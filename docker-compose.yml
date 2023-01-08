@@ -1,0 +1,13 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: kolbaska_db
+      MYSQL_USER: kolbaska
+      MYSQL_PASSWORD: kolbaska_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
