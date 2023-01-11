@@ -1,0 +1,624 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1673464811708-1
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_address
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: street
+                  type: varchar(100)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: apartment_number
+                  type: varchar(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: city
+                  type: varchar(50)
+              - column:
+                  name: state
+                  type: varchar(2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: zip_code
+                  type: varchar(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: country
+                  type: varchar(50)
+            tableName: address
+  - changeSet:
+      id: 1673464811708-2
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_category
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: varchar(32)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: text
+            tableName: category
+  - changeSet:
+      id: 1673464811708-3
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: category_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurants_id
+                  type: BIGINT
+            tableName: category_restaurants
+  - changeSet:
+      id: 1673464811708-4
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_certificate
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: sent_from
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: sent_to
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: text
+              - column:
+                  constraints:
+                    nullable: false
+                  name: activation_code
+                  type: varchar(36)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: value
+                  type: int
+              - column:
+                  constraints:
+                    nullable: false
+                  name: valid_until
+                  type: date
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_category_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: active
+                  type: bool
+              - column:
+                  constraints:
+                    nullable: false
+                  name: activated_at
+                  type: date
+            tableName: certificate
+  - changeSet:
+      id: 1673464811708-5
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_restaurant
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: varchar(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: text
+              - column:
+                  constraints:
+                    nullable: false
+                  name: working_hours
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: company
+                  type: varchar(24)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: registration_code
+                  type: int
+              - column:
+                  constraints:
+                    nullable: false
+                  name: address_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: phone
+                  type: varchar(15)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_code
+                  type: varchar(6)
+            tableName: restaurant
+  - changeSet:
+      id: 1673464811708-6
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: categories_id
+                  type: BIGINT
+            tableName: restaurant_categories
+  - changeSet:
+      id: 1673464811708-7
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_role
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role_name
+                  type: VARCHAR(255)
+            tableName: role
+  - changeSet:
+      id: 1673464811708-8
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_transaction
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: unique_identifier
+                  type: varchar(36)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: value
+                  type: double(4,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: certificate_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: waiter_id
+                  type: BIGINT
+            tableName: transaction
+  - changeSet:
+      id: 1673464811708-9
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: datetime
+              - column:
+                  constraints:
+                    nullable: false
+                  name: updated_at
+                  type: datetime
+              - column:
+                  name: username
+                  type: varchar(24)
+              - column:
+                  name: password
+                  type: varchar(60)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: full_name
+                  type: varchar(60)
+              - column:
+                  name: email
+                  type: varchar(120)
+              - column:
+                  name: phone
+                  type: varchar(15)
+              - column:
+                  name: address_id
+                  type: BIGINT
+              - column:
+                  name: last_logged
+                  type: date
+              - column:
+                  name: last_ip
+                  type: varchar(15)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: activated
+                  type: bool
+              - column:
+                  constraints:
+                    nullable: false
+                  name: deleted
+                  type: bool
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+            tableName: user
+  - changeSet:
+      id: 1673464811708-10
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: certificates_id
+                  type: BIGINT
+            tableName: user_certificates
+  - changeSet:
+      id: 1673464811708-11
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: transactions_id
+                  type: BIGINT
+            tableName: user_transactions
+  - changeSet:
+      id: 1673464811708-12
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: certificates_id
+            constraintName: uc_user_certificates_certificates
+            tableName: user_certificates
+  - changeSet:
+      id: 1673464811708-13
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: transactions_id
+            constraintName: uc_user_transactions_transactions
+            tableName: user_transactions
+  - changeSet:
+      id: 1673464811708-14
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_category_id
+            baseTableName: certificate
+            constraintName: FK_CERTIFICATE_ON_RESTAURANTCATEGORY
+            referencedColumnNames: id
+            referencedTableName: category
+  - changeSet:
+      id: 1673464811708-15
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: certificate
+            constraintName: FK_CERTIFICATE_ON_USER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1673464811708-16
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: address_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_ADDRESS
+            referencedColumnNames: id
+            referencedTableName: address
+  - changeSet:
+      id: 1673464811708-17
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: certificate_id
+            baseTableName: transaction
+            constraintName: FK_TRANSACTION_ON_CERTIFICATE
+            referencedColumnNames: id
+            referencedTableName: certificate
+  - changeSet:
+      id: 1673464811708-18
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: waiter_id
+            baseTableName: transaction
+            constraintName: FK_TRANSACTION_ON_WAITER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1673464811708-19
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: address_id
+            baseTableName: user
+            constraintName: FK_USER_ON_ADDRESS
+            referencedColumnNames: id
+            referencedTableName: address
+  - changeSet:
+      id: 1673464811708-20
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: user
+            constraintName: FK_USER_ON_RESTAURANT
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1673464811708-21
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: category_id
+            baseTableName: category_restaurants
+            constraintName: fk_catres_on_category
+            referencedColumnNames: id
+            referencedTableName: category
+  - changeSet:
+      id: 1673464811708-22
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurants_id
+            baseTableName: category_restaurants
+            constraintName: fk_catres_on_restaurant
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1673464811708-23
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: categories_id
+            baseTableName: restaurant_categories
+            constraintName: fk_rescat_on_category
+            referencedColumnNames: id
+            referencedTableName: category
+  - changeSet:
+      id: 1673464811708-24
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: restaurant_categories
+            constraintName: fk_rescat_on_restaurant
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1673464811708-25
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: certificates_id
+            baseTableName: user_certificates
+            constraintName: fk_usecer_on_certificate
+            referencedColumnNames: id
+            referencedTableName: certificate
+  - changeSet:
+      id: 1673464811708-26
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_certificates
+            constraintName: fk_usecer_on_user
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1673464811708-27
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: transactions_id
+            baseTableName: user_transactions
+            constraintName: fk_usetra_on_transaction
+            referencedColumnNames: id
+            referencedTableName: transaction
+  - changeSet:
+      id: 1673464811708-28
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_transactions
+            constraintName: fk_usetra_on_user
+            referencedColumnNames: id
+            referencedTableName: user
+
