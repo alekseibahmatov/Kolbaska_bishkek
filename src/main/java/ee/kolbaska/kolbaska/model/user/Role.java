@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @Entity
@@ -37,4 +39,8 @@ public class Role {
 
     @Column(name = "role_name", nullable = false)
     private String roleName;
+
+    @OneToMany(mappedBy = "role", orphanRemoval = true)
+    private List<User> users = new ArrayList<>();
+
 }
