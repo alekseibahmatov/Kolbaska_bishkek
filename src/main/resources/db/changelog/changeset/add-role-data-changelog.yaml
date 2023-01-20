@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-customer-role
+      author: aleksei
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_CUSTOMER
+  - changeSet:
+      id: insert-waiter-role
+      author: aleksei
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_WAITER
+  - changeSet:
+      id: insert-manager-role
+      author: aleksei
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_MANAGER
+  - changeSet:
+      id: insert-admin-role
+      author: aleksei
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_ADMIN

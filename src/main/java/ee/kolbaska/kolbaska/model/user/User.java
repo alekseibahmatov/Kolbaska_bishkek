@@ -10,7 +10,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -18,35 +23,30 @@ import java.util.List;
 @Table(name = "user")
 @Getter
 @Setter
-public class User {
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(
             name = "created_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date createdAt;
 
     @Column(
             name = "updated_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
     @Column(
             name = "username",
             columnDefinition = "varchar(24)"
@@ -125,4 +125,28 @@ public class User {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }

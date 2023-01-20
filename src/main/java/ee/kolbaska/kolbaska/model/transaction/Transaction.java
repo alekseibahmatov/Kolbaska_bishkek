@@ -1,9 +1,11 @@
 package ee.kolbaska.kolbaska.model.transaction;
 
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
+import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,39 +18,26 @@ import java.util.Date;
 public class Transaction {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(
             name = "created_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date createdAt;
 
     @Column(
             name = "updated_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
-    @NotNull
-    @Column(
-            name = "unique_identifier",
-            columnDefinition = "varchar(36)",
-            nullable = false
-    )
-    private String uID;
 
     @NotNull
     @Column(
@@ -58,7 +47,6 @@ public class Transaction {
     )
     private Double value;
 
-    //TODO Add restaurant
 
     @NotNull
     @OneToOne(optional = false)
@@ -69,4 +57,10 @@ public class Transaction {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private User waiter;
+
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private Restaurant restaurant;
+
 }

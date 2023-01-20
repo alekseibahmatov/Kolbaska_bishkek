@@ -1,12 +1,13 @@
 databaseChangeLog:
   - changeSet:
-      id: 1673464811708-1
+      id: 1674208272598-1
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -16,13 +17,15 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -53,13 +56,14 @@ databaseChangeLog:
                   type: varchar(50)
             tableName: address
   - changeSet:
-      id: 1673464811708-2
+      id: 1674208272598-2
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -69,13 +73,15 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -88,7 +94,7 @@ databaseChangeLog:
                   type: text
             tableName: category
   - changeSet:
-      id: 1673464811708-3
+      id: 1674208272598-3
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -106,7 +112,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: category_restaurants
   - changeSet:
-      id: 1673464811708-4
+      id: 1674208272598-4
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -118,17 +124,19 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: pk_certificate
                   name: id
-                  type: BIGINT
+                  type: VARCHAR(255)
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -181,13 +189,14 @@ databaseChangeLog:
                   type: date
             tableName: certificate
   - changeSet:
-      id: 1673464811708-5
+      id: 1674208272598-5
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -197,13 +206,15 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -246,7 +257,7 @@ databaseChangeLog:
                   type: varchar(6)
             tableName: restaurant
   - changeSet:
-      id: 1673464811708-6
+      id: 1674208272598-6
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -264,13 +275,14 @@ databaseChangeLog:
                   type: BIGINT
             tableName: restaurant_categories
   - changeSet:
-      id: 1673464811708-7
+      id: 1674208272598-7
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -280,13 +292,15 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -294,7 +308,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: role
   - changeSet:
-      id: 1673464811708-8
+      id: 1674208272598-8
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -306,22 +320,19 @@ databaseChangeLog:
                     primaryKey: true
                     primaryKeyName: pk_transaction
                   name: id
-                  type: BIGINT
+                  type: VARCHAR(255)
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
-              - column:
-                  constraints:
-                    nullable: false
-                  name: unique_identifier
-                  type: varchar(36)
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -331,21 +342,27 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: certificate_id
-                  type: BIGINT
+                  type: VARCHAR(255)
               - column:
                   constraints:
                     nullable: false
                   name: waiter_id
                   type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_id
+                  type: BIGINT
             tableName: transaction
   - changeSet:
-      id: 1673464811708-9
+      id: 1674208272598-9
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
             columns:
               - column:
+                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
@@ -355,13 +372,15 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: datetime
+                  type: TIMESTAMP
               - column:
                   name: username
                   type: varchar(24)
@@ -403,7 +422,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: user
   - changeSet:
-      id: 1673464811708-10
+      id: 1674208272598-10
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -418,10 +437,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: certificates_id
-                  type: BIGINT
+                  type: VARCHAR(255)
             tableName: user_certificates
   - changeSet:
-      id: 1673464811708-11
+      id: 1674208272598-11
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -436,10 +455,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: transactions_id
-                  type: BIGINT
+                  type: VARCHAR(255)
             tableName: user_transactions
   - changeSet:
-      id: 1673464811708-12
+      id: 1674208272598-12
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -448,7 +467,7 @@ databaseChangeLog:
             constraintName: uc_user_certificates_certificates
             tableName: user_certificates
   - changeSet:
-      id: 1673464811708-13
+      id: 1674208272598-13
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -457,7 +476,7 @@ databaseChangeLog:
             constraintName: uc_user_transactions_transactions
             tableName: user_transactions
   - changeSet:
-      id: 1673464811708-14
+      id: 1674208272598-14
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -468,7 +487,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1673464811708-15
+      id: 1674208272598-15
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -479,7 +498,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1673464811708-16
+      id: 1674208272598-16
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -490,7 +509,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1673464811708-17
+      id: 1674208272598-17
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -501,7 +520,18 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: certificate
   - changeSet:
-      id: 1673464811708-18
+      id: 1674208272598-18
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: transaction
+            constraintName: FK_TRANSACTION_ON_RESTAURANT
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1674208272598-19
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -512,7 +542,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1673464811708-19
+      id: 1674208272598-20
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -523,7 +553,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1673464811708-20
+      id: 1674208272598-21
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -534,7 +564,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1673464811708-21
+      id: 1674208272598-22
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -545,7 +575,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1673464811708-22
+      id: 1674208272598-23
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -556,7 +586,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1673464811708-23
+      id: 1674208272598-24
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -567,7 +597,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1673464811708-24
+      id: 1674208272598-25
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -578,7 +608,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1673464811708-25
+      id: 1674208272598-26
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -589,7 +619,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: certificate
   - changeSet:
-      id: 1673464811708-26
+      id: 1674208272598-27
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -600,7 +630,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1673464811708-27
+      id: 1674208272598-28
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -611,7 +641,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: transaction
   - changeSet:
-      id: 1673464811708-28
+      id: 1674208272598-29
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:

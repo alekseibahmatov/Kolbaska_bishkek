@@ -16,32 +16,26 @@ import java.util.Date;
 public class Certificate {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(
             name = "created_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date createdAt;
 
     @Column(
             name = "updated_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
 
     @NotNull
     @Column(

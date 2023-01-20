@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.model.restaurant;
 
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
+import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "restaurant")
@@ -19,32 +22,29 @@ import java.util.List;
 public class Restaurant {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(
             name = "created_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date createdAt;
 
     @Column(
             name = "updated_at",
-            columnDefinition = "datetime",
-            nullable = false
+            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+            nullable = false,
+            insertable = false,
+            updatable = false
     )
     private Date updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
+    @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
+    private Set<Transaction> transactions = new LinkedHashSet<>();
 
     @NotNull
     @Column(
@@ -116,4 +116,5 @@ public class Restaurant {
     @NotNull
     @OneToMany(mappedBy = "restaurant")
     private List<User> waiters = new java.util.ArrayList<>();
+
 }
