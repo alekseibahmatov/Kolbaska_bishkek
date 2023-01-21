@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1674327867621-3" author="Aleksei (generated)">
+        <addColumn tableName="restaurant">
+            <column name="average_bill" type="int"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1674327867621-4" author="Aleksei (generated)">
+        <addNotNullConstraint columnDataType="int" columnName="average_bill" tableName="restaurant"/>
+    </changeSet>
+    <changeSet id="1674327867621-1" author="Aleksei (generated)">
+        <dropColumn columnName="value" tableName="transaction"/>
+    </changeSet>
+    <changeSet id="1674327867621-2" author="Aleksei (generated)">
+        <addColumn tableName="transaction">
+            <column name="value" type="double(4,2)">
+                <constraints nullable="false" validateNullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -87,6 +87,14 @@ public class Restaurant {
     private Integer registrationCode;
 
     @NotNull
+    @Column(
+            name = "average_bill",
+            columnDefinition = "int",
+            nullable = false
+    )
+    private Integer averageBill;
+
+    @NotNull
     @ManyToOne
     private Address address;
 
