@@ -9,3 +9,4 @@
 7. In the "Configuration" field, select the Docker Compose configuration that you created earlier.
 8. Click on "Apply" and "OK" to save the changes.
 9. Now, when you click on the "Run" button in the upper menu, the selected services in the Docker Compose configuration will be started before the Spring Boot application.
+10. It may not start from first time, if it fails, try next time in 10 seconds
