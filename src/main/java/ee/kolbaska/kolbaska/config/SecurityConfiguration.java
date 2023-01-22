@@ -24,9 +24,9 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
-                .permitAll()
-                .requestMatchers("/api/v1/admin/**").hasRole("ROLE_ADMIN")
+                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -37,4 +37,5 @@ public class SecurityConfiguration {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
 }

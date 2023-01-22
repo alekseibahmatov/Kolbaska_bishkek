@@ -1,4 +1,4 @@
-package ee.kolbaska.kolbaska.security.service;
+package ee.kolbaska.kolbaska.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -24,7 +24,7 @@ public class JwtService {
     private String JWT_ISSUER;
 
     public String extractUserEmail(String token) {
-        return extractClaims(token).get("Email").asString();
+        return JWT.decode(token).getSubject();
     }
 
     public String createToken(UserDetails userDetails) {
@@ -32,7 +32,7 @@ public class JwtService {
     }
 
     public String createToken(
-            Map<String, String[]> claims,
+            Map<String, String> claims,
             UserDetails userDetails
     ) {
         return JWT

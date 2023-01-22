@@ -74,7 +74,8 @@ public class User implements UserDetails {
 
     @Column(
             name = "email",
-            columnDefinition = "varchar(120)"
+            columnDefinition = "varchar(120)",
+            nullable = false
     )
     @Email
     private String email;
@@ -83,7 +84,7 @@ public class User implements UserDetails {
             name = "phone",
             columnDefinition = "varchar(15)"
     )
-    @Size(min = 15, max = 15)
+    @Size(min = 12, max = 15)
     private String phone;
 
     @ManyToOne
@@ -91,6 +92,11 @@ public class User implements UserDetails {
     private Address address;
 
 
+    @Column(
+            name = "personal_code",
+            columnDefinition = "varchar(11)"
+    )
+    private String personalCode;
 
     @Column(
             name = "last_logged",
@@ -135,6 +141,11 @@ public class User implements UserDetails {
     private Role role;
 
     @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getRoleName()));
     }
@@ -146,7 +157,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !deleted;
     }
 
     @Override
@@ -156,6 +167,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return deleted;
+        return activated;
     }
 }
