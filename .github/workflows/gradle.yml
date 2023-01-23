@@ -38,42 +38,17 @@ jobs:
       
     - name: Test Success
       if: success()
-      uses: actions/github-script@0.5.0
+      uses: hmarr/auto-approve-action@v3
       with:
         github-token: ${{ secrets.TOKEN }}
-        script: |
-          async function run() {
-            const pull_number = "${{github.event.pull_request.number}}"
-            await github.pulls.createReview({
-              owner: "${{github.event.repository.owner.login}}",
-              repo: "${{github.event.repository.name}}",
-              pull_number,
-              body: "All tests passed.",
-              event: "APPROVE"
-            })
-          }
-          run()
+        pull-request-number: ${{ github.event.pull_request.number }}
+          
     - name: Test Fail
       if: failure()
-      uses: actions/github-script@0.5.0
+      uses: ntsd/auto-request-changes-action@v2.0.2
       with:
         github-token: ${{ secrets.TOKEN }}
-        script: |
-          async function run() {
-            const pull_number = "${{github.event.pull_request.number}}"
-            await github.pulls.createReview({
-              owner: "${{github.event.repository.owner.login}}",
-              repo: "${{github.event.repository.name}}",
-              pull_number,
-              body: "There is something wrong with test codes.",
-              event: "REQUEST_CHANGES"
-            })
-            await github.pulls.update({
-              owner: "${{github.event.repository.owner.login}}",
-              repo: "${{github.event.repository.name}}",
-              pull_number,
-              state: "closed"
-            })
-          }
-          run()
+        pull-request-number: ${{github.event.pull_request.number}}
+        comment-body: "Some of tests didn't pass"
+
           
