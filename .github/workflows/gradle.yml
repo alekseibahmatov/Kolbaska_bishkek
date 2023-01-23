@@ -40,34 +40,40 @@ jobs:
       if: success()
       uses: actions/github-script@0.5.0
       with:
-        github-token: ${{ github.token }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const pull_number = "${{github.event.pull_request.number}}"
-          await github.pulls.createReview({
-            owner: "${{github.event.repository.owner.login}}",
-            repo: "${{github.event.repository.name}}",
-            pull_number,
-            body: "All tests passed.",
-            event: "APPROVE"
-          })
+          async function run() {
+            const pull_number = "${{github.event.pull_request.number}}"
+            await github.pulls.createReview({
+              owner: "${{github.event.repository.owner.login}}",
+              repo: "${{github.event.repository.name}}",
+              pull_number,
+              body: "All tests passed.",
+              event: "APPROVE"
+            })
+          }
+          run()
     - name: Test Fail
       if: failure()
       uses: actions/github-script@0.5.0
       with:
-        github-token: ${{ github.token }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const pull_number = "${{github.event.pull_request.number}}"
-          await github.pulls.createReview({
-            owner: "${{github.event.repository.owner.login}}",
-            repo: "${{github.event.repository.name}}",
-            pull_number,
-            body: "There is something wrong with test codes.",
-            event: "REQUEST_CHANGES"
-          })
-          await github.pulls.update({
-            owner: "${{github.event.repository.owner.login}}",
-            repo: "${{github.event.repository.name}}",
-            pull_number,
-            state: "closed"
-          })
+          async function run() {
+            const pull_number = "${{github.event.pull_request.number}}"
+            await github.pulls.createReview({
+              owner: "${{github.event.repository.owner.login}}",
+              repo: "${{github.event.repository.name}}",
+              pull_number,
+              body: "There is something wrong with test codes.",
+              event: "REQUEST_CHANGES"
+            })
+            await github.pulls.update({
+              owner: "${{github.event.repository.owner.login}}",
+              repo: "${{github.event.repository.name}}",
+              pull_number,
+              state: "closed"
+            })
+          }
+          run()
           
