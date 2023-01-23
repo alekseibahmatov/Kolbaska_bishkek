@@ -36,36 +36,11 @@ jobs:
     - name: Test with gradle
       run: ./gradlew clean test
       
-      
-    - name: Test Success
-      if: success()
-      uses: actions/github-script@v6.3.3
+    - name: Validation
+      uses: 10up/action-pr-automator@trunk
       with:
-        github-token: ${{ github.token }}
-        script: |
-          const pull_number = "${{github.event.number}}"
-          await github.pulls.createReview({
-            ...context.repo,
-            pull_number,
-            body: "All tests passed.",
-            event: "APPROVE"
-          })
+        fail-label: 'needs:feedback'
+        pass-label: 'needs:code-review'
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
           
-    - name: Test Fail
-      if: failure()
-      uses: actions/github-script@v6.3.3
-      with:
-        github-token: ${{ github.token }}
-        script: |
-          const pull_number = "${{github.event.number}}"
-          await github.pulls.createReview({
-            ...context.repo,
-            pull_number,
-            body: "There is something wrong with test codes.",
-           event: "REQUEST_CHANGES"
-          })
-          await github.pulls.update({
-            ...context.repo,
-            pull_number,
-            state: "closed"
-          })
