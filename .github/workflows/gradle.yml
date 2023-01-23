@@ -40,14 +40,14 @@ jobs:
       if: success()
       uses: hmarr/auto-approve-action@v3
       with:
-        github-token: ${{ secrets.TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         pull-request-number: ${{ github.event.pull_request.number }}
           
     - name: Test Fail
       if: failure()
       uses: ntsd/auto-request-changes-action@v2.0.2
       with:
-        github-token: ${{ secrets.TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         pull-request-number: ${{github.event.pull_request.number}}
         comment-body: "Some of tests didn't pass"
 
