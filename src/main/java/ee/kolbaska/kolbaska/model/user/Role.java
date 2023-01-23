@@ -1,8 +1,7 @@
 package ee.kolbaska.kolbaska.model.user;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +12,9 @@ import java.util.List;
 @Table(name = "role")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
 
     @Id

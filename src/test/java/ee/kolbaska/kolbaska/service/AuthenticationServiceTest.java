@@ -7,13 +7,16 @@ import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.AuthenticationRequest;
 import ee.kolbaska.kolbaska.request.RegisterRequest;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
-import ee.kolbaska.kolbaska.security.service.JwtService;
+import ee.kolbaska.kolbaska.security.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.NoSuchElementException;
@@ -21,8 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 class AuthenticationServiceTest {
@@ -34,6 +36,8 @@ class AuthenticationServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private JwtService jwtService;
+    @Mock
+    private AuthenticationManager authenticationManager;
     @InjectMocks
     private AuthenticationService authenticationService;
 
@@ -53,7 +57,7 @@ class AuthenticationServiceTest {
     void testRegister() throws Exception {
         when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
         when(userRepository.save(any(User.class))).thenReturn(new User());
-        when(jwtService.createToken(any(User.class))).thenReturn("token");
+        when(jwtService.createToken(anyMap(), any(User.class))).thenReturn("token");
 
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setEmail("test@test.com");
@@ -76,8 +80,10 @@ class AuthenticationServiceTest {
 
     @Test
     void testAuthenticate() {
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
-        when(jwtService.createToken(any(User.class))).thenReturn("token");
+        User user = new User();
+        user.setRole(roleRepository.findRoleByRoleName("ROLE_CUSTOMER").get());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(jwtService.createToken(anyMap(), any(User.class))).thenReturn("token");
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setEmail("test@test.com");
@@ -98,3 +104,4 @@ class AuthenticationServiceTest {
         assertThrows(NoSuchElementException.class, () -> authenticationService.authenticate(authenticationRequest));
     }
 }
+
