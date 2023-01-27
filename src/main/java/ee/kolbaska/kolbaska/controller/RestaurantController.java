@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/restaurant")
+@RequestMapping("${api.basepath}")
 @RequiredArgsConstructor
 public class RestaurantController {
 
     private final RestaurantService service;
 
-    @PostMapping("/waiter")
+    @PostMapping("/restaurant/waiter")
     public ResponseEntity<WaiterResponse> createWaiter(
             @NotNull @RequestBody WaiterRequest request
             ) throws Exception {
