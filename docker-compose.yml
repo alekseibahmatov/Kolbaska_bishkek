@@ -13,5 +13,6 @@ services:
       - ./mysql:/var/lib/mysql
     networks:
       - mysql-network
+    restart: always
 networks:
   mysql-network: {}
