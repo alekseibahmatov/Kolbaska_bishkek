@@ -1,5 +1,6 @@
 package ee.kolbaska.kolbaska.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,17 +10,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantTableResponse {
+public class RestaurantResponse {
 
-    private String restaurantCode;
+    private Long id;
 
     private String restaurantName;
 
     private String restaurantEmail;
 
-    private String restaurantPhone;
+    private Double receivedTotal;
 
-    private Integer averageBill;
+    private String message;
 
-    // TODO Add picture
 }

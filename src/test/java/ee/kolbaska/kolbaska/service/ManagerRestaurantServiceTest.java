@@ -1,8 +1,10 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
+import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
+import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
@@ -10,7 +12,6 @@ import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
-import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 
-public class RestaurantServiceTest {
+public class ManagerRestaurantServiceTest {
     @Mock
     private UserRepository userRepository;
 
@@ -49,8 +50,11 @@ public class RestaurantServiceTest {
     @Mock
     private RoleRepository roleRepository;
 
+    @Mock
+    private RestaurantRepository restaurantRepository;
+
     @InjectMocks
-    private RestaurantService restaurantService;
+    private ManagerRestaurantService managerRestaurantService;
 
 
     @Test
@@ -58,6 +62,14 @@ public class RestaurantServiceTest {
         // mock the dependencies of the RestaurantService
         when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(1L);
+        restaurant.setName("R14");
+        restaurant.setDescription("Zalupa konja");
+        restaurant.setRestaurantCode("123456");
+
+        when(restaurantRepository.findByRestaurantCode(anyString())).thenReturn(Optional.of(restaurant));
         User waiter = new User();
         waiter.setId(1L);
         waiter.setEmail("test@test.com");
@@ -76,9 +88,10 @@ public class RestaurantServiceTest {
         request.setEmail("test@test.com");
         request.setFullName("John Doe");
         request.setPhone("0000000");
+        request.setRestaurantCode("123456");
 
         // call the createWaiter method
-        ResponseEntity<WaiterResponse> response = restaurantService.createWaiter(request);
+        ResponseEntity<WaiterResponse> response = managerRestaurantService.createWaiter(request);
 
         // assert that the response is as expected
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -103,24 +116,34 @@ public class RestaurantServiceTest {
     void testCreateWaiter_UserAlreadyExists() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
 
+
         WaiterRequest request = new WaiterRequest();
         request.setEmail("test@test.com");
         request.setFullName("John Doe");
         request.setPhone("0000000");
 
-        assertThrows(UserAlreadyExistsException.class, () -> restaurantService.createWaiter(request));
+        assertThrows(UserAlreadyExistsException.class, () -> managerRestaurantService.createWaiter(request));
     }
 
     @Test
     void testCreateWaiter_RoleNotFound() {
         when(roleRepository.findRoleByRoleName("ROLE_WAITER")).thenReturn(Optional.empty());
 
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(1L);
+        restaurant.setName("R14");
+        restaurant.setDescription("Zalupa konja");
+        restaurant.setRestaurantCode("123456");
+
+        when(restaurantRepository.findByRestaurantCode(anyString())).thenReturn(Optional.of(restaurant));
+
         WaiterRequest request = new WaiterRequest();
         request.setEmail("test@test.com");
         request.setFullName("John Doe");
         request.setPhone("0000000");
+        request.setRestaurantCode("123456");
 
-        assertThrows(RoleNotFoundException.class, () -> restaurantService.createWaiter(request));
+        assertThrows(RoleNotFoundException.class, () -> managerRestaurantService.createWaiter(request));
     }
 
     @Test
@@ -132,6 +155,6 @@ public class RestaurantServiceTest {
         request.setFullName("John Doe");
         request.setPhone("invalid_number");
 
-        assertThrows(IllegalArgumentException.class, () -> restaurantService.createWaiter(request));
+        assertThrows(IllegalArgumentException.class, () -> managerRestaurantService.createWaiter(request));
     }
 }

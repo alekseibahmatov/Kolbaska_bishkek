@@ -35,6 +35,13 @@ public class Address {
     )
     private Date updatedAt;
 
+    @Column(
+            name = "deleted_at",
+            insertable = false,
+            updatable = false
+    )
+    private Date deletedAt;
+
     @NotNull
     @Column(
             name = "street",

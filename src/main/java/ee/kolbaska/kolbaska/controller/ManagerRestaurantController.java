@@ -1,8 +1,10 @@
 package ee.kolbaska.kolbaska.controller;
 
+import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
+import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
-import ee.kolbaska.kolbaska.service.RestaurantService;
+import ee.kolbaska.kolbaska.service.ManagerRestaurantService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("${api.basepath}")
 @RequiredArgsConstructor
-public class RestaurantController {
+public class ManagerRestaurantController {
 
-    private final RestaurantService service;
+    private final ManagerRestaurantService service;
 
-    @PostMapping("/restaurant/waiter")
+    @PostMapping("/manager/restaurant/waiter")
     public ResponseEntity<WaiterResponse> createWaiter(
             @NotNull @RequestBody WaiterRequest request
             ) throws Exception {

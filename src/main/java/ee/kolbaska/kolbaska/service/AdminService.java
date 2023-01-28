@@ -17,7 +17,13 @@ public class AdminService {
     public ResponseEntity<List<RestaurantTableResponse>> returnRestaurantList() {
 
         List<RestaurantTableResponse> response = restaurantRepository.findAll()
-                .stream().map(restaurant -> new RestaurantTableResponse(restaurant.getName(), restaurant.getAverageBill()))
+                .stream().map(restaurant -> new RestaurantTableResponse(
+                        restaurant.getRestaurantCode(),
+                        restaurant.getName(),
+                        restaurant.getEmail(),
+                        restaurant.getPhone(),
+                        restaurant.getAverageBill()
+                ))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);

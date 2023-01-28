@@ -3,9 +3,3 @@ databaseChangeLog:
       file: db/changelog/changeset/init-changelog.yaml
   - include:
       file: db/changelog/changeset/add-role-data-changelog.yaml
-  - include:
-      file: db/changelog/changeset/22-01-changelog.yaml
-  - include:
-      file: db/changelog/changeset/22-02-changelog.yaml
-  - include:
-      file: db/changelog/changeset/22-03-changelog.yaml
