@@ -5,10 +5,10 @@ import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -19,6 +19,9 @@ import java.util.Set;
 @Table(name = "restaurant")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Restaurant {
 
     @Id
@@ -42,6 +45,13 @@ public class Restaurant {
             updatable = false
     )
     private Date updatedAt;
+
+    @Column(
+            name = "deleted_at",
+            insertable = false,
+            updatable = false
+    )
+    private Date deletedAt;
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private Set<Transaction> transactions = new LinkedHashSet<>();
@@ -72,22 +82,6 @@ public class Restaurant {
 
     @NotNull
     @Column(
-            name = "company",
-            columnDefinition = "varchar(24)",
-            nullable = false
-    )
-    private String company;
-
-    @NotNull
-    @Column(
-            name = "registration_code",
-            columnDefinition = "int",
-            nullable = false
-    )
-    private Integer registrationCode;
-
-    @NotNull
-    @Column(
             name = "average_bill",
             columnDefinition = "int",
             nullable = false
@@ -109,6 +103,15 @@ public class Restaurant {
 
     @NotNull
     @Column(
+            name = "email",
+            columnDefinition = "varchar(120)",
+            nullable = false
+    )
+    @Email
+    private String email;
+
+    @NotNull
+    @Column(
             name = "restaurant_code",
             columnDefinition = "varchar(6)",
             nullable = false
@@ -124,5 +127,21 @@ public class Restaurant {
     @NotNull
     @OneToMany(mappedBy = "restaurant")
     private List<User> waiters = new java.util.ArrayList<>();
+
+    @NotNull
+    @Column(
+            name = "photo_name",
+            columnDefinition = "varchar(40)",
+            nullable = false
+    )
+    private String photoName;
+
+    @NotNull
+    @Column(
+            name = "contract_name",
+            columnDefinition = "varchar(40)",
+            nullable = false
+    )
+    private String contractName;
 
 }

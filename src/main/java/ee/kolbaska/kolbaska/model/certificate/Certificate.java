@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "certificate")
@@ -47,14 +48,6 @@ public class Certificate {
 
     @NotNull
     @Column(
-            name = "sent_to",
-            columnDefinition = "varchar(120)",
-            nullable = false
-    )
-    private String sentTo;
-
-    @NotNull
-    @Column(
             name = "description",
             columnDefinition = "text",
             nullable = false
@@ -88,8 +81,8 @@ public class Certificate {
 
 
     @NotNull
-    @ManyToOne
-    private Category restaurantCategory;
+    @OneToMany
+    private List<Category> restaurantCategory;
 
     @NotNull
     @ManyToOne
@@ -111,4 +104,11 @@ public class Certificate {
             nullable = false
     )
     private Date activatedAt;
+
+    @Column(
+            name = "deleted_at",
+            insertable = false,
+            updatable = false
+    )
+    private Date deletedAt;
 }

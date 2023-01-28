@@ -39,6 +39,13 @@ public class Role {
     )
     private Date updatedAt;
 
+    @Column(
+            name = "deleted_at",
+            insertable = false,
+            updatable = false
+    )
+    private Date deletedAt;
+
     @Column(name = "role_name", nullable = false)
     private String roleName;
 

@@ -3,8 +3,7 @@ package ee.kolbaska.kolbaska.model.category;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +13,9 @@ import java.util.List;
 @Table(name = "category")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id
@@ -38,6 +40,13 @@ public class Category {
     )
     private Date updatedAt;
 
+    @Column(
+            name = "deleted_at",
+            insertable = false,
+            updatable = false
+    )
+    private Date deletedAt;
+
     @NotNull
     @Column(
             name = "name",
@@ -45,15 +54,6 @@ public class Category {
             nullable = false
     )
     private String name;
-
-    @NotNull
-    @Column(
-            name = "description",
-            columnDefinition = "text",
-            nullable = false
-    )
-    private String description;
-
 
     @ManyToMany
     @JoinTable(name = "category_restaurants",

@@ -33,11 +33,18 @@ public class Transaction {
     @Column(
             name = "updated_at",
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
             insertable = false,
             updatable = false
     )
     private Date updatedAt;
+
+    @Column(
+            name = "deleted_at",
+            nullable = false,
+            insertable = false,
+            updatable = false
+    )
+    private Date deletedAt;
 
     @NotNull
     @Column(

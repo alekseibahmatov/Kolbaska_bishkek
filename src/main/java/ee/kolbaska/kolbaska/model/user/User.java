@@ -51,11 +51,11 @@ public class User implements UserDetails {
     private Date updatedAt;
 
     @Column(
-            name = "username",
-            columnDefinition = "varchar(24)"
+            name = "deleted_at",
+            insertable = false,
+            updatable = false
     )
-    @Size(min = 4, max = 24)
-    private String username;
+    private Date deletedAt;
 
     @Column(
             name = "password",
@@ -117,6 +117,12 @@ public class User implements UserDetails {
             nullable = false
     )
     private Boolean activated;
+
+    @Column(
+            name = "registration_code",
+            columnDefinition = "varchar(36)"
+    )
+    private String registrationCode;
 
     @NotNull
     @Column(

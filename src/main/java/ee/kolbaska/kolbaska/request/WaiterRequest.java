@@ -25,4 +25,7 @@ public class WaiterRequest {
 
     @NotNull
     private String personalCode;
+
+    @NotNull
+    private String restaurantCode;
 }
