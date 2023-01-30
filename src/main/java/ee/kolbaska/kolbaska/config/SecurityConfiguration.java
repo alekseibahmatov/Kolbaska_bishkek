@@ -10,6 +10,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -19,21 +27,38 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter authenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+            // other public endpoints of your API may be appended to this array
+    };
+
     @Value("${api.basepath}")
-    private static String API_BASEPATH;
+    private String API_BASEPATH;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf()
                 .disable()
-                .authorizeHttpRequests()
-                .requestMatchers(API_BASEPATH + "/auth/**").permitAll()
-                .requestMatchers(API_BASEPATH + "/admin/**").hasRole("ADMIN")
-                .requestMatchers(API_BASEPATH + "/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
-                .anyRequest()
-                .authenticated()
-                .and()
+                .authorizeHttpRequests(
+                        (requests) -> requests
+                                .requestMatchers(API_BASEPATH + "/auth/**").permitAll()
+                                .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
+                                .requestMatchers(API_BASEPATH + "/admin/**").hasRole("ADMIN")
+                                .requestMatchers(API_BASEPATH + "/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
+                                .anyRequest()
+                                .authenticated()
+                )
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -42,4 +67,15 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    @Bean
+    public CorsFilter corsFilter() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 }

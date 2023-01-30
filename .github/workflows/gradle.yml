@@ -31,9 +31,6 @@ jobs:
     - name: Grant Permissions to gradlew
       run: chmod +x gradlew
       
-    - name: Move application-properties
-      run: mv .github/workflows/application.properties src/main/resources/application.properties
-      
     - name: Test with gradle
       run: ./gradlew clean test
       
