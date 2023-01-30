@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.Optional;
@@ -30,7 +31,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-
+@TestPropertySource("/tests.properties")
 public class ManagerRestaurantServiceTest {
     @Mock
     private UserRepository userRepository;

@@ -1,8 +1,11 @@
 package ee.kolbaska.kolbaska.service.miscellaneous;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+@TestPropertySource("/tests.properties")
 
 class FormatServiceTest {
     private FormatService formatService = new FormatService();

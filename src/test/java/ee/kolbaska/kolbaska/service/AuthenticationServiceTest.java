@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 
 
 import javax.management.relation.RoleNotFoundException;
@@ -26,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+
+@TestPropertySource("/tests.properties")
 
 class AuthenticationServiceTest {
     @Mock
