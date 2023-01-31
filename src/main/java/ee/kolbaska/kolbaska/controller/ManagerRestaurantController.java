@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("${api.basepath}")
+@RequestMapping("${api.basepath}/manager")
 @RequiredArgsConstructor
 public class ManagerRestaurantController {
 
     private final ManagerRestaurantService service;
 
-    @PostMapping("/manager/restaurant/waiter")
+    @PostMapping("/restaurant/waiter")
     public ResponseEntity<WaiterResponse> createWaiter(
             @NotNull @RequestBody WaiterRequest request
             ) throws Exception {
