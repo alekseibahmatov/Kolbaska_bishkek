@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api.basepath}")
+@RequestMapping("${api.basepath}/admin")
 @RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService service;
 
-    @GetMapping("/admin/restaurant")
+    @GetMapping("/restaurant")
     private ResponseEntity<List<RestaurantTableResponse>> returnRestaurantList() {
         return service.returnRestaurantList();
     }

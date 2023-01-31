@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class AdminRestaurantService {
                 .phone(request.getRestaurantPhone())
                 .email(request.getRestaurantEmail())
                 .restaurantCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase())
-                .categories(getCategories(new HashSet<>(request.getCategories())))
+                .categories(setupCategories(new HashSet<>(request.getCategories())))
                 .photoName(fileService.storeFile(request.getPhoto()))
                 .contractName(fileService.storeFile(request.getContact()))
                 .waiters(List.of(getUser(request.getManagerEmail())))
@@ -71,7 +72,13 @@ public class AdminRestaurantService {
         return userRepository.save(newUser);
     }
 
-    private List<Category> getCategories(Set<String> categories) {
+    public ResponseEntity<List<String>> getCategories() {
+        return ResponseEntity.ok(categoryRepository.findAll().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList()));
+    }
+
+    private List<Category> setupCategories(Set<String> categories) {
 
         if (categories.isEmpty()) throw new NullPointerException("Categories are empty");
 

@@ -13,20 +13,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${api.basepath}/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthenticationService service;
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @NotNull @RequestBody RegisterRequest request
             ) throws Exception {
         return ResponseEntity.ok(service.register(request));
     }
 
-    @PostMapping("/auth/authenticate")
+    @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @NotNull @RequestBody AuthenticationRequest request
             ) {
