@@ -8,6 +8,7 @@ import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
+import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
@@ -20,10 +21,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.management.relation.RoleNotFoundException;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -157,5 +160,31 @@ public class ManagerRestaurantServiceTest {
         request.setPhone("invalid_number");
 
         assertThrows(IllegalArgumentException.class, () -> managerRestaurantService.createWaiter(request));
+    }
+
+    @Test
+    void deleteWaiter_waiterExists_waiterIsDeleted() {
+        User waiter = User.builder()
+                .id(1L)
+                .email("test@test.com")
+                .password("password")
+                .build();
+
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(waiter));
+        when(userRepository.save(any(User.class))).thenReturn(waiter);
+
+        ResponseEntity<WaiterDeletedResponse> response = managerRestaurantService.deleteWaiter(1L);
+
+        assertEquals(Objects.requireNonNull(response.getBody()).getId(), 1L);
+        assertTrue(response.getBody().isDeleted());
+        assertFalse(waiter.isAccountNonLocked());
+        assertNotNull(waiter.getDeletedAt());
+    }
+
+    @Test
+    void deleteWaiter_waiterNotExists_throwsUsernameNotFoundException() {
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class, () -> managerRestaurantService.deleteWaiter(1L));
     }
 }

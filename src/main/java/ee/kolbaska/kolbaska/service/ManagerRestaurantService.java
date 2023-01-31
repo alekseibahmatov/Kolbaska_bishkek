@@ -12,12 +12,14 @@ import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
+import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -80,5 +82,25 @@ public class ManagerRestaurantService {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    public ResponseEntity<WaiterDeletedResponse> deleteWaiter(Long id) {
+        Optional<User> waiterExists = userRepository.findById(id);
+
+        if (waiterExists.isEmpty()) throw new UsernameNotFoundException(String.format("User with id: %x not found", id));
+
+        User waiter = waiterExists.get();
+
+        waiter.setDeleted(true);
+        waiter.setDeletedAt(new Date());
+
+        userRepository.save(waiter);
+
+        WaiterDeletedResponse response = WaiterDeletedResponse.builder()
+                .id(id)
+                .deleted(true)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }
