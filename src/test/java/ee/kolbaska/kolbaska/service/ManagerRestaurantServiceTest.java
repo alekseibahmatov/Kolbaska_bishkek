@@ -24,8 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
@@ -104,16 +102,15 @@ public class ManagerRestaurantServiceTest {
         request.setRestaurantCode("123456");
 
         // call the createWaiter method
-        ResponseEntity<WaiterResponse> response = managerRestaurantService.createWaiter(request);
+        WaiterResponse response = managerRestaurantService.createWaiter(request);
 
         // assert that the response is as expected
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1L, response.getBody().getId().longValue());
-        assertEquals("test@test.com", response.getBody().getEmail());
-        assertEquals("John Doe", response.getBody().getFullName());
-        assertEquals("+370000000", response.getBody().getPhone());
-        assertEquals(0.0, response.getBody().getTurnover(), 0.0);
+        assertNotNull(response);
+        assertEquals(1L, response.getId().longValue());
+        assertEquals("test@test.com", response.getEmail());
+        assertEquals("John Doe", response.getFullName());
+        assertEquals("+370000000", response.getPhone());
+        assertEquals(0.0, response.getTurnover(), 0.0);
 
         // verify that the dependencies were called as expected
         verify(passwordEncoder).encode("password");
@@ -182,10 +179,10 @@ public class ManagerRestaurantServiceTest {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(waiter));
         when(userRepository.save(any(User.class))).thenReturn(waiter);
 
-        ResponseEntity<WaiterDeletedResponse> response = managerRestaurantService.deleteWaiter(1L);
+        WaiterDeletedResponse response = managerRestaurantService.deleteWaiter(1L);
 
-        assertEquals(Objects.requireNonNull(response.getBody()).getId(), 1L);
-        assertTrue(response.getBody().isDeleted());
+        assertEquals(Objects.requireNonNull(response).getId(), 1L);
+        assertTrue(response.isDeleted());
         assertFalse(waiter.isAccountNonLocked());
         assertNotNull(waiter.getDeletedAt());
     }
@@ -239,13 +236,11 @@ public class ManagerRestaurantServiceTest {
         waiter1.setTransactions(Arrays.asList(transaction1, transaction2));
         waiter2.setTransactions(Collections.singletonList(transaction3));
 
-        ResponseEntity<List<WaiterResponse>> result = managerRestaurantService.getWaiters();
+        List<WaiterResponse> result = managerRestaurantService.getWaiters();
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        List<WaiterResponse> response = result.getBody();
-        assertEquals(2, response.size());
-        WaiterResponse waiterResponse1 = response.get(0);
-        WaiterResponse waiterResponse2 = response.get(1);
+        assertEquals(2, result.size());
+        WaiterResponse waiterResponse1 = result.get(0);
+        WaiterResponse waiterResponse2 = result.get(1);
         assertEquals(2L, waiterResponse1.getId());
         assertEquals("Waiter1 Test", waiterResponse1.getFullName());
         assertEquals("111-111-1111", waiterResponse1.getPhone());

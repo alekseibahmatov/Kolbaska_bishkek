@@ -30,7 +30,7 @@ public class AdminRestaurantService {
 
     private final FileService fileService;
 
-    public ResponseEntity<RestaurantTableResponse> createRestaurant(RestaurantRequest request) throws Exception {
+    public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
 
         boolean restaurantExists = restaurantRepository.findByEmail(request.getRestaurantEmail()).isPresent();
 
@@ -50,13 +50,13 @@ public class AdminRestaurantService {
                 .waiters(List.of(getUser(request.getManagerEmail())))
                 .build();
 
-        return ResponseEntity.ok(new RestaurantTableResponse(
+        return new RestaurantTableResponse(
                 newRestaurant.getRestaurantCode(),
                 newRestaurant.getName(),
                 newRestaurant.getEmail(),
                 newRestaurant.getPhone(),
                 newRestaurant.getAverageBill()
-        ));
+        );
     }
 
     private User getUser(String email) {
@@ -66,16 +66,17 @@ public class AdminRestaurantService {
 
         User newUser = User.builder()
                 .email(email)
-                .registrationCode(UUID.randomUUID().toString())
+                .activationCode(UUID.randomUUID().toString())
+                .activated(true)
                 .build();
 
         return userRepository.save(newUser);
     }
 
-    public ResponseEntity<List<String>> getCategories() {
-        return ResponseEntity.ok(categoryRepository.findAll().stream()
+    public List<String> getCategories() {
+        return categoryRepository.findAll().stream()
                 .map(Category::getName)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     private List<Category> setupCategories(Set<String> categories) {

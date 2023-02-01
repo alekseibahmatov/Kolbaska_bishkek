@@ -119,10 +119,10 @@ public class User implements UserDetails {
     private Boolean activated;
 
     @Column(
-            name = "registration_code",
+            name = "activation_code",
             columnDefinition = "varchar(36)"
     )
-    private String registrationCode;
+    private String activationCode;
 
     @NotNull
     @Column(

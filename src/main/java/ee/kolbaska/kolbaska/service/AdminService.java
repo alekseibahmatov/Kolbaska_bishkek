@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final RestaurantRepository restaurantRepository;
-    public ResponseEntity<List<RestaurantTableResponse>> returnRestaurantList() {
+    public List<RestaurantTableResponse> returnRestaurantList() {
 
-        List<RestaurantTableResponse> response = restaurantRepository.findAll()
+        return restaurantRepository.findAll()
                 .stream().map(restaurant -> new RestaurantTableResponse(
                         restaurant.getRestaurantCode(),
                         restaurant.getName(),
@@ -25,7 +25,5 @@ public class AdminService {
                         restaurant.getAverageBill()
                 ))
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(response);
     }
 }
