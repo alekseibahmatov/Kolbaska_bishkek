@@ -1,5 +1,6 @@
 package ee.kolbaska.kolbaska.controller;
 
+import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
@@ -10,6 +11,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("${api.basepath}/manager")
@@ -23,6 +26,11 @@ public class ManagerRestaurantController {
             @NotNull @RequestBody WaiterRequest request
             ) throws Exception {
         return service.createWaiter(request);
+    }
+
+    @GetMapping("/restaurant/waiter")
+    public ResponseEntity<List<WaiterResponse>> getWaiters() throws RestaurantNotFoundException {
+        return service.getWaiters();
     }
 
     @DeleteMapping("/restaurant/waiter/{id}")

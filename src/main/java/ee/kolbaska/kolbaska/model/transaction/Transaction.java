@@ -5,9 +5,7 @@ import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -15,6 +13,9 @@ import java.util.Date;
 @Table(name = "transaction")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id
