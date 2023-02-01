@@ -20,10 +20,4 @@ public class WaiterResponse {
     private String phone;
 
     private Double turnover;
-
-    private String message;
-
-    public WaiterResponse(String message) {
-        this.message = message;
-    }
 }

@@ -1,7 +1,9 @@
 package ee.kolbaska.kolbaska.service;
 
+import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
+import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
@@ -10,10 +12,13 @@ import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
+import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,10 +29,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.management.relation.RoleNotFoundException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -56,6 +62,9 @@ public class ManagerRestaurantServiceTest {
 
     @Mock
     private RestaurantRepository restaurantRepository;
+
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
     private ManagerRestaurantService managerRestaurantService;
@@ -186,5 +195,93 @@ public class ManagerRestaurantServiceTest {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> managerRestaurantService.deleteWaiter(1L));
+    }
+
+    @Test
+    public void getWaiters_SuccessfulScenario_ShouldReturnListOfWaiters() throws RestaurantNotFoundException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        when(request.getHeader("Authorization")).thenReturn("Bearer 12345");
+
+        String email = "test@test.com";
+        when(jwtService.extractUserEmail("12345")).thenReturn(email);
+
+        User manager = User.builder()
+                .id(1L)
+                .email(email)
+                .fullName("Test Test")
+                .build();
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(manager));
+
+        Restaurant restaurant = Restaurant.builder().id(1L).build();
+        manager.setRestaurant(restaurant);
+
+        User waiter1 = User.builder()
+                .id(2L)
+                .email("waiter1@test.com")
+                .fullName("Waiter1 Test")
+                .phone("111-111-1111")
+                .restaurant(restaurant)
+                .build();
+        User waiter2 = User.builder()
+                .id(3L)
+                .email("waiter2@test.com")
+                .fullName("Waiter2 Test")
+                .phone("222-222-2222")
+                .restaurant(restaurant)
+                .build();
+        List<User> waiters = Arrays.asList(waiter1, waiter2);
+        restaurant.setWaiters(waiters);
+
+        Transaction transaction1 = Transaction.builder().value(100.0).waiter(waiter1).build();
+        Transaction transaction2 = Transaction.builder().value(200.0).waiter(waiter1).build();
+        Transaction transaction3 = Transaction.builder().value(500.0).waiter(waiter2).build();
+        waiter1.setTransactions(Arrays.asList(transaction1, transaction2));
+        waiter2.setTransactions(Collections.singletonList(transaction3));
+
+        ResponseEntity<List<WaiterResponse>> result = managerRestaurantService.getWaiters();
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        List<WaiterResponse> response = result.getBody();
+        assertEquals(2, response.size());
+        WaiterResponse waiterResponse1 = response.get(0);
+        WaiterResponse waiterResponse2 = response.get(1);
+        assertEquals(2L, waiterResponse1.getId());
+        assertEquals("Waiter1 Test", waiterResponse1.getFullName());
+        assertEquals("111-111-1111", waiterResponse1.getPhone());
+        assertEquals("waiter1@test.com", waiterResponse1.getEmail());
+        assertEquals(300.0, waiterResponse1.getTurnover());
+        assertEquals(500.0, waiterResponse2.getTurnover());
+    }
+
+    @Test
+    void whenGetWaitersAndRestaurantNotFound_thenReturnRestaurantNotFoundException() throws RestaurantNotFoundException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        String jwtToken = "jwtToken";
+        String email = "test@email.com";
+
+        User manager = User.builder().email(email).restaurant(null).build();
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(manager));
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + jwtToken);
+        when(jwtService.extractUserEmail(jwtToken)).thenReturn(email);
+
+        Assertions.assertThrows(RestaurantNotFoundException.class, () -> managerRestaurantService.getWaiters());
+    }
+
+    @Test
+    void whenGetWaitersAndManagerEmailNotFound_thenReturnUsernameNotFoundException() throws RestaurantNotFoundException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        String jwtToken = "jwtToken";
+        String email = "test@email.com";
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(request.getHeader("Authorization")).thenReturn("Bearer " + jwtToken);
+        when(jwtService.extractUserEmail(jwtToken)).thenReturn(email);
+
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> managerRestaurantService.getWaiters());
     }
 }
