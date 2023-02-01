@@ -19,6 +19,6 @@ public class AdminController {
 
     @GetMapping("/restaurant")
     private ResponseEntity<List<RestaurantTableResponse>> returnRestaurantList() {
-        return service.returnRestaurantList();
+        return ResponseEntity.ok(service.returnRestaurantList());
     }
 }

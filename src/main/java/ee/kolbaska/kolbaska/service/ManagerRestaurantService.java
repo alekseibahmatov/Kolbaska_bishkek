@@ -54,7 +54,7 @@ public class ManagerRestaurantService {
 
     private final JwtService jwtService;
 
-    public ResponseEntity<WaiterResponse> createWaiter(WaiterRequest request) throws Exception {
+    public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
 
         boolean userExists = userRepository.findByEmail(request.getEmail()).isPresent();
 
@@ -89,11 +89,11 @@ public class ManagerRestaurantService {
                 .fullName(waiter.getFullName())
                 .build();
 
-        return ResponseEntity.ok(response);
+        return response;
 
     }
 
-    public ResponseEntity<WaiterDeletedResponse> deleteWaiter(Long id) {
+    public WaiterDeletedResponse deleteWaiter(Long id) {
         Optional<User> waiterExists = userRepository.findById(id);
 
         if (waiterExists.isEmpty()) throw new UsernameNotFoundException(String.format("User with id: %x not found", id));
@@ -110,10 +110,10 @@ public class ManagerRestaurantService {
                 .deleted(true)
                 .build();
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 
-    public ResponseEntity<List<WaiterResponse>> getWaiters() throws RestaurantNotFoundException {
+    public List<WaiterResponse> getWaiters() throws RestaurantNotFoundException {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         final String jwtToken = request.getHeader("Authorization").substring(7);
@@ -151,6 +151,6 @@ public class ManagerRestaurantService {
             response.add(waiterResponse);
         }
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 }

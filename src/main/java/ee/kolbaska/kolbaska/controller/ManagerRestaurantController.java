@@ -25,18 +25,18 @@ public class ManagerRestaurantController {
     public ResponseEntity<WaiterResponse> createWaiter(
             @NotNull @RequestBody WaiterRequest request
             ) throws Exception {
-        return service.createWaiter(request);
+        return ResponseEntity.ok(service.createWaiter(request));
     }
 
     @GetMapping("/restaurant/waiter")
     public ResponseEntity<List<WaiterResponse>> getWaiters() throws RestaurantNotFoundException {
-        return service.getWaiters();
+        return ResponseEntity.ok(service.getWaiters());
     }
 
     @DeleteMapping("/restaurant/waiter/{id}")
     public ResponseEntity<WaiterDeletedResponse> deleteWaiter(
             @NotNull @PathVariable Long id
     ) {
-        return service.deleteWaiter(id);
+        return ResponseEntity.ok(service.deleteWaiter(id));
     }
 }

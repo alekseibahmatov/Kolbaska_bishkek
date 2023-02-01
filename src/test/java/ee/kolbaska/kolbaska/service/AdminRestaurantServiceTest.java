@@ -73,11 +73,10 @@ class AdminRestaurantServiceTest {
         when(categoryRepository.findByName("Test Category 2")).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<RestaurantTableResponse> response = adminRestaurantService.createRestaurant(request);
+        RestaurantTableResponse response = adminRestaurantService.createRestaurant(request);
 
         // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        RestaurantTableResponse content = response.getBody();
+        RestaurantTableResponse content = response;
         assertNotNull(content.getRestaurantCode());
         assertEquals("Test Restaurant", content.getRestaurantName());
         assertEquals("test@test.com", content.getRestaurantEmail());

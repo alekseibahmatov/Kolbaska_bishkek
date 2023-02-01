@@ -22,11 +22,11 @@ public class AdminRestaurantController {
     public ResponseEntity<RestaurantTableResponse> createRestaurant(
             @NotNull @RequestBody RestaurantRequest request
     ) throws Exception {
-        return service.createRestaurant(request);
+        return ResponseEntity.ok(service.createRestaurant(request));
     }
 
     @GetMapping("/category")
     public ResponseEntity<List<String>> getCategories() {
-        return service.getCategories();
+        return ResponseEntity.ok(service.getCategories());
     }
 }
