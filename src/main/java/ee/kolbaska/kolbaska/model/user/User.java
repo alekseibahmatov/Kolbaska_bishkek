@@ -136,7 +136,7 @@ public class User implements UserDetails {
     private List<Transaction> transactions;
 
     @OneToMany
-    private List<Certificate> certificates = new java.util.ArrayList<>();
+    private List<Certificate> certificates;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")

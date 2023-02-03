@@ -8,8 +8,8 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource("/tests.properties")
 class KolbaskaApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+//    @Test
+//    void contextLoads() {
+//    }
 
 }

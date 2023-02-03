@@ -50,6 +50,6 @@ public class Role {
     private String roleName;
 
     @OneToMany(mappedBy = "role", orphanRemoval = true)
-    private List<User> users = new ArrayList<>();
+    private List<User> users;
 
 }

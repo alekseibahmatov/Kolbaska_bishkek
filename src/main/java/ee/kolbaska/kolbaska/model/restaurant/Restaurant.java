@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.model.restaurant;
 
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
+import ee.kolbaska.kolbaska.model.file.File;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
@@ -10,10 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "restaurant")
@@ -54,7 +52,7 @@ public class Restaurant {
     private Date deletedAt;
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
-    private Set<Transaction> transactions = new LinkedHashSet<>();
+    private Set<Transaction> transactions;
 
     @NotNull
     @Column(
@@ -124,24 +122,20 @@ public class Restaurant {
             joinColumns = @JoinColumn(name = "Restaurant_id", referencedColumnName = "id"))
     private List<Category> categories;
 
-    @NotNull
     @OneToMany(mappedBy = "restaurant")
-    private List<User> waiters = new java.util.ArrayList<>();
+    private List<User> waiters;
 
     @NotNull
-    @Column(
-            name = "photo_name",
-            columnDefinition = "varchar(40)",
-            nullable = false
-    )
-    private String photoName;
+    @OneToOne
+    @JoinColumn(name = "manager_id")
+    private User manager;
 
-    @NotNull
-    @Column(
-            name = "contract_name",
-            columnDefinition = "varchar(40)",
-            nullable = false
-    )
-    private String contractName;
+    @OneToOne
+    @JoinColumn(name = "photo_id")
+    private File photo;
+
+    @OneToOne
+    @JoinColumn(name = "contract_id")
+    private File contract;
 
 }

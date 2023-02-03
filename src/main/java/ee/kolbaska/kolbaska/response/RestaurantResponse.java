@@ -1,10 +1,14 @@
 package ee.kolbaska.kolbaska.response;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -12,14 +16,50 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RestaurantResponse {
 
-    private Long id;
-
+    @NotNull
     private String restaurantName;
 
+    @NotNull
+    private String restaurantDescription;
+
+    @NotNull
+    @Email
     private String restaurantEmail;
 
-    private Double receivedTotal;
+    @NotNull
+    @Size(min = 12, max = 15)
+    private String restaurantPhone;
 
-    private String message;
+    @NotNull
+    private Long managerId;
+
+    @NotNull
+    private String country;
+
+    @NotNull
+    private String province;
+
+    @NotNull
+    private String city;
+
+    @NotNull
+    @Size(max = 10)
+    private String postalCode;
+
+    @NotNull
+    @Size(max = 120)
+    private String workingHours;
+
+    @NotNull
+    private Integer averageBill;
+
+    @NotNull
+    private List<String> categories;
+
+    @NotNull
+    private byte[] photo;
+
+    @NotNull
+    private byte[] contact;
 
 }

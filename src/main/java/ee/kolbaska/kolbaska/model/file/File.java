@@ -1,26 +1,40 @@
-package ee.kolbaska.kolbaska.model.category;
+package ee.kolbaska.kolbaska.model.file;
 
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@Table(name = "category")
+@Table(name = "file")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
-
+public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
+
+    @NotNull
+    @Column(
+            name = "file_type",
+            columnDefinition = "varchar(20)",
+            nullable = false
+    )
+    private FileType fileType;
+
+    @NotNull
+    @Column(
+            name = "file_name",
+            columnDefinition = "varchar(40)",
+            nullable = false
+    )
+    private String fileName;
 
     @Column(
             name = "created_at",
@@ -47,17 +61,8 @@ public class Category {
     )
     private Date deletedAt;
 
-    @NotNull
-    @Column(
-            name = "name",
-            columnDefinition = "varchar(32)",
-            nullable = false
-    )
-    private String name;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private Restaurant restaurant;
 
-    @ManyToMany
-    @JoinTable(name = "category_restaurants",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "restaurants_id"))
-    private List<Restaurant> restaurants;
 }
