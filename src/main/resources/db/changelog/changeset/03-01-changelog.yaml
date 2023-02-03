@@ -1,0 +1,105 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1675434751530-3
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: contract_id
+                  type: BIGINT
+              - column:
+                  name: manager_id
+                  type: BIGINT
+              - column:
+                  name: photo_id
+                  type: BIGINT
+            tableName: restaurant
+  - changeSet:
+      id: 1675434751530-5
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addNotNullConstraint:
+            columnDataType: BIGINT
+            columnName: manager_id
+            tableName: restaurant
+  - changeSet:
+      id: 1675434751530-7
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: file
+            constraintName: FK_FILE_ON_RESTAURANT
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1675434751530-8
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: contract_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_CONTRACT
+            referencedColumnNames: id
+            referencedTableName: file
+  - changeSet:
+      id: 1675434751530-9
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: manager_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_MANAGER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1675434751530-10
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: photo_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_PHOTO
+            referencedColumnNames: id
+            referencedTableName: file
+  - changeSet:
+      id: 1675434751530-11
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: contract_name
+            tableName: restaurant
+        - dropColumn:
+            columnName: photo_name
+            tableName: restaurant
+  - changeSet:
+      id: 1675434751530-1
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: value
+            tableName: transaction
+  - changeSet:
+      id: 1675434751530-2
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    validateNullable: true
+                  name: value
+                  type: double(4,2)
+            tableName: transaction
+

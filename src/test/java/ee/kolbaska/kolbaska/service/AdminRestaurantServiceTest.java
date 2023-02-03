@@ -1,6 +1,8 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
+import ee.kolbaska.kolbaska.model.file.File;
+import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.CategoryRepository;
@@ -8,14 +10,12 @@ import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
-import ee.kolbaska.kolbaska.service.miscellaneous.FileService;
+import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 
@@ -42,7 +42,7 @@ class AdminRestaurantServiceTest {
     private AdminRestaurantService adminRestaurantService;
 
     @Mock
-    private FileService fileService;
+    private StorageService storageService;
 
     @BeforeEach
     void setUp() {
@@ -51,6 +51,7 @@ class AdminRestaurantServiceTest {
 
     @Test
     public void createRestaurant_validInput_returnsRestaurantCodeAndName() throws Exception {
+
         // Arrange
         RestaurantRequest request = new RestaurantRequest();
         request.setRestaurantName("Test Restaurant");
@@ -76,12 +77,11 @@ class AdminRestaurantServiceTest {
         RestaurantTableResponse response = adminRestaurantService.createRestaurant(request);
 
         // Assert
-        RestaurantTableResponse content = response;
-        assertNotNull(content.getRestaurantCode());
-        assertEquals("Test Restaurant", content.getRestaurantName());
-        assertEquals("test@test.com", content.getRestaurantEmail());
-        assertEquals("1234567890", content.getRestaurantPhone());
-        assertEquals(200, content.getAverageBill(), 0);
+        assertNotNull(response.getRestaurantCode());
+        assertEquals("Test Restaurant", response.getRestaurantName());
+        assertEquals("test@test.com", response.getRestaurantEmail());
+        assertEquals("1234567890", response.getRestaurantPhone());
+        assertEquals(200, response.getAverageBill(), 0);
     }
 
     @Test

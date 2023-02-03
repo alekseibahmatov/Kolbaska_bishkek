@@ -2,17 +2,16 @@ package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.model.category.Category;
+import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.CategoryRepository;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
-import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
-import ee.kolbaska.kolbaska.service.miscellaneous.FileService;
+import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,7 +27,7 @@ public class AdminRestaurantService {
 
     private final CategoryRepository categoryRepository;
 
-    private final FileService fileService;
+    private final StorageService storageService;
 
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
 
@@ -45,9 +44,9 @@ public class AdminRestaurantService {
                 .email(request.getRestaurantEmail())
                 .restaurantCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase())
                 .categories(setupCategories(new HashSet<>(request.getCategories())))
-                .photoName(fileService.storeFile(request.getPhoto()))
-                .contractName(fileService.storeFile(request.getContact()))
-                .waiters(List.of(getUser(request.getManagerEmail())))
+                .photo(storageService.uploadFile(request.getPhoto(), FileType.PHOTO))
+                .contract(storageService.uploadFile(request.getContact(), FileType.CONTRACT))
+                .manager(getUser(request.getManagerEmail()))
                 .build();
 
         return new RestaurantTableResponse(

@@ -34,7 +34,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @TestPropertySource("/tests.properties")
-
 class AuthenticationServiceTest {
     @Mock
     private UserRepository userRepository;
