@@ -29,4 +29,16 @@ public class AdminRestaurantController {
     public ResponseEntity<List<String>> getCategories() {
         return ResponseEntity.ok(service.getCategories());
     }
+
+    @GetMapping("/restaurant")
+    public ResponseEntity<List<RestaurantTableResponse>> returnRestaurantList() {
+        return ResponseEntity.ok(service.returnRestaurantList());
+    }
+
+    @GetMapping("/restaurant/{code}")
+    public ResponseEntity<RestaurantResponse> returnRestaurant(
+            @NotNull @PathVariable String code
+    ) throws Exception {
+        return ResponseEntity.ok(service.returnRestaurant(code));
+    }
 }

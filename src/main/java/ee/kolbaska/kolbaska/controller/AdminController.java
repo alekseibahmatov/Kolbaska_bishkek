@@ -16,19 +16,4 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.basepath}/admin")
 @RequiredArgsConstructor
-public class AdminController {
-
-    private final AdminService service;
-
-    @GetMapping("/restaurant")
-    public ResponseEntity<List<RestaurantTableResponse>> returnRestaurantList() {
-        return ResponseEntity.ok(service.returnRestaurantList());
-    }
-
-    @GetMapping("/restaurant/{code}")
-    public ResponseEntity<RestaurantResponse> returnRestaurant(
-            @NotNull @PathVariable String code
-    ) throws Exception {
-        return ResponseEntity.ok(service.returnRestaurant(code));
-    }
-}
+public class AdminController {}
