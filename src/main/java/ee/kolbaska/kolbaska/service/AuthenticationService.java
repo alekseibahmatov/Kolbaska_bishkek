@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
+import ee.kolbaska.kolbaska.model.login.Login;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
@@ -54,7 +55,6 @@ public class AuthenticationService {
                 .activated(true)
                 .fullName("Zalupka")
                 .build();
-
 
         userRepository.save(newUser);
 

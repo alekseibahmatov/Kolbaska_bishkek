@@ -1,5 +1,9 @@
 package ee.kolbaska.kolbaska.config;
 
+import ee.kolbaska.kolbaska.model.login.Login;
+import ee.kolbaska.kolbaska.model.user.User;
+import ee.kolbaska.kolbaska.repository.LoginRepository;
+import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +20,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+    private final LoginRepository loginRepository;
 
     @Override
     protected void doFilterInternal(
@@ -54,6 +64,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                String clientIpAddress = request.getHeader("X-FORWARDED-FOR");
+                if (clientIpAddress == null) {
+                    clientIpAddress = request.getRemoteAddr();
+                }
+
+                String userAgent = request.getHeader("User-Agent");
+
+                User loginUser = userRepository.findByEmail(userEmail).get();
+
+                Login newLogin = Login.builder()
+                        .ip(clientIpAddress)
+                        .userAgent(userAgent)
+                        .user(loginUser)
+                        .build();
+
+                loginUser.getLogins().add(newLogin);
+
+                loginUser.setLogins(loginUser.getLogins());
+
+                loginRepository.save(newLogin);
+                userRepository.save(loginUser);
             }
         }
         filterChain.doFilter(request, response);

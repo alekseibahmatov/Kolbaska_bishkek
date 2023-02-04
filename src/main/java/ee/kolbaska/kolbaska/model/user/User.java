@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.model.user;
 
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
+import ee.kolbaska.kolbaska.model.login.Login;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -98,17 +100,7 @@ public class User implements UserDetails {
     )
     private String personalCode;
 
-    @Column(
-            name = "last_logged",
-            columnDefinition = "date"
-    )
-    private Date lastLogged;
 
-    @Column(
-            name = "last_ip",
-            columnDefinition = "varchar(15)"
-    )
-    private String lastIp;
 
     @NotNull
     @Column(
@@ -145,6 +137,9 @@ public class User implements UserDetails {
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<Login> logins = new ArrayList<>();
 
     @Override
     public String getUsername() {
