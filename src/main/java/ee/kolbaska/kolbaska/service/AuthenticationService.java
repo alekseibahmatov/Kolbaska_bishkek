@@ -1,21 +1,19 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
-import ee.kolbaska.kolbaska.model.login.Login;
 import ee.kolbaska.kolbaska.model.user.Role;
+import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.AuthenticationRequest;
 import ee.kolbaska.kolbaska.request.RecoveryRequest;
-import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
 import ee.kolbaska.kolbaska.request.RegisterRequest;
+import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
-import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.response.RecoveryResponse;
 import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,7 +51,7 @@ public class AuthenticationService {
                 .role(role)
                 .deleted(false)
                 .activated(true)
-                .fullName("Zalupka")
+                .fullName("Zalupka") //TODO change fullName when we decide to open registration for regular customer
                 .build();
 
         userRepository.save(newUser);

@@ -1,20 +1,14 @@
 package ee.kolbaska.kolbaska.service;
 
-import ee.kolbaska.kolbaska.config.RequestContextFilter;
-import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
-import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
-import ee.kolbaska.kolbaska.repository.CategoryRepository;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
-import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
-import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.security.JwtService;
@@ -23,7 +17,6 @@ import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,7 +25,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,15 +73,13 @@ public class ManagerRestaurantService {
 
         waiter = userRepository.save(waiter);
 
-        WaiterResponse response = WaiterResponse.builder()
+        return WaiterResponse.builder()
                 .id(waiter.getId())
                 .phone(waiter.getPhone())
                 .turnover(0.0)
                 .email(waiter.getEmail())
                 .fullName(waiter.getFullName())
                 .build();
-
-        return response;
 
     }
 
@@ -102,15 +92,14 @@ public class ManagerRestaurantService {
 
         waiter.setDeleted(true);
         waiter.setDeletedAt(new Date());
+        //TODO add restaurant deletion
 
         userRepository.save(waiter);
 
-        WaiterDeletedResponse response = WaiterDeletedResponse.builder()
+        return WaiterDeletedResponse.builder()
                 .id(id)
                 .deleted(true)
                 .build();
-
-        return response;
     }
 
     public List<WaiterResponse> getWaiters() throws RestaurantNotFoundException {

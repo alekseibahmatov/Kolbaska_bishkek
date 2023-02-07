@@ -10,13 +10,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -139,7 +136,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
-    private List<Login> logins = new ArrayList<>();
+    private List<Login> logins;
 
     @Override
     public String getUsername() {
