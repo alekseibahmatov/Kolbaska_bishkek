@@ -60,20 +60,6 @@ public class AdminRestaurantService {
         );
     }
 
-    private User getUser(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
-
-        if (user.isPresent()) return user.get();
-
-        User newUser = User.builder()
-                .email(email)
-                .activationCode(UUID.randomUUID().toString())
-                .activated(true)
-                .build();
-
-        return userRepository.save(newUser);
-    }
-
     public List<RestaurantTableResponse> returnRestaurantList() {
 
         return restaurantRepository.findAll()
@@ -116,6 +102,20 @@ public class AdminRestaurantService {
         return categoryRepository.findAll().stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());
+    }
+
+    private User getUser(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isPresent()) return user.get();
+
+        User newUser = User.builder()
+                .email(email)
+                .activationCode(UUID.randomUUID().toString())
+                .activated(true)
+                .build();
+
+        return userRepository.save(newUser);
     }
 
     private List<Category> setupCategories(Set<String> categories) {
