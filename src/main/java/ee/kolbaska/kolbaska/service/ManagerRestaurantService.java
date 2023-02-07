@@ -74,7 +74,6 @@ public class ManagerRestaurantService {
 
             waiter = userRepository.save(waiter);
 
-            restaurant.getWaiters().add(waiter);
         } else {
             waiter = userExists.get();
 
@@ -82,6 +81,9 @@ public class ManagerRestaurantService {
 
             waiter.setRestaurant(restaurant);
         }
+
+        if(restaurant.getWaiters() == null) restaurant.setWaiters(List.of(waiter));
+        else restaurant.getWaiters().add(waiter);
 
         restaurantRepository.save(restaurant);
 
@@ -106,7 +108,7 @@ public class ManagerRestaurantService {
         waiter.setDeletedAt(new Date());
 
         Restaurant restaurant = waiter.getRestaurant();
-        restaurant.getWaiters().remove(waiter);
+        restaurant.setWaiters(restaurant.getWaiters().stream().filter((rest) -> !Objects.equals(rest.getId(), waiter.getId())).toList());
 
         waiter.setRestaurant(null);
 

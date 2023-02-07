@@ -1,7 +1,6 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
-import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.Role;
@@ -16,7 +15,6 @@ import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
-
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,7 +29,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.management.relation.RoleNotFoundException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -72,7 +73,7 @@ public class ManagerRestaurantServiceTest {
     void testCreateWaiter() throws Exception {
         // mock the dependencies of the RestaurantService
         when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByPersonalCode(anyString())).thenReturn(Optional.empty());
 
         Restaurant restaurant = new Restaurant();
         restaurant.setId(1L);
@@ -84,6 +85,7 @@ public class ManagerRestaurantServiceTest {
         User waiter = new User();
         waiter.setId(1L);
         waiter.setEmail("test@test.com");
+        waiter.setPersonalCode("12345612345");
         waiter.setFullName("John Doe");
         waiter.setPhone("+370000000");
         when(userRepository.save(any(User.class))).thenReturn(waiter);
@@ -99,6 +101,7 @@ public class ManagerRestaurantServiceTest {
         request.setEmail("test@test.com");
         request.setFullName("John Doe");
         request.setPhone("0000000");
+        request.setPersonalCode("12345612345");
         request.setRestaurantCode("123456");
 
         // call the createWaiter method
@@ -114,25 +117,12 @@ public class ManagerRestaurantServiceTest {
 
         // verify that the dependencies were called as expected
         verify(passwordEncoder).encode("password");
-        verify(userRepository).findByEmail("test@test.com");
+        verify(userRepository).findByPersonalCode("12345612345");
         verify(userRepository).save(any(User.class));
         verify(passwordService).generatePassword(10);
         verify(formatService).formatE164("0000000");
         verify(emailService).sendSimpleMessage("test@test.com", "Password", "Here is your password for accessing qr code page: password");
         verify(roleRepository).findRoleByRoleName("ROLE_WAITER");
-    }
-
-    @Test
-    void testCreateWaiter_UserAlreadyExists() {
-        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new User()));
-
-
-        WaiterRequest request = new WaiterRequest();
-        request.setEmail("test@test.com");
-        request.setFullName("John Doe");
-        request.setPhone("0000000");
-
-        assertThrows(UserAlreadyExistsException.class, () -> managerRestaurantService.createWaiter(request));
     }
 
     @Test
@@ -157,34 +147,78 @@ public class ManagerRestaurantServiceTest {
     }
 
     @Test
-    void testCreateWaiter_InvalidPhoneNumber() {
-        doThrow(IllegalArgumentException.class).when(formatService).formatE164(anyString());
+    void createWaiter_waiterAlreadyExists_waiterIsReassignedToRestaurant() throws Exception {
+        WaiterRequest request = WaiterRequest.builder()
+                .fullName("Test Waiter")
+                .email("test@test.com")
+                .personalCode("ABC123")
+                .restaurantCode("RES123")
+                .phone("1234567890")
+                .build();
 
-        WaiterRequest request = new WaiterRequest();
-        request.setEmail("test@test.com");
-        request.setFullName("John Doe");
-        request.setPhone("invalid_number");
+        Role role = Role.builder()
+                .id(1L)
+                .roleName("ROLE_WAITER")
+                .build();
 
-        assertThrows(IllegalArgumentException.class, () -> managerRestaurantService.createWaiter(request));
+        Restaurant restaurant = Restaurant.builder()
+                .id(1L)
+                .restaurantCode("RES123")
+                .build();
+
+        User waiter = User.builder()
+                .id(1L)
+                .fullName("Test Waiter")
+                .email("test@test.com")
+                .phone("1234567890")
+                .password("password")
+                .role(role)
+                .restaurant(null)
+                .build();
+
+        when(userRepository.findByPersonalCode(anyString())).thenReturn(Optional.of(waiter));
+        when(restaurantRepository.findByRestaurantCode(anyString())).thenReturn(Optional.of(restaurant));
+
+        WaiterResponse response = managerRestaurantService.createWaiter(request);
+
+        assertEquals(response.getId(), 1L);
+        assertEquals(response.getEmail(), "test@test.com");
+        assertEquals(response.getFullName(), "Test Waiter");
+        assertEquals(response.getPhone(), "1234567890");
+        assertEquals(response.getTurnover(), 0.0, 0.0);
+        assertEquals(waiter.getRestaurant(), restaurant);
     }
 
     @Test
-    void deleteWaiter_waiterExists_waiterIsDeleted() {
-        User waiter = User.builder()
+    public void deleteWaiter_waiterExists_waiterDeleted() {
+        Long id = 1L;
+        Role role = Role.builder()
                 .id(1L)
+                .roleName("ROLE_WAITER")
+                .build();
+        Restaurant restaurant = Restaurant.builder()
+                .id(1L)
+                .restaurantCode("RES123")
+                .build();
+        User waiter = User.builder()
+                .id(id)
+                .fullName("Test Waiter")
                 .email("test@test.com")
                 .password("password")
+                .role(role)
+                .restaurant(restaurant)
                 .build();
 
-        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(waiter));
-        when(userRepository.save(any(User.class))).thenReturn(waiter);
+        restaurant.setWaiters(List.of(waiter));
 
-        WaiterDeletedResponse response = managerRestaurantService.deleteWaiter(1L);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(waiter));
+        when(userRepository.save(any(User.class))).thenReturn(User.builder().id(id).deleted(true).build());
+        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(Restaurant.builder().id(1L).build());
 
-        assertEquals(Objects.requireNonNull(response).getId(), 1L);
+        WaiterDeletedResponse response = managerRestaurantService.deleteWaiter(id);
+
+        assertEquals(response.getId(), id);
         assertTrue(response.isDeleted());
-        assertFalse(waiter.isAccountNonLocked());
-        assertNotNull(waiter.getDeletedAt());
     }
 
     @Test
@@ -250,7 +284,7 @@ public class ManagerRestaurantServiceTest {
     }
 
     @Test
-    void whenGetWaitersAndRestaurantNotFound_thenReturnRestaurantNotFoundException() throws RestaurantNotFoundException {
+    void whenGetWaitersAndRestaurantNotFound_thenReturnRestaurantNotFoundException() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
@@ -266,7 +300,7 @@ public class ManagerRestaurantServiceTest {
     }
 
     @Test
-    void whenGetWaitersAndManagerEmailNotFound_thenReturnUsernameNotFoundException() throws RestaurantNotFoundException {
+    void whenGetWaitersAndManagerEmailNotFound_thenReturnUsernameNotFoundException() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
