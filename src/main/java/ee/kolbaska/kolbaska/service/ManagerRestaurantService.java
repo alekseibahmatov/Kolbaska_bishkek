@@ -1,7 +1,7 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
-import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
+import ee.kolbaska.kolbaska.exception.UserStillOnDutyExceptions;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
@@ -48,30 +48,44 @@ public class ManagerRestaurantService {
 
     public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
 
-        boolean userExists = userRepository.findByEmail(request.getEmail()).isPresent();
+        Optional<User> userExists = userRepository.findByPersonalCode(request.getPersonalCode());
 
-        if (userExists) throw new UserAlreadyExistsException("User already exists");
+        Restaurant restaurant = restaurantRepository.findByRestaurantCode(request.getRestaurantCode()).orElseThrow(() -> new RestaurantNotFoundException("There is no restaurant with code: " + request.getRestaurantCode()));
 
-        String phoneFormatted = formatService.formatE164(request.getPhone());
+        User waiter;
 
-        String securePassword = passwordService.generatePassword(10);
+        if (userExists.isEmpty()) {
+            String phoneFormatted = formatService.formatE164(request.getPhone());
 
-        emailService.sendSimpleMessage(request.getEmail(), "Password", String.format("Here is your password for accessing qr code page: %s", securePassword));
+            String securePassword = passwordService.generatePassword(10);
 
-        Restaurant restaurant = restaurantRepository.findByRestaurantCode(request.getRestaurantCode()).orElseThrow(() -> new NoSuchElementException("There is no restaurant with code: " + request.getRestaurantCode()));
+            emailService.sendSimpleMessage(request.getEmail(), "Password", String.format("Here is your password for accessing qr code page: %s", securePassword));
 
-        User waiter = User.builder()
-                .fullName(request.getFullName())
-                .phone(phoneFormatted)
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(securePassword))
-                .role(roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new))
-                .activated(true)
-                .deleted(false)
-                .restaurant(restaurant)
-                .build();
+            waiter = User.builder()
+                    .fullName(request.getFullName())
+                    .phone(phoneFormatted)
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(securePassword))
+                    .role(roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new))
+                    .activated(true)
+                    .deleted(false)
+                    .restaurant(restaurant)
+                    .build();
 
-        waiter = userRepository.save(waiter);
+            waiter = userRepository.save(waiter);
+
+        } else {
+            waiter = userExists.get();
+
+            if (waiter.getRestaurant() != null) throw new UserStillOnDutyExceptions("User is currently connected to restaurant. Please ask him to disconnect from previous restaurant");
+
+            waiter.setRestaurant(restaurant);
+        }
+
+        if(restaurant.getWaiters() == null) restaurant.setWaiters(List.of(waiter));
+        else restaurant.getWaiters().add(waiter);
+
+        restaurantRepository.save(restaurant);
 
         return WaiterResponse.builder()
                 .id(waiter.getId())
@@ -92,9 +106,14 @@ public class ManagerRestaurantService {
 
         waiter.setDeleted(true);
         waiter.setDeletedAt(new Date());
-        //TODO add restaurant deletion
+
+        Restaurant restaurant = waiter.getRestaurant();
+        restaurant.setWaiters(restaurant.getWaiters().stream().filter((rest) -> !Objects.equals(rest.getId(), waiter.getId())).toList());
+
+        waiter.setRestaurant(null);
 
         userRepository.save(waiter);
+        restaurantRepository.save(restaurant);
 
         return WaiterDeletedResponse.builder()
                 .id(id)
