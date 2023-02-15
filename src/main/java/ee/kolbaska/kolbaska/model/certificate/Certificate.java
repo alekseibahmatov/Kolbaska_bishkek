@@ -4,8 +4,7 @@ import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +13,9 @@ import java.util.List;
 @Table(name = "certificate")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Certificate {
 
     @Id
@@ -37,14 +39,6 @@ public class Certificate {
             updatable = false
     )
     private Date updatedAt;
-
-    @NotNull
-    @Column(
-            name = "sent_from",
-            columnDefinition = "varchar(120)",
-            nullable = false
-    )
-    private String sentFrom;
 
     @NotNull
     @Column(
@@ -86,7 +80,7 @@ public class Certificate {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_holder")
     private User holder;
 
     @NotNull
@@ -111,4 +105,9 @@ public class Certificate {
             updatable = false
     )
     private Date deletedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_sender")
+    private User sender;
+
 }

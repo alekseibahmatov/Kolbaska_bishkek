@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -90,14 +91,11 @@ public class User implements UserDetails {
     @JoinColumn(name = "address_id")
     private Address address;
 
-
     @Column(
             name = "personal_code",
             columnDefinition = "varchar(11)"
     )
     private String personalCode;
-
-
 
     @NotNull
     @Column(
@@ -124,8 +122,8 @@ public class User implements UserDetails {
     @OneToMany
     private List<Transaction> transactions;
 
-    @OneToMany
-    private List<Certificate> certificates;
+    @OneToMany(mappedBy = "holder", orphanRemoval = true)
+    private List<Certificate> receivedCertificates;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
@@ -137,6 +135,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<Login> logins;
+
+    @OneToMany(mappedBy = "sender", orphanRemoval = true)
+    private List<Certificate> sent_certificates = new ArrayList<>();
 
     @Override
     public String getUsername() {
