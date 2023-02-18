@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations on receiving your QR code</title>
+    <style>
+        body {
+            background-color: #292929;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #77bc1f;
+            font-size: 36px;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        p {
+            margin: 0 0 20px;
+        }
+        .container {
+            margin: 30px auto;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        .qr-code {
+            display: block;
+            margin: 30px auto;
+            max-width: 200px;
+        }
+        .restaurant-list {
+            margin-top: 30px;
+        }
+        .restaurant {
+            background-color: #77bc1f;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .restaurant h2 {
+            color: #fff;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .restaurant p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Congratulations on receiving your QR code</h1>
+    <p>You have received a QR code for access to 30 best restaurants in Estonia. Use it to enjoy great food and have a wonderful time!</p>
+    <img class="qr-code" src="cid:qrCode" alt="QR Code" width="150" height="150">
+    <div class="restaurant-list">
+        <h2>Here are some of the restaurants you can visit:</h2>
+        <div class="restaurant">
+            <h2>Restaurant 1</h2>
+            <p>Address: Address 1</p>
+            <p>Phone: Phone 1</p>
+        </div>
+        <div class="restaurant">
+            <h2>Restaurant 2</h2>
+            <p>Address: Address 2</p>
+            <p>Phone: Phone 2</p>
+        </div>
+        <div class="restaurant">
+            <h2>Restaurant 3</h2>
+            <p>Address: Address 3</p>
+            <p>Phone: Phone 3</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

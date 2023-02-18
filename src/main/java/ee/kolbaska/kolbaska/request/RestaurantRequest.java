@@ -39,7 +39,10 @@ public class RestaurantRequest {
     private String country;
 
     @NotNull
-    private String province;
+    private String state;
+
+    @NotNull
+    private String street;
 
     @NotNull
     private String city;

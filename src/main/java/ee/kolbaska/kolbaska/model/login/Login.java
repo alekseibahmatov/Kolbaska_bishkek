@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "logins")
+@Table(name = "login")
 @Getter
 @Setter
 @Builder

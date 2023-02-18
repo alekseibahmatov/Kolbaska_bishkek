@@ -7,6 +7,7 @@ import ee.kolbaska.kolbaska.model.file.File;
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
+import ee.kolbaska.kolbaska.repository.AddressRepository;
 import ee.kolbaska.kolbaska.repository.CategoryRepository;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
@@ -45,6 +46,9 @@ class AdminRestaurantServiceTest {
     @Mock
     private RestaurantRepository restaurantRepository;
 
+    @Mock
+    private AddressRepository addressRepository;
+
     @InjectMocks
     private AdminRestaurantService adminRestaurantService;
 
@@ -66,6 +70,11 @@ class AdminRestaurantServiceTest {
         request.setWorkingHours("10am-10pm");
         request.setAverageBill(200);
         request.setRestaurantPhone("1234567890");
+        request.setCity("Tallinn");
+        request.setCountry("Estonia");
+        request.setState("Harjumaa");
+        request.setStreet("Joe 4c");
+        request.setPostalCode("10159");
         request.setRestaurantEmail("test@test.com");
         request.setCategories(Arrays.asList("Test Category 1", "Test Category 2"));
         request.setManagerEmail("manager@test.com");
