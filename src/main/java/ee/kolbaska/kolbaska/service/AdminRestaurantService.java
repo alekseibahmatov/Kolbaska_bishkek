@@ -2,10 +2,12 @@ package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
+import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
+import ee.kolbaska.kolbaska.repository.AddressRepository;
 import ee.kolbaska.kolbaska.repository.CategoryRepository;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
@@ -30,12 +32,23 @@ public class AdminRestaurantService {
     private final CategoryRepository categoryRepository;
 
     private final StorageService storageService;
+    private final AddressRepository addressRepository;
 
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
 
         boolean restaurantExists = restaurantRepository.findByEmail(request.getRestaurantEmail()).isPresent();
 
         if (restaurantExists) throw new RestaurantAlreadyExistsException("Restaurant with following email is already exists, please check restaurant list");
+
+        Address address = Address.builder()
+                .street(request.getStreet())
+                .state(request.getState())
+                .zipCode(request.getPostalCode())
+                .city(request.getCity())
+                .country(request.getCountry())
+                .build();
+
+        address = addressRepository.save(address);
 
         Restaurant newRestaurant = Restaurant.builder()
                 .name(request.getRestaurantName())
@@ -49,6 +62,7 @@ public class AdminRestaurantService {
                 .photo(storageService.uploadFile(request.getPhoto(), FileType.PHOTO))
                 .contract(storageService.uploadFile(request.getContact(), FileType.CONTRACT))
                 .manager(getUser(request.getManagerEmail()))
+                .address(address)
                 .build();
 
         return new RestaurantTableResponse(

@@ -50,14 +50,6 @@ public class Certificate {
 
     @NotNull
     @Column(
-            name = "activation_code",
-            columnDefinition = "varchar(36)",
-            nullable = false
-    )
-    private String activationCode;
-
-    @NotNull
-    @Column(
             name = "value",
             columnDefinition = "int",
             nullable = false
@@ -71,12 +63,7 @@ public class Certificate {
             columnDefinition = "date",
             nullable = false
     )
-    private String validUntil;
-
-
-    @NotNull
-    @OneToMany
-    private List<Category> restaurantCategory;
+    private Date validUntil;
 
     @NotNull
     @ManyToOne
@@ -91,11 +78,9 @@ public class Certificate {
     )
     private Boolean active;
 
-    @NotNull
     @Column(
             name = "activated_at",
-            columnDefinition = "date",
-            nullable = false
+            columnDefinition = "date"
     )
     private Date activatedAt;
 

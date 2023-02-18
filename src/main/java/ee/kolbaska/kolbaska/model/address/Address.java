@@ -2,8 +2,7 @@ package ee.kolbaska.kolbaska.model.address;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,6 +10,9 @@ import java.util.Date;
 @Table(name = "address")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Address {
 
     @Id
@@ -50,11 +52,9 @@ public class Address {
     )
     private String street;
 
-    @NotNull
     @Column(
             name = "apartment_number",
-            columnDefinition = "varchar(10)",
-            nullable = false
+            columnDefinition = "varchar(10)"
     )
     private String apartmentNumber;
 

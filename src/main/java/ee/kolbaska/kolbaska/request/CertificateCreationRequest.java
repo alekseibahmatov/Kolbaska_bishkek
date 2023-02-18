@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.request;
 
-import ee.kolbaska.kolbaska.model.address.Address;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,21 +12,37 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CertificateCreationRequest {
+    @NotNull
     private Integer value;
 
+    @NotNull
+    @Email
     private String fromEmail;
 
+    @NotNull
     private String toFullName;
 
+    @NotNull
+    private String fromFullName;
+
+    @NotNull
+    @Email
     private String toEmail;
 
+    @NotNull
     private String toPhone;
 
+    @NotNull
+    private String fromPhone;
+
+    @NotNull
     private String congratsText;
 
-    private Address billingAddress;
+    @NotNull
+    private AddressRequest billingAddress;
 
-    private Address shippingAddress;
+    @NotNull
+    private AddressRequest shippingAddress;
 
-    private String preferredProvider;
+    private String preferredProvider; //TODO change this to mandatory when will connect montonio
 }
