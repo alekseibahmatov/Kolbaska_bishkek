@@ -44,7 +44,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
     if(profile == 'production') {
-        runtimeOnly 'io.micrometer:micrometer-registry-influx'
+//        runtimeOnly 'io.micrometer:micrometer-registry-influx'
         runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     }
     annotationProcessor 'org.projectlombok:lombok'
