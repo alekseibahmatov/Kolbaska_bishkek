@@ -19,7 +19,7 @@ RUN mkdir /var/data
 RUN mkdir /var/data/photos
 RUN mkdir /var/data/contracts
 
-RUN gradle clean build -x test --args="--spring.profiless.active=production"
+RUN gradle clean build -x test -Pproduction
 
 EXPOSE 8080
 CMD ["java", "-jar", "build/libs/Kolbaska-0.0.1-SNAPSHOT.jar"]
