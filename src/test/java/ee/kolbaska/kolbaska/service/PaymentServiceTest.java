@@ -43,21 +43,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
 @TestPropertySource("/tests.properties")
 public class PaymentServiceTest {
 
     private String JWT_SECRET = "supersecret";
 
-    @Value("${api.baseurl}")
-    private String API_BASEURL;
 
     @MockitoSettings(strictness = Strictness.LENIENT)
     @Nested
-    @DisplayName("verificateCreation method tests")
+    @DisplayName("verificationCreation method tests")
     @TestPropertySource("/tests.properties")
-    class VerificateCreation {
+    class VerificationCreation {
 
         private PaymentRepository paymentRepository;
         private UserRepository userRepository;
@@ -106,7 +102,7 @@ public class PaymentServiceTest {
 
         @Test
         @DisplayName("Should successfully verify a payment with a valid token")
-        void testVerificateCreationValidToken() throws PaymentNotFoundException, PaymentException, IOException, MessagingException, WriterException, TemplateException {
+        void testVerificationCreationValidToken() throws PaymentNotFoundException, PaymentException, IOException, MessagingException, WriterException, TemplateException {
             // Arrange
             Payment payment = createPayment();
             String orderToken = createToken(paymentId, accessKey, "PAID");
@@ -122,7 +118,7 @@ public class PaymentServiceTest {
             when(paymentRepository.findById(uuid)).thenReturn(Optional.of(payment));
             when(roleRepository.findRoleByRoleName("ROLE_CUSTOMER")).thenReturn(Optional.of(customerRole));
             CertificateVerificationRequest request = CertificateVerificationRequest.builder().orderToken(orderToken).build();
-            CertificateVerificationResponse response = paymentService.verificateCreation(request);
+            CertificateVerificationResponse response = paymentService.verificationCreation(request);
 
             // Assert
             assertNotNull(response);
@@ -135,7 +131,7 @@ public class PaymentServiceTest {
 
         @Test
         @DisplayName("Should throw PaymentException when payment status is not PAID")
-        void testVerificateCreationInvalidPaymentStatus() throws MessagingException, TemplateException, IOException {
+        void testVerificationCreationInvalidPaymentStatus() throws MessagingException, TemplateException, IOException {
             // Arrange
             Payment payment = createPayment();
             payment.setStatus(Status.PENDING);
@@ -152,7 +148,7 @@ public class PaymentServiceTest {
             when(paymentRepository.findById(uuid)).thenReturn(Optional.of(payment));
             when(roleRepository.findRoleByRoleName("ROLE_CUSTOMER")).thenReturn(Optional.of(customerRole));
             CertificateVerificationRequest request = CertificateVerificationRequest.builder().orderToken(orderToken).build();
-            assertThrows(PaymentException.class, () -> paymentService.verificateCreation(request));
+            assertThrows(PaymentException.class, () -> paymentService.verificationCreation(request));
 
             verify(certificateRepository, times(0)).save(any(Certificate.class));
             verify(paymentRepository, times(0)).save(payment);
@@ -161,7 +157,7 @@ public class PaymentServiceTest {
 
         @Test
         @DisplayName("Should throw PaymentException when access key is invalid")
-        void testVerificateCreationInvalidAccessKey() throws MessagingException, TemplateException, IOException {
+        void testVerificationCreationInvalidAccessKey() throws MessagingException, TemplateException, IOException {
             // Arrange
             Payment payment = createPayment();
             String orderToken = createToken(paymentId, "invalidaccesskey", "PAID");
@@ -171,7 +167,7 @@ public class PaymentServiceTest {
             // Act & Assert
             when(paymentRepository.findById(uuid)).thenReturn(Optional.of(payment));
             CertificateVerificationRequest request = CertificateVerificationRequest.builder().orderToken(orderToken).build();
-            assertThrows(PaymentException.class, () -> paymentService.verificateCreation(request));
+            assertThrows(PaymentException.class, () -> paymentService.verificationCreation(request));
 
             verify(certificateRepository, times(0)).save(any(Certificate.class));
             verify(paymentRepository, times(0)).save(payment);
@@ -180,7 +176,7 @@ public class PaymentServiceTest {
 
         @Test
         @DisplayName("Should throw PaymentNotFoundException when payment is not found")
-        void testVerificateCreationInvalidPaymentNotFound() throws MessagingException, TemplateException, IOException {
+        void testVerificationCreationInvalidPaymentNotFound() throws MessagingException, TemplateException, IOException {
             // Arrange
             String orderToken = createToken(paymentId, accessKey, "PAID");
             Map<String, Claim> claims = JWT.decode(orderToken).getClaims();
@@ -189,7 +185,7 @@ public class PaymentServiceTest {
             // Act & Assert
             when(paymentRepository.findById(uuid)).thenReturn(Optional.empty());
             CertificateVerificationRequest request = CertificateVerificationRequest.builder().orderToken(orderToken).build();
-            assertThrows(PaymentNotFoundException.class, () -> paymentService.verificateCreation(request));
+            assertThrows(PaymentNotFoundException.class, () -> paymentService.verificationCreation(request));
 
             verify(certificateRepository, times(0)).save(any(Certificate.class));
             verify(paymentRepository, times(0)).save(any(Payment.class));

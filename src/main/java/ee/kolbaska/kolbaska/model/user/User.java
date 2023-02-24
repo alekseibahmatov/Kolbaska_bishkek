@@ -137,7 +137,7 @@ public class User implements UserDetails {
     private List<Login> logins;
 
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
-    private List<Certificate> sent_certificates = new ArrayList<>();
+    private List<Certificate> sent_certificates;
 
     @Override
     public String getUsername() {

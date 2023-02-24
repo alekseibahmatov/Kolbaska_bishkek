@@ -1,5 +1,6 @@
 package ee.kolbaska.kolbaska.service;
 
+import ee.kolbaska.kolbaska.config.UserConfiguration;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserStillOnDutyExceptions;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
@@ -44,7 +45,7 @@ public class ManagerRestaurantService {
 
     private final RestaurantRepository restaurantRepository;
 
-    private final JwtService jwtService;
+    private final UserConfiguration userConfiguration;
 
     public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
 
@@ -122,22 +123,15 @@ public class ManagerRestaurantService {
     }
 
     public List<WaiterResponse> getWaiters() throws RestaurantNotFoundException {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        final String jwtToken = request.getHeader("Authorization").substring(7);
-
-        final String email = jwtService.extractUserEmail(jwtToken);
-
-        User manager = userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User with such email not found!")
-        );
+        User manager = userConfiguration.getRequestUser();
 
         Restaurant restaurant = manager.getRestaurant();
 
         if (restaurant == null) throw new RestaurantNotFoundException("This manager is not associated with any restaurant!");
 
         List<User> usersWithoutManager = restaurant.getWaiters().stream()
-                .filter(user -> !Objects.equals(user.getEmail(), email)).toList();
+                .filter(user -> !Objects.equals(user.getEmail(), manager.getEmail())).toList();
 
         List<WaiterResponse> response = new ArrayList<>();
 

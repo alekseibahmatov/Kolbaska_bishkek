@@ -34,10 +34,10 @@ public class PaymentController {
         return ResponseEntity.ok(service.initiateCreation(request));
     }
 
-    @PostMapping("/verificateCreation")
-    public ResponseEntity<CertificateVerificationResponse> verificateCreation(
+    @PostMapping("/verificationCreation")
+    public ResponseEntity<CertificateVerificationResponse> verificationCreation(
             @NotNull @RequestBody CertificateVerificationRequest request
     ) throws PaymentNotFoundException, PaymentException, MessagingException, IOException, WriterException, TemplateException {
-        return ResponseEntity.ok(service.verificateCreation(request));
+        return ResponseEntity.ok(service.verificationCreation(request));
     }
 }

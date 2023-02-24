@@ -1,6 +1,6 @@
 package ee.kolbaska.kolbaska.controller;
 
-import ee.kolbaska.kolbaska.request.AuthenticationRequest;
+import ee.kolbaska.kolbaska.request.UserAuthenticationRequest;
 import ee.kolbaska.kolbaska.request.RecoveryRequest;
 import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
 import ee.kolbaska.kolbaska.request.RegisterRequest;
@@ -45,7 +45,7 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @NotNull @RequestBody AuthenticationRequest request
+            @NotNull @RequestBody UserAuthenticationRequest request
             ) {
         return ResponseEntity.ok(service.authenticate(request));
     }

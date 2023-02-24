@@ -5,7 +5,7 @@ import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
-import ee.kolbaska.kolbaska.request.AuthenticationRequest;
+import ee.kolbaska.kolbaska.request.UserAuthenticationRequest;
 import ee.kolbaska.kolbaska.request.RecoveryRequest;
 import ee.kolbaska.kolbaska.request.RegisterRequest;
 import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
@@ -30,10 +30,15 @@ import java.util.UUID;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
+
     private final RoleRepository roleRepository;
+
     private final PasswordEncoder passwordEncoder;
+
     private final JwtService jwtService;
+
     private final AuthenticationManager authenticationManager;
+
     private final EmailService emailService;
 
 
@@ -67,7 +72,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(UserAuthenticationRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()

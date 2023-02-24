@@ -1,11 +1,13 @@
 package ee.kolbaska.kolbaska.model.certificate;
 
 import ee.kolbaska.kolbaska.model.category.Category;
+import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +58,11 @@ public class Certificate {
     )
     private Integer value;
 
+    @Column(
+            name = "remaining_value",
+            columnDefinition = "double"
+    )
+    private Double remainingValue;
 
     @NotNull
     @Column(
@@ -94,5 +101,8 @@ public class Certificate {
     @ManyToOne
     @JoinColumn(name = "user_sender")
     private User sender;
+
+    @OneToMany(mappedBy = "certificate", orphanRemoval = true)
+    private List<Transaction> transactions;
 
 }

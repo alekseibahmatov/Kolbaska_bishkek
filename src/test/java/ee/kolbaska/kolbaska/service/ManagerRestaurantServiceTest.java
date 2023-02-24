@@ -1,5 +1,6 @@
 package ee.kolbaska.kolbaska.service;
 
+import ee.kolbaska.kolbaska.config.UserConfiguration;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
@@ -64,6 +65,9 @@ public class ManagerRestaurantServiceTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private UserConfiguration userConfiguration;
 
     @InjectMocks
     private ManagerRestaurantService managerRestaurantService;
@@ -230,19 +234,15 @@ public class ManagerRestaurantServiceTest {
 
     @Test
     public void getWaiters_SuccessfulScenario_ShouldReturnListOfWaiters() throws RestaurantNotFoundException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(request.getHeader("Authorization")).thenReturn("Bearer 12345");
 
         String email = "test@test.com";
-        when(jwtService.extractUserEmail("12345")).thenReturn(email);
 
         User manager = User.builder()
                 .id(1L)
                 .email(email)
                 .fullName("Test Test")
                 .build();
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(manager));
+        when(userConfiguration.getRequestUser()).thenReturn(manager);
 
         Restaurant restaurant = Restaurant.builder().id(1L).build();
         manager.setRestaurant(restaurant);
@@ -285,32 +285,13 @@ public class ManagerRestaurantServiceTest {
 
     @Test
     void whenGetWaitersAndRestaurantNotFound_thenReturnRestaurantNotFoundException() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        String jwtToken = "jwtToken";
         String email = "test@email.com";
 
         User manager = User.builder().email(email).restaurant(null).build();
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(manager));
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + jwtToken);
-        when(jwtService.extractUserEmail(jwtToken)).thenReturn(email);
+        when(userConfiguration.getRequestUser()).thenReturn(manager);
 
         Assertions.assertThrows(RestaurantNotFoundException.class, () -> managerRestaurantService.getWaiters());
     }
 
-    @Test
-    void whenGetWaitersAndManagerEmailNotFound_thenReturnUsernameNotFoundException() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-
-        String jwtToken = "jwtToken";
-        String email = "test@email.com";
-
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
-        when(request.getHeader("Authorization")).thenReturn("Bearer " + jwtToken);
-        when(jwtService.extractUserEmail(jwtToken)).thenReturn(email);
-
-        Assertions.assertThrows(UsernameNotFoundException.class, () -> managerRestaurantService.getWaiters());
-    }
 }

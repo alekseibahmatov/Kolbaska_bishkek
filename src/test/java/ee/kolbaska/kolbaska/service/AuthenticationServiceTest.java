@@ -4,7 +4,7 @@ import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
-import ee.kolbaska.kolbaska.request.AuthenticationRequest;
+import ee.kolbaska.kolbaska.request.UserAuthenticationRequest;
 import ee.kolbaska.kolbaska.request.RecoveryRequest;
 import ee.kolbaska.kolbaska.request.RegisterRequest;
 import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
@@ -94,11 +94,11 @@ class AuthenticationServiceTest {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(jwtService.createToken(anyMap(), any(User.class))).thenReturn("token");
 
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("test@test.com");
-        authenticationRequest.setPassword("password");
+        UserAuthenticationRequest userAuthenticationRequest = new UserAuthenticationRequest();
+        userAuthenticationRequest.setEmail("test@test.com");
+        userAuthenticationRequest.setPassword("password");
 
-        AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
+        AuthenticationResponse response = authenticationService.authenticate(userAuthenticationRequest);
         assertEquals("token", response.getToken());
     }
 
@@ -106,11 +106,11 @@ class AuthenticationServiceTest {
     void testAuthenticate_UserNotFound() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("test@test.com");
-        authenticationRequest.setPassword("password");
+        UserAuthenticationRequest userAuthenticationRequest = new UserAuthenticationRequest();
+        userAuthenticationRequest.setEmail("test@test.com");
+        userAuthenticationRequest.setPassword("password");
 
-        assertThrows(NoSuchElementException.class, () -> authenticationService.authenticate(authenticationRequest));
+        assertThrows(NoSuchElementException.class, () -> authenticationService.authenticate(userAuthenticationRequest));
     }
 
     @Test

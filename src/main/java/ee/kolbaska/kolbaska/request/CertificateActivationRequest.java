@@ -1,8 +1,6 @@
 package ee.kolbaska.kolbaska.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,12 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequest {
+public class CertificateActivationRequest {
     @NotNull
-    @Email
-    private String email;
+    private String uniqueCode;
 
     @NotNull
-    @Size(min = 6, max = 12)
-    private String password;
+    private Double amount;
 }

@@ -57,11 +57,6 @@ public class Transaction {
 
 
     @NotNull
-    @OneToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Certificate certificate;
-
-    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private User waiter;
@@ -70,5 +65,9 @@ public class Transaction {
     @ManyToOne(optional = false)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "certificate_id", nullable = false)
+    private Certificate certificate;
 
 }
