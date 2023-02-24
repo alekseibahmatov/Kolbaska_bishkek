@@ -35,8 +35,7 @@ public class SecurityConfiguration {
                         (requests) -> requests
                                 .requestMatchers(API_BASEPATH + "/auth/**", API_BASEPATH + "/payment/initiateCreation").permitAll()
                                 .requestMatchers(API_BASEPATH + "/payment/verificationCreation").permitAll() //TODO change permit all to access from specific IPs
-                                .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
-                                .requestMatchers("/actuator", "/actuator/**").access(new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
+                                .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**", "/actuator", "/actuator/**").permitAll()
                                 .requestMatchers(API_BASEPATH + "/admin/**").hasRole("ADMIN")
                                 .requestMatchers(API_BASEPATH + "/transaction/**").hasAnyRole("ADMIN", "MANAGER", "WAITER")
                                 .requestMatchers(API_BASEPATH + "/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
