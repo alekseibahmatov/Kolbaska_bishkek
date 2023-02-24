@@ -31,11 +31,11 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests(
                         (requests) -> requests
-                                .requestMatchers(API_BASEPATH + "/auth/**").permitAll()
-                                .requestMatchers(API_BASEPATH + "/payment/initiateCreation").permitAll()
-                                .requestMatchers(API_BASEPATH + "/payment/verificateCreation").permitAll() //TODO change permit all to access from specific IPs
+                                .requestMatchers(API_BASEPATH + "/auth/**", API_BASEPATH + "/payment/initiateCreation").permitAll()
+                                .requestMatchers(API_BASEPATH + "/payment/verificationCreation").permitAll() //TODO change permit all to access from specific IPs
                                 .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
                                 .requestMatchers(API_BASEPATH + "/admin/**").hasRole("ADMIN")
+                                .requestMatchers(API_BASEPATH + "/transaction/**").hasAnyRole("ADMIN", "MANAGER", "WAITER")
                                 .requestMatchers(API_BASEPATH + "/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
                                 .anyRequest()
                                 .authenticated()

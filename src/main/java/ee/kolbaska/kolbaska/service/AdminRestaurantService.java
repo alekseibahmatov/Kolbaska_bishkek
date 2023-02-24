@@ -32,6 +32,7 @@ public class AdminRestaurantService {
     private final CategoryRepository categoryRepository;
 
     private final StorageService storageService;
+
     private final AddressRepository addressRepository;
 
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
