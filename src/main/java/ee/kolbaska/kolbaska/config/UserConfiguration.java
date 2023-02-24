@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -19,14 +20,18 @@ public class UserConfiguration {
 
     @Bean
     public User getRequestUser() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
-        final String jwtToken = request.getHeader("Authorization").substring(7);
+            final String jwtToken = request.getHeader("Authorization").substring(7);
 
-        final String email = jwtService.extractUserEmail(jwtToken);
+            final String email = jwtService.extractUserEmail(jwtToken);
 
-        return userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User with such email not found!")
-        );
+            return userRepository.findByEmail(email).orElseThrow(
+                    () -> new UsernameNotFoundException("User with such email not found!")
+            );
+        } catch (IllegalStateException e) {
+            return null;
+        }
     }
 }
