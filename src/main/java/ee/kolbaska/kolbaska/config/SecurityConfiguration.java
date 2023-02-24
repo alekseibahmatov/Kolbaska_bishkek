@@ -7,10 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -34,6 +36,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(API_BASEPATH + "/auth/**", API_BASEPATH + "/payment/initiateCreation").permitAll()
                                 .requestMatchers(API_BASEPATH + "/payment/verificationCreation").permitAll() //TODO change permit all to access from specific IPs
                                 .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll()
+                                .requestMatchers("/actuator", "/actuator/**").access(new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
                                 .requestMatchers(API_BASEPATH + "/admin/**").hasRole("ADMIN")
                                 .requestMatchers(API_BASEPATH + "/transaction/**").hasAnyRole("ADMIN", "MANAGER", "WAITER")
                                 .requestMatchers(API_BASEPATH + "/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
