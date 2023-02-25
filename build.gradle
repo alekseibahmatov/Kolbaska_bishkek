@@ -22,8 +22,6 @@ ext {
     set('testcontainersVersion', "1.17.6")
 }
 
-def profile = project.findProperty('spring.profiles.active')
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -43,7 +41,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
-    if(profile == 'production') {
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    if(project.hasProperty('production')) {
 //        runtimeOnly 'io.micrometer:micrometer-registry-influx'
         runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     }
