@@ -1,82 +1,137 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Congratulations on receiving your QR code</title>
-    <style>
-        body {
-            background-color: #292929;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            margin: 0;
-            padding: 0;
-        }
-        h1 {
-            color: #77bc1f;
-            font-size: 36px;
-            margin-top: 30px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        p {
-            margin: 0 0 20px;
-        }
-        .container {
-            margin: 30px auto;
-            max-width: 800px;
-            padding: 0 20px;
-        }
-        .qr-code {
-            display: block;
-            margin: 30px auto;
-            max-width: 200px;
-        }
-        .restaurant-list {
-            margin-top: 30px;
-        }
-        .restaurant {
-            background-color: #77bc1f;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-        .restaurant h2 {
-            color: #fff;
-            font-size: 24px;
-            margin-top: 0;
-            margin-bottom: 5px;
-        }
-        .restaurant p {
-            margin: 0;
-        }
-    </style>
+    <title>SailChimp HTML Email Template</title>
+    <link href='https://fonts.googleapis.com/css2?family=Raleway:wght@100&display=swap' rel="stylesheet">
 </head>
-<body>
-<div class="container">
-    <h1>Congratulations on receiving your QR code</h1>
-    <p>You have received a QR code for access to 30 best restaurants in Estonia. Use it to enjoy great food and have a wonderful time!</p>
-    <img class="qr-code" src="cid:qrCode" alt="QR Code" width="150" height="150">
-    <div class="restaurant-list">
-        <h2>Here are some of the restaurants you can visit:</h2>
-        <div class="restaurant">
-            <h2>Restaurant 1</h2>
-            <p>Address: Address 1</p>
-            <p>Phone: Phone 1</p>
+
+<body style="font-weight: bold; font-family: 'Raleway', sans-serif">
+<div class="modal-contentCertificate" style="width: 100%;
+            margin: 0 auto;
+            background: white;
+            z-index: 2;
+            border-radius: 20px;
+            max-width: 980px;">
+<div>
+    <div class="certificatePopup" style="display: block;">
+        <div class="rightCertificatePopup" style=" width: 100%;
+            margin-right: 30px;
+            margin-left: -10px;
+            padding-top: 40px;
+            padding-bottom: 20px;">
+            <div class="shadow" style="box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+            border-radius: 20px;
+            height: 100%;">
+                <div class="certificateImageBlock" style="background-image:linear-gradient(to bottom,rgba(245, 246, 252, 0),rgba(4, 4, 38, 1)95%), url('https://i.ibb.co/PQTgYvg/leha2.png');
+            height: 100%;
+            background-size: cover;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            width: 100%;
+            border-radius: 20px;" >
+                    <div class="descriptionCertificatePopup" style="color: #8e8887 !important;
+            padding-top: 380px;
+            padding-left: 20px;
+            padding-bottom: 40px;
+            text-shadow: #000 1px 0 5px;">
+                        <div class="blockHeaderCertificatePopup" style="font-size: 20px;
+            text-transform: uppercase;
+text-shadow: 1px 3px 0 #969696, 3px 3px 0px rgba(255,255,255,0);">
+                            gift certificate
+                        </div>
+                        <div class="blockNameCertificatePopup" style="font-size: 30px;
+            margin-top: 5px;
+           text-shadow: 1px 3px 0 #969696, 3px 3px 0px rgba(255,255,255,0);">
+                            To the best restaurants in Tallinn
+                        </div>
+                        <div class="nominalAndDateCertificatePopup" style="display: flex;
+            margin-top: 20px;
+            font-size: 20px;
+            text-transform: uppercase;
+            color:#8e8887 !important;
+     ">
+                            <div class="nominalValueCertificatePopup" style="text-shadow: 1px 3px 0 #969696, 3px 3px 0px rgba(255,255,255,0);">
+                                Nominal
+                            </div>
+                            <div class="dateCertificatePopup" style="margin-left: 50px; text-shadow: 1px 3px 0 #969696, 3px 3px 0px rgba(255,255,255,0);">
+                                Valid until
+                            </div>
+                        </div>
+                        <div class="valuesCertificatePopup" style="display: flex;
+            color: #D81159;
+            font-size: 20px;">
+                            <div class="nominalValueCertificatePopup" th:text="${value}"></div>
+                            <div class="validDateCertificatePopup" style="margin-left: 100px" th:text="${valid_until}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="restaurant">
-            <h2>Restaurant 2</h2>
-            <p>Address: Address 2</p>
-            <p>Phone: Phone 2</p>
-        </div>
-        <div class="restaurant">
-            <h2>Restaurant 3</h2>
-            <p>Address: Address 3</p>
-            <p>Phone: Phone 3</p>
+        <div class="leftCertificatePopup" style="width: 100%;
+            padding-top: 20px;
+            margin-right: 30px;
+            margin-left: -10px;">
+            <div class="leftCertificatePopupHeader" style="font-size: 40px;"
+            >
+                M E N U
+            </div>
+            <div class="questionAnswerCertificate" style="margin-top: 20px;
+            border-bottom: 3px dashed #D81159;">
+                <div class="questionCertificate" style="color: #D81159;
+            font-size: 14px;
+            font-family: 'Raleway', sans-serif;">
+                    From who
+                </div>
+                <div class="answerCertificate" style="padding: 10px 0;
+            font-family: 'Raleway', sans-serif;" th:text="${from}"></div>
+            </div>
+            <div class="questionAnswerCertificate" style="margin-top: 20px;
+            border-bottom: 3px dashed #D81159;" >
+                <div class="questionCertificate" style="color: #D81159;
+            font-size: 14px;
+            font-family: 'Raleway', sans-serif;">
+                    To
+                </div>
+                <div class="answerCertificate" style="padding: 10px 0;
+            font-family: 'Raleway', sans-serif;" th:text="${to}"></div>
+            </div>
+            <div class="questionAnswerCertificate" style="margin-top: 20px;
+            border-bottom: 3px dashed #D81159;">
+                <div class="questionCertificate" style="color: #D81159;
+            font-size: 14px;
+            font-family: 'Raleway', sans-serif;">
+                    Wishes
+                </div>
+                <div class="answerCertificate" style="padding: 10px 0;
+            font-family: 'Raleway', sans-serif;" th:text="${description}"></div>
+            </div>
+            <div class="questionAnswerCertificate" style="margin-top: 20px;
+            border-bottom: 3px dashed #D81159;">
+                <div class="questionCertificate" style="color: #D81159;
+            font-size: 14px;
+            font-family: 'Raleway', sans-serif;">
+                    Scan it!
+                </div>
+                <div class="qrCodeCertificate" style="text-align: center;">
+                    <img  class="qrCodeCertificateImage" src="cid:qrCode" alt="qr-Code-Certificate" border="0" style="width: 160px;
+            height: 160px;
+            margin-bottom: 10px;
+            background-color: #ffffff;">
+                </div>
+            </div>
+            <div class="furtherInfo" style="margin-top: 20px;
+            font-family: 'Raleway', sans-serif;">
+                Further info can be found on <a class='blue' style="color: #00B4CC;
+            transition: 0.3s;
+            cursor: pointer;">cocksuck.menu.ee</a>
+            </div>
         </div>
     </div>
+
 </div>
+</div>
+
 </body>
 </html>
