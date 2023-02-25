@@ -146,8 +146,8 @@ public class PaymentService {
             content.put("qrCode", qrCodeImage);
             content.put("value", "%d€".formatted(payment.getValue()));
             content.put("valid_until", sf.format(cal.getTime()));
-            content.put("from", sender.getFullName());
-            content.put("to", holder.getFullName());
+            content.put("from", payment.getFromFullName());
+            content.put("to", payment.getToFullName());
             content.put("description", payment.getDescription());
 
             emailService.sendHTMLEmail(
