@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -138,15 +139,22 @@ public class PaymentService {
 
             byte[] qrCodeImage = qrCodeService.createQrCode(qrCodeUrl);
 
-            Map<String, Object> contentIdToImageMapping = new HashMap<>();
+            Map<String, Object> content = new HashMap<>();
 
-            contentIdToImageMapping.put("qrCode", qrCodeImage);
+            SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+
+            content.put("qrCode", qrCodeImage);
+            content.put("value", "%d€".formatted(payment.getValue()));
+            content.put("valid_until", sf.format(cal.getTime()));
+            content.put("from", payment.getFromFullName());
+            content.put("to", payment.getToFullName());
+            content.put("description", payment.getDescription());
 
             emailService.sendHTMLEmail(
                     payment.getToEmail(),
                     "Congratulations you received restaurant certificate",
                     "successfulCertificatePayment",
-                    contentIdToImageMapping
+                    content
             );
 
             return CertificateVerificationResponse.builder()

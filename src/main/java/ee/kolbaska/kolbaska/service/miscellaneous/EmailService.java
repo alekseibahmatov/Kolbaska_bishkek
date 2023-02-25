@@ -15,6 +15,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -36,17 +37,19 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void sendHTMLEmail(String to, String subject, String templateName, Map<String, Object> images) throws MessagingException, IOException, TemplateException {
+    public void sendHTMLEmail(String to, String subject, String templateName, Map<String, Object> data) throws MessagingException, IOException, TemplateException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         Context context = new Context();
-        context.setVariables(images);
+        context.setVariables(data);
         helper.setText(templateEngine.process(templateName, context), true);
 
-        for (Map.Entry<String, Object> image : images.entrySet()) {
-            ByteArrayResource dataSource = new ByteArrayResource((byte[]) image.getValue());
-            helper.addInline(image.getKey(), dataSource, "image/png");
+        for (Map.Entry<String, Object> image : data.entrySet()) {
+            if (Objects.equals(image.getKey(), "qrCode")) {
+                ByteArrayResource dataSource = new ByteArrayResource((byte[]) image.getValue());
+                helper.addInline(image.getKey(), dataSource, "image/png");
+            }
         }
 
         helper.setFrom(from);
