@@ -1,5 +1,15 @@
 databaseChangeLog:
   - changeSet:
+      id: insert-newbie-role
+      author: aleksei
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_NEWBIE
+  - changeSet:
       id: insert-customer-role
       author: aleksei
       changes:

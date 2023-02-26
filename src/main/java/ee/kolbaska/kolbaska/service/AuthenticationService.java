@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.RoleNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +54,7 @@ public class AuthenticationService {
         User newUser = User.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(role)
+                .roles(List.of(role))
                 .deleted(false)
                 .activated(true)
                 .fullName("Zalupka") //TODO change fullName when we decide to open registration for regular customer
@@ -65,7 +62,7 @@ public class AuthenticationService {
 
         userRepository.save(newUser);
 
-        Map<String, String> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
 
         claims.put("role", role.getRoleName());
 
@@ -84,9 +81,9 @@ public class AuthenticationService {
 
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
-        Map<String, String> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
 
-        claims.put("role", user.getRole().getRoleName());
+        claims.put("roles", user.getRoles().stream().map(Role::getRoleName).toList());
 
         String token = jwtService.createToken(claims, user);
 

@@ -54,7 +54,7 @@ public class ManagerRestaurantService {
 
             waiter = User.builder()
                     .email(request.getEmail())
-                    .role(roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new))
+                    .roles(List.of(roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new), roleRepository.findRoleByRoleName("ROLE_NEWBIE").orElseThrow(RoleNotFoundException::new)))
                     .activationCode(activationCode)
                     .activated(true)
                     .deleted(false)

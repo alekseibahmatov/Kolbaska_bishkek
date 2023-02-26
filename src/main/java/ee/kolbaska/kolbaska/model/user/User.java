@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -127,15 +128,17 @@ public class User implements UserDetails {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
-
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<Login> logins;
 
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
     private List<Certificate> sent_certificates;
+
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private Collection<Role> roles;
 
     @Override
     public String getUsername() {
@@ -144,7 +147,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getRoleName()));
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).toList();
     }
 
     @Override
