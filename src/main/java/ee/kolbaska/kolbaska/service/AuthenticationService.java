@@ -1,28 +1,30 @@
 package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
+import ee.kolbaska.kolbaska.mapper.AddressMapper;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
-import ee.kolbaska.kolbaska.request.UserAuthenticationRequest;
-import ee.kolbaska.kolbaska.request.RecoveryRequest;
-import ee.kolbaska.kolbaska.request.RegisterRequest;
-import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
+import ee.kolbaska.kolbaska.request.*;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
+import ee.kolbaska.kolbaska.response.PersonalDataResponse;
 import ee.kolbaska.kolbaska.response.RecoveryResponse;
 import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
+import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -40,6 +42,8 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     private final EmailService emailService;
+
+    private final FormatService formatService;
 
 
     public AuthenticationResponse register(RegisterRequest request) throws Exception {
@@ -120,6 +124,27 @@ public class AuthenticationService {
 
         return RecoveryResponse.builder()
                 .message("Password was successfully reset")
+                .build();
+    }
+
+    @Transactional
+    public PersonalDataResponse savePersonalData(PersonalDataRequest request) {
+        Optional<User> ifUser = userRepository.findByActivationCode(request.getActivationCode());
+
+        if (ifUser.isEmpty()) throw new UsernameNotFoundException("User not found!");
+
+        User user = ifUser.get();
+        user.setPersonalCode(request.getPersonalCode());
+        user.setFullName(request.getFullName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setAddress(AddressMapper.INSTANCE.toAddress(request.getAddress()));
+        user.setActivationCode(null);
+        user.setPhone(formatService.formatE164(request.getPhone()));
+
+        userRepository.save(user);
+
+        return PersonalDataResponse.builder()
+                .message("Personal data was successfully saved!")
                 .build();
     }
 }

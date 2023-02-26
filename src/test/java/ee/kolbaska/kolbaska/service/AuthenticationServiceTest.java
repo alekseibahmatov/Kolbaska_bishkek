@@ -4,14 +4,13 @@ import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
-import ee.kolbaska.kolbaska.request.UserAuthenticationRequest;
-import ee.kolbaska.kolbaska.request.RecoveryRequest;
-import ee.kolbaska.kolbaska.request.RegisterRequest;
-import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
+import ee.kolbaska.kolbaska.request.*;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
+import ee.kolbaska.kolbaska.response.PersonalDataResponse;
 import ee.kolbaska.kolbaska.response.RecoveryResponse;
 import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
+import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,14 +21,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -47,6 +46,8 @@ class AuthenticationServiceTest {
     private AuthenticationManager authenticationManager;
     @Mock
     private EmailService emailService;
+    @Mock
+    private FormatService formatService;
     @InjectMocks
     private AuthenticationService authenticationService;
 
@@ -150,5 +151,51 @@ class AuthenticationServiceTest {
         assertEquals("Password was successfully reset", recoveryResponse.getMessage());
         verify(userRepository, times(1)).save(user);
     }
+
+    @Test
+    @Transactional
+    void testSavePersonalData() {
+        // Set up test data
+        String activationCode = "123456";
+        String personalCode = "123456789";
+        String fullName = "John Doe";
+        String password = "password";
+        AddressRequest address = new AddressRequest("123 Main St", "Apt 1", "New York", "NY", "10001", "USA");
+        String phone = "+1 (123) 456-7890";
+
+        User user = new User();
+        user.setActivationCode(activationCode);
+
+        when(userRepository.findByActivationCode(activationCode)).thenReturn(Optional.of(user));
+
+        PersonalDataRequest request = PersonalDataRequest.builder()
+                .activationCode(activationCode)
+                .personalCode(personalCode)
+                .fullName(fullName)
+                .password(password)
+                .address(address)
+                .phone(phone)
+                .build();
+
+        // Call the method being tested
+        PersonalDataResponse response = authenticationService.savePersonalData(request);
+
+        // Assert that the personal data was saved
+        assertTrue(response.getMessage().contains("successfully saved"));
+        User savedUser = userRepository.findByActivationCode(activationCode).orElse(null);
+        assertNotNull(savedUser);
+        assertEquals(personalCode, savedUser.getPersonalCode());
+        assertEquals(fullName, savedUser.getFullName());
+        assertNotNull(savedUser.getAddress());
+        assertEquals(address.getStreet(), savedUser.getAddress().getStreet());
+        assertEquals(address.getApartmentNumber(), savedUser.getAddress().getApartmentNumber());
+        assertEquals(address.getCity(), savedUser.getAddress().getCity());
+        assertEquals(address.getState(), savedUser.getAddress().getState());
+        assertEquals(address.getZipCode(), savedUser.getAddress().getZipCode());
+        assertEquals(address.getCountry(), savedUser.getAddress().getCountry());
+        assertEquals(formatService.formatE164(phone), savedUser.getPhone());
+        assertNull(savedUser.getActivationCode());
+    }
+
 }
 

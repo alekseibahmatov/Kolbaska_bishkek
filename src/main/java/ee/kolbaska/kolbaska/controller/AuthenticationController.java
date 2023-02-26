@@ -1,10 +1,8 @@
 package ee.kolbaska.kolbaska.controller;
 
-import ee.kolbaska.kolbaska.request.UserAuthenticationRequest;
-import ee.kolbaska.kolbaska.request.RecoveryRequest;
-import ee.kolbaska.kolbaska.request.StartRecoveryRequest;
-import ee.kolbaska.kolbaska.request.RegisterRequest;
+import ee.kolbaska.kolbaska.request.*;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
+import ee.kolbaska.kolbaska.response.PersonalDataResponse;
 import ee.kolbaska.kolbaska.response.RecoveryResponse;
 import ee.kolbaska.kolbaska.service.AuthenticationService;
 import jakarta.validation.constraints.NotNull;
@@ -48,5 +46,12 @@ public class AuthenticationController {
             @NotNull @RequestBody UserAuthenticationRequest request
             ) {
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @PostMapping("/personalData")
+    public ResponseEntity<PersonalDataResponse> savePersonalData(
+            @NotNull @RequestBody PersonalDataRequest request
+    ) {
+        return ResponseEntity.ok(service.savePersonalData(request));
     }
 }

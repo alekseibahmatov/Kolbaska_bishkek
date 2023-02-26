@@ -12,17 +12,11 @@ import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
-import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
-import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
-import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.*;
@@ -33,13 +27,7 @@ public class ManagerRestaurantService {
 
     private final UserRepository userRepository;
 
-    private final FormatService formatService;
-
-    private final PasswordService passwordService;
-
     private final EmailService emailService;
-
-    private final PasswordEncoder passwordEncoder;
 
     private final RoleRepository roleRepository;
 
@@ -47,31 +35,34 @@ public class ManagerRestaurantService {
 
     private final UserConfiguration userConfiguration;
 
+    @Transactional
     public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
 
-        Optional<User> userExists = userRepository.findByPersonalCode(request.getPersonalCode());
+        User manager = userConfiguration.getRequestUser();
 
-        Restaurant restaurant = restaurantRepository.findByRestaurantCode(request.getRestaurantCode()).orElseThrow(() -> new RestaurantNotFoundException("There is no restaurant with code: " + request.getRestaurantCode()));
+        if (manager.getRestaurant() == null) throw new RestaurantNotFoundException("This manager is not assigned to any restaurant");
+
+        Optional<User> userExists = userRepository.findByEmail(request.getEmail());
+
+        Restaurant restaurant = manager.getRestaurant();
 
         User waiter;
 
         if (userExists.isEmpty()) {
-            String phoneFormatted = formatService.formatE164(request.getPhone());
 
-            String securePassword = passwordService.generatePassword(10);
-
-            emailService.sendSimpleMessage(request.getEmail(), "Password", String.format("Here is your password for accessing qr code page: %s", securePassword));
+            String activationCode = UUID.randomUUID().toString();
 
             waiter = User.builder()
-                    .fullName(request.getFullName())
-                    .phone(phoneFormatted)
                     .email(request.getEmail())
-                    .password(passwordEncoder.encode(securePassword))
                     .role(roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new))
+                    .activationCode(activationCode)
                     .activated(true)
                     .deleted(false)
                     .restaurant(restaurant)
                     .build();
+
+            emailService.sendSimpleMessage(request.getEmail(), "Activate your account", String.format("Here is your uuid to activate you account: %s", activationCode));
+
 
             waiter = userRepository.save(waiter);
 
