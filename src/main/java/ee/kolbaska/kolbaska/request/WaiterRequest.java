@@ -12,20 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaiterRequest {
-
-    @NotNull
-    private String fullName;
-
-    @NotNull
-    private String phone;
-
     @NotNull
     @Email
     private String email;
-
-    @NotNull
-    private String personalCode;
-
-    @NotNull
-    private String restaurantCode;
 }

@@ -12,11 +12,7 @@ import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
-import ee.kolbaska.kolbaska.security.JwtService;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
-import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
-import ee.kolbaska.kolbaska.service.miscellaneous.PasswordService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.Arrays;
@@ -46,25 +39,13 @@ public class ManagerRestaurantServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private FormatService formatService;
-
-    @Mock
-    private PasswordService passwordService;
-
-    @Mock
     private EmailService emailService;
-
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @Mock
     private RoleRepository roleRepository;
 
     @Mock
     private RestaurantRepository restaurantRepository;
-
-    @Mock
-    private JwtService jwtService;
 
     @Mock
     private UserConfiguration userConfiguration;
@@ -76,8 +57,6 @@ public class ManagerRestaurantServiceTest {
     @Test
     void testCreateWaiter() throws Exception {
         // mock the dependencies of the RestaurantService
-        when(passwordEncoder.encode(anyString())).thenReturn("encoded_password");
-        when(userRepository.findByPersonalCode(anyString())).thenReturn(Optional.empty());
 
         Restaurant restaurant = new Restaurant();
         restaurant.setId(1L);
@@ -85,7 +64,20 @@ public class ManagerRestaurantServiceTest {
         restaurant.setDescription("Zalupa konja");
         restaurant.setRestaurantCode("123456");
 
-        when(restaurantRepository.findByRestaurantCode(anyString())).thenReturn(Optional.of(restaurant));
+        Role roleManager = new Role();
+        roleManager.setRoleName("ROLE_MANAGER");
+
+        User manager = new User();
+        manager.setId(2L);
+        manager.setEmail("test123@test.com");
+        manager.setPersonalCode("12345622345");
+        manager.setFullName("John Doe");
+        manager.setPhone("+370010000");
+        manager.setRole(roleManager);
+        manager.setRestaurant(restaurant);
+
+        when(userConfiguration.getRequestUser()).thenReturn(manager);
+
         User waiter = new User();
         waiter.setId(1L);
         waiter.setEmail("test@test.com");
@@ -93,8 +85,6 @@ public class ManagerRestaurantServiceTest {
         waiter.setFullName("John Doe");
         waiter.setPhone("+370000000");
         when(userRepository.save(any(User.class))).thenReturn(waiter);
-        when(passwordService.generatePassword(anyInt())).thenReturn("password");
-        when(formatService.formatE164(anyString())).thenReturn("+370000000");
         doNothing().when(emailService).sendSimpleMessage(anyString(), anyString(), anyString());
         Role role = new Role();
         role.setRoleName("ROLE_WAITER");
@@ -103,10 +93,6 @@ public class ManagerRestaurantServiceTest {
         // create the request object
         WaiterRequest request = new WaiterRequest();
         request.setEmail("test@test.com");
-        request.setFullName("John Doe");
-        request.setPhone("0000000");
-        request.setPersonalCode("12345612345");
-        request.setRestaurantCode("123456");
 
         // call the createWaiter method
         WaiterResponse response = managerRestaurantService.createWaiter(request);
@@ -120,12 +106,7 @@ public class ManagerRestaurantServiceTest {
         assertEquals(0.0, response.getTurnover(), 0.0);
 
         // verify that the dependencies were called as expected
-        verify(passwordEncoder).encode("password");
-        verify(userRepository).findByPersonalCode("12345612345");
         verify(userRepository).save(any(User.class));
-        verify(passwordService).generatePassword(10);
-        verify(formatService).formatE164("0000000");
-        verify(emailService).sendSimpleMessage("test@test.com", "Password", "Here is your password for accessing qr code page: password");
         verify(roleRepository).findRoleByRoleName("ROLE_WAITER");
     }
 
@@ -139,13 +120,22 @@ public class ManagerRestaurantServiceTest {
         restaurant.setDescription("Zalupa konja");
         restaurant.setRestaurantCode("123456");
 
-        when(restaurantRepository.findByRestaurantCode(anyString())).thenReturn(Optional.of(restaurant));
+        Role roleManager = new Role();
+        roleManager.setRoleName("ROLE_MANAGER");
+
+        User manager = new User();
+        manager.setId(2L);
+        manager.setEmail("test123@test.com");
+        manager.setPersonalCode("12345622345");
+        manager.setFullName("John Doe");
+        manager.setPhone("+370010000");
+        manager.setRole(roleManager);
+        manager.setRestaurant(restaurant);
+
+        when(userConfiguration.getRequestUser()).thenReturn(manager);
 
         WaiterRequest request = new WaiterRequest();
         request.setEmail("test@test.com");
-        request.setFullName("John Doe");
-        request.setPhone("0000000");
-        request.setRestaurantCode("123456");
 
         assertThrows(RoleNotFoundException.class, () -> managerRestaurantService.createWaiter(request));
     }
@@ -153,11 +143,7 @@ public class ManagerRestaurantServiceTest {
     @Test
     void createWaiter_waiterAlreadyExists_waiterIsReassignedToRestaurant() throws Exception {
         WaiterRequest request = WaiterRequest.builder()
-                .fullName("Test Waiter")
                 .email("test@test.com")
-                .personalCode("ABC123")
-                .restaurantCode("RES123")
-                .phone("1234567890")
                 .build();
 
         Role role = Role.builder()
@@ -170,6 +156,20 @@ public class ManagerRestaurantServiceTest {
                 .restaurantCode("RES123")
                 .build();
 
+        Role roleManager = new Role();
+        roleManager.setRoleName("ROLE_MANAGER");
+
+        User manager = new User();
+        manager.setId(2L);
+        manager.setEmail("test123@test.com");
+        manager.setPersonalCode("12345622345");
+        manager.setFullName("John Doe");
+        manager.setPhone("+370010000");
+        manager.setRole(roleManager);
+        manager.setRestaurant(restaurant);
+
+        when(userConfiguration.getRequestUser()).thenReturn(manager);
+
         User waiter = User.builder()
                 .id(1L)
                 .fullName("Test Waiter")
@@ -180,8 +180,7 @@ public class ManagerRestaurantServiceTest {
                 .restaurant(null)
                 .build();
 
-        when(userRepository.findByPersonalCode(anyString())).thenReturn(Optional.of(waiter));
-        when(restaurantRepository.findByRestaurantCode(anyString())).thenReturn(Optional.of(restaurant));
+        when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(waiter));
 
         WaiterResponse response = managerRestaurantService.createWaiter(request);
 

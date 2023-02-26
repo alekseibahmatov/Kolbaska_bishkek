@@ -14,7 +14,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -64,14 +63,13 @@ public class User implements UserDetails {
     @Size(min = 60, max = 60)
     private String password;
 
-    @NotNull
     @Column(
             name = "full_name",
-            columnDefinition = "varchar(60)",
-            nullable = false
+            columnDefinition = "varchar(60)"
     )
     private String fullName;
 
+    @NotNull
     @Column(
             name = "email",
             columnDefinition = "varchar(120)",
