@@ -137,6 +137,7 @@ public class AuthenticationService {
         user.setAddress(AddressMapper.INSTANCE.toAddress(request.getAddress()));
         user.setActivationCode(null);
         user.setPhone(formatService.formatE164(request.getPhone()));
+        user.setRoles(user.getRoles().stream().filter(role -> !role.getRoleName().equals("ROLE_NEWBIE")).toList());
 
         userRepository.save(user);
 
