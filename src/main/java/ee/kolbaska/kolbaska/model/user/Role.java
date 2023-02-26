@@ -3,9 +3,7 @@ package ee.kolbaska.kolbaska.model.user;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Entity
@@ -49,7 +47,6 @@ public class Role {
     @Column(name = "role_name", nullable = false)
     private String roleName;
 
-    @OneToMany(mappedBy = "role", orphanRemoval = true)
-    private List<User> users;
-
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users = new LinkedHashSet<>();
 }

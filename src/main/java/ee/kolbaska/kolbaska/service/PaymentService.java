@@ -104,7 +104,7 @@ public class PaymentService {
                     .email(payment.getToEmail())
                     .deleted(false)
                     .activated(false)
-                    .role(customerRole)
+                    .roles(List.of(customerRole))
                     .build()));
 
             User sender = ifSender.orElseGet(() -> userRepository.save(User.builder()
@@ -112,7 +112,7 @@ public class PaymentService {
                     .fullName(payment.getToFullName())
                     .deleted(false)
                     .activated(false)
-                    .role(customerRole)
+                    .roles(List.of(customerRole))
                     .build()));
 
             Calendar cal = Calendar.getInstance();

@@ -32,7 +32,7 @@ public class JwtService {
     }
 
     public String createToken(
-            Map<String, String> claims,
+            Map<String, Object> claims,
             UserDetails userDetails
     ) {
         return JWT
