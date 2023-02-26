@@ -73,7 +73,7 @@ public class ManagerRestaurantServiceTest {
         manager.setPersonalCode("12345622345");
         manager.setFullName("John Doe");
         manager.setPhone("+370010000");
-        manager.setRole(roleManager);
+        manager.setRoles(List.of(roleManager));
         manager.setRestaurant(restaurant);
 
         when(userConfiguration.getRequestUser()).thenReturn(manager);
@@ -88,13 +88,17 @@ public class ManagerRestaurantServiceTest {
         doNothing().when(emailService).sendSimpleMessage(anyString(), anyString(), anyString());
         Role role = new Role();
         role.setRoleName("ROLE_WAITER");
+        Role roleNewbie = new Role();
+        roleNewbie.setRoleName("ROLE_NEWBIE");
         when(roleRepository.findRoleByRoleName("ROLE_WAITER")).thenReturn(Optional.of(role));
+        when(roleRepository.findRoleByRoleName("ROLE_NEWBIE")).thenReturn(Optional.of(roleNewbie));
 
         // create the request object
         WaiterRequest request = new WaiterRequest();
         request.setEmail("test@test.com");
 
         // call the createWaiter method
+
         WaiterResponse response = managerRestaurantService.createWaiter(request);
 
         // assert that the response is as expected
@@ -129,7 +133,7 @@ public class ManagerRestaurantServiceTest {
         manager.setPersonalCode("12345622345");
         manager.setFullName("John Doe");
         manager.setPhone("+370010000");
-        manager.setRole(roleManager);
+        manager.setRoles(List.of(roleManager));
         manager.setRestaurant(restaurant);
 
         when(userConfiguration.getRequestUser()).thenReturn(manager);
@@ -165,7 +169,7 @@ public class ManagerRestaurantServiceTest {
         manager.setPersonalCode("12345622345");
         manager.setFullName("John Doe");
         manager.setPhone("+370010000");
-        manager.setRole(roleManager);
+        manager.setRoles(List.of(roleManager));
         manager.setRestaurant(restaurant);
 
         when(userConfiguration.getRequestUser()).thenReturn(manager);
@@ -176,7 +180,7 @@ public class ManagerRestaurantServiceTest {
                 .email("test@test.com")
                 .phone("1234567890")
                 .password("password")
-                .role(role)
+                .roles(List.of(role))
                 .restaurant(null)
                 .build();
 
@@ -208,7 +212,7 @@ public class ManagerRestaurantServiceTest {
                 .fullName("Test Waiter")
                 .email("test@test.com")
                 .password("password")
-                .role(role)
+                .roles(List.of(role))
                 .restaurant(restaurant)
                 .build();
 

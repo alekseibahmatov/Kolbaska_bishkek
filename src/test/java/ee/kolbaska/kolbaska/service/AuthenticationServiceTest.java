@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.management.relation.RoleNotFoundException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -91,7 +92,7 @@ class AuthenticationServiceTest {
     @Test
     void testAuthenticate() {
         User user = new User();
-        user.setRole(roleRepository.findRoleByRoleName("ROLE_CUSTOMER").get());
+        user.setRoles(List.of(roleRepository.findRoleByRoleName("ROLE_CUSTOMER").get()));
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(jwtService.createToken(anyMap(), any(User.class))).thenReturn("token");
 
@@ -163,8 +164,16 @@ class AuthenticationServiceTest {
         AddressRequest address = new AddressRequest("123 Main St", "Apt 1", "New York", "NY", "10001", "USA");
         String phone = "+1 (123) 456-7890";
 
+        Role roleWaiter = Role.builder()
+                .roleName("ROLE_WAITER")
+                .build();
+        Role roleNewbie = Role.builder()
+                .roleName("ROLE_NEWBIE")
+                .build();
+
         User user = new User();
         user.setActivationCode(activationCode);
+        user.setRoles(List.of(roleWaiter, roleNewbie));
 
         when(userRepository.findByActivationCode(activationCode)).thenReturn(Optional.of(user));
 

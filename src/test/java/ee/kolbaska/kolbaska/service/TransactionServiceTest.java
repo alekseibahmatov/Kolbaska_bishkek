@@ -84,12 +84,12 @@ class TransactionServiceTest {
         workerNormal.setId(1L);
         workerNormal.setFullName("Vasja Pupkin");
         workerNormal.setRestaurant(restaurant);
-        workerNormal.setRole(roleWaiter);
+        workerNormal.setRoles(List.of(roleWaiter));
 
         workerWithoutRestaurant = new User();
         workerWithoutRestaurant.setId(2L);
         workerWithoutRestaurant.setFullName("Irina");
-        workerWithoutRestaurant.setRole(roleWaiter);
+        workerWithoutRestaurant.setRoles(List.of(roleWaiter));
 
         restaurant.setWaiters(List.of(workerNormal));
 
@@ -124,7 +124,7 @@ class TransactionServiceTest {
         customer = new User();
         customer.setId(3L);
         customer.setFullName("Galina");
-        customer.setRole(roleCustomer);
+        customer.setRoles(List.of(roleCustomer));
         customer.setReceivedCertificates(List.of(certificateNormal, certificateDisabled, certificateInsufficientFunds, certificateOutDated));
 
         certificateNormal.setHolder(customer);
