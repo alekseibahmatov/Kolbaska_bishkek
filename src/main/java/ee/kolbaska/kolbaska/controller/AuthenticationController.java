@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.controller;
 
 import ee.kolbaska.kolbaska.request.*;
+import ee.kolbaska.kolbaska.response.ActivationCodeValidationResponse;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
 import ee.kolbaska.kolbaska.response.PersonalDataResponse;
 import ee.kolbaska.kolbaska.response.RecoveryResponse;
@@ -8,10 +9,7 @@ import ee.kolbaska.kolbaska.service.AuthenticationService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${api.basepath}/auth")
@@ -53,5 +51,12 @@ public class AuthenticationController {
             @NotNull @RequestBody PersonalDataRequest request
     ) {
         return ResponseEntity.ok(service.savePersonalData(request));
+    }
+
+    @GetMapping("/activationCode/{id}")
+    public ResponseEntity<ActivationCodeValidationResponse> validateActivationCode(
+            @NotNull @PathVariable String id
+    ) {
+        return ResponseEntity.ok(service.validateActivationCode(id));
     }
 }
