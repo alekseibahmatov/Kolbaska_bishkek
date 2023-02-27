@@ -1,0 +1,859 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1677522016607-1
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_address
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: street
+                  type: varchar(100)
+              - column:
+                  name: apartment_number
+                  type: varchar(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: city
+                  type: varchar(50)
+              - column:
+                  name: state
+                  type: varchar(20)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: zip_code
+                  type: varchar(10)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: country
+                  type: varchar(50)
+            tableName: address
+  - changeSet:
+      id: 1677522016607-2
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_category
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: varchar(32)
+            tableName: category
+  - changeSet:
+      id: 1677522016607-3
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: category_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurants_id
+                  type: BIGINT
+            tableName: category_restaurants
+  - changeSet:
+      id: 1677522016607-4
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_certificate
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: text
+              - column:
+                  constraints:
+                    nullable: false
+                  name: value
+                  type: int
+              - column:
+                  name: remaining_value
+                  type: double
+              - column:
+                  constraints:
+                    nullable: false
+                  name: valid_until
+                  type: date
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_holder
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: active
+                  type: bool
+              - column:
+                  name: activated_at
+                  type: date
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  name: user_sender
+                  type: BIGINT
+            tableName: certificate
+  - changeSet:
+      id: 1677522016607-5
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_file
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: file_type
+                  type: varchar(20)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: file_name
+                  type: varchar(40)
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_id
+                  type: BIGINT
+            tableName: file
+  - changeSet:
+      id: 1677522016607-6
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_login
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: ip
+                  type: varchar(15)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_agent
+                  type: text
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+            tableName: login
+  - changeSet:
+      id: 1677522016607-7
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_payment
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: from_email
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: to_email
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: text
+              - column:
+                  constraints:
+                    nullable: false
+                  name: to_fullname
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: from_fullname
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: phone
+                  type: varchar(15)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: value
+                  type: int
+              - column:
+                  constraints:
+                    nullable: false
+                  name: payment_status
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+            tableName: payment
+  - changeSet:
+      id: 1677522016607-8
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_restaurant
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: varchar(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: text
+              - column:
+                  constraints:
+                    nullable: false
+                  name: working_hours
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: average_bill
+                  type: int
+              - column:
+                  constraints:
+                    nullable: false
+                  name: address_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: phone
+                  type: varchar(15)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: varchar(120)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_code
+                  type: varchar(6)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: manager_id
+                  type: BIGINT
+              - column:
+                  name: photo_id
+                  type: BIGINT
+              - column:
+                  name: contract_id
+                  type: BIGINT
+            tableName: restaurant
+  - changeSet:
+      id: 1677522016607-9
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: categories_id
+                  type: BIGINT
+            tableName: restaurant_categories
+  - changeSet:
+      id: 1677522016607-10
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_role
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role_name
+                  type: VARCHAR(255)
+            tableName: role
+  - changeSet:
+      id: 1677522016607-11
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_transaction
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: value
+                  type: double(4,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: waiter_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: restaurant_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: certificate_id
+                  type: VARCHAR(255)
+            tableName: transaction
+  - changeSet:
+      id: 1677522016607-12
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  constraints:
+                    nullable: false
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
+                  name: deleted_at
+                  type: DATETIME
+              - column:
+                  name: password
+                  type: varchar(60)
+              - column:
+                  name: full_name
+                  type: varchar(60)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: varchar(120)
+              - column:
+                  name: phone
+                  type: varchar(15)
+              - column:
+                  name: address_id
+                  type: BIGINT
+              - column:
+                  name: personal_code
+                  type: varchar(11)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: activated
+                  type: bool
+              - column:
+                  name: activation_code
+                  type: varchar(36)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: deleted
+                  type: bool
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+            tableName: user
+  - changeSet:
+      id: 1677522016607-13
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: roles_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+            tableName: user_roles
+  - changeSet:
+      id: 1677522016607-14
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: transactions_id
+                  type: VARCHAR(255)
+            tableName: user_transactions
+  - changeSet:
+      id: 1677522016607-15
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: transactions_id
+            constraintName: uc_user_transactions_transactions
+            tableName: user_transactions
+  - changeSet:
+      id: 1677522016607-16
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_holder
+            baseTableName: certificate
+            constraintName: FK_CERTIFICATE_ON_USER_HOLDER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1677522016607-17
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_sender
+            baseTableName: certificate
+            constraintName: FK_CERTIFICATE_ON_USER_SENDER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1677522016607-18
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: file
+            constraintName: FK_FILE_ON_RESTAURANT
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1677522016607-19
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: login
+            constraintName: FK_LOGIN_ON_USER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1677522016607-20
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: address_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_ADDRESS
+            referencedColumnNames: id
+            referencedTableName: address
+  - changeSet:
+      id: 1677522016607-21
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: contract_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_CONTRACT
+            referencedColumnNames: id
+            referencedTableName: file
+  - changeSet:
+      id: 1677522016607-22
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: manager_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_MANAGER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1677522016607-23
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: photo_id
+            baseTableName: restaurant
+            constraintName: FK_RESTAURANT_ON_PHOTO
+            referencedColumnNames: id
+            referencedTableName: file
+  - changeSet:
+      id: 1677522016607-24
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: certificate_id
+            baseTableName: transaction
+            constraintName: FK_TRANSACTION_ON_CERTIFICATE
+            referencedColumnNames: id
+            referencedTableName: certificate
+  - changeSet:
+      id: 1677522016607-25
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: transaction
+            constraintName: FK_TRANSACTION_ON_RESTAURANT
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1677522016607-26
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: waiter_id
+            baseTableName: transaction
+            constraintName: FK_TRANSACTION_ON_WAITER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1677522016607-27
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: address_id
+            baseTableName: user
+            constraintName: FK_USER_ON_ADDRESS
+            referencedColumnNames: id
+            referencedTableName: address
+  - changeSet:
+      id: 1677522016607-28
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: user
+            constraintName: FK_USER_ON_RESTAURANT
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1677522016607-29
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: category_id
+            baseTableName: category_restaurants
+            constraintName: fk_catres_on_category
+            referencedColumnNames: id
+            referencedTableName: category
+  - changeSet:
+      id: 1677522016607-30
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurants_id
+            baseTableName: category_restaurants
+            constraintName: fk_catres_on_restaurant
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1677522016607-31
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: categories_id
+            baseTableName: restaurant_categories
+            constraintName: fk_rescat_on_category
+            referencedColumnNames: id
+            referencedTableName: category
+  - changeSet:
+      id: 1677522016607-32
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: restaurant_categories
+            constraintName: fk_rescat_on_restaurant
+            referencedColumnNames: id
+            referencedTableName: restaurant
+  - changeSet:
+      id: 1677522016607-33
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: roles_id
+            baseTableName: user_roles
+            constraintName: fk_userol_on_role
+            referencedColumnNames: id
+            referencedTableName: role
+  - changeSet:
+      id: 1677522016607-34
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_roles
+            constraintName: fk_userol_on_user
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1677522016607-35
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: transactions_id
+            baseTableName: user_transactions
+            constraintName: fk_usetra_on_transaction
+            referencedColumnNames: id
+            referencedTableName: transaction
+  - changeSet:
+      id: 1677522016607-36
+      author: Aleksei (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_transactions
+            constraintName: fk_usetra_on_user
+            referencedColumnNames: id
+            referencedTableName: user
+
