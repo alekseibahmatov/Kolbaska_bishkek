@@ -2,8 +2,10 @@ package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
 import ee.kolbaska.kolbaska.mapper.AddressMapper;
+import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
+import ee.kolbaska.kolbaska.repository.AddressRepository;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.*;
@@ -42,6 +44,8 @@ public class AuthenticationService {
     private final EmailService emailService;
 
     private final FormatService formatService;
+
+    private final AddressRepository addressRepository;
 
 
     public AuthenticationResponse register(RegisterRequest request) throws Exception {
@@ -131,11 +135,14 @@ public class AuthenticationService {
 
         if (ifUser.isEmpty()) throw new UsernameNotFoundException("User not found!");
 
+        Address newAddress = AddressMapper.INSTANCE.toAddress(request.getAddress());
+        newAddress = addressRepository.save(newAddress);
+
         User user = ifUser.get();
         user.setPersonalCode(request.getPersonalCode());
         user.setFullName(request.getFullName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setAddress(AddressMapper.INSTANCE.toAddress(request.getAddress()));
+        user.setAddress(newAddress);
         user.setActivationCode(null);
         user.setPhone(formatService.formatE164(request.getPhone()));
         user.setRoles(user.getRoles().stream().filter(role -> !role.getRoleName().equals("ROLE_NEWBIE")).toList());
