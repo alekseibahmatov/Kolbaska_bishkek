@@ -68,7 +68,7 @@ public class Address {
 
     @Column(
             name = "state",
-            columnDefinition = "varchar(2)"
+            columnDefinition = "varchar(20)"
     )
     private String state;
 
