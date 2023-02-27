@@ -7,6 +7,7 @@ import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.*;
+import ee.kolbaska.kolbaska.response.ActivationCodeValidationResponse;
 import ee.kolbaska.kolbaska.response.AuthenticationResponse;
 import ee.kolbaska.kolbaska.response.PersonalDataResponse;
 import ee.kolbaska.kolbaska.response.RecoveryResponse;
@@ -143,6 +144,13 @@ public class AuthenticationService {
 
         return PersonalDataResponse.builder()
                 .message("Personal data was successfully saved!")
+                .build();
+    }
+
+    public ActivationCodeValidationResponse validateActivationCode(String id) {
+        userRepository.findByActivationCode(id).orElseThrow(() -> new UsernameNotFoundException("Activation code not valid"));
+        return ActivationCodeValidationResponse.builder()
+                .message("Activation code valid")
                 .build();
     }
 }
