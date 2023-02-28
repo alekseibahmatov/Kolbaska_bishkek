@@ -145,7 +145,12 @@ public class AuthenticationService {
         user.setAddress(newAddress);
         user.setActivationCode(null);
         user.setPhone(formatService.formatE164(request.getPhone()));
-        user.setRoles(user.getRoles().stream().filter(role -> !role.getRoleName().equals("ROLE_NEWBIE")).toList());
+        user.setActivated(true);
+        List<Role> newRoles = new ArrayList<>(user.getRoles());
+        newRoles.removeIf(role -> role.getRoleName().equals("ROLE_NEWBIE"));
+        user.setRoles(newRoles);
+
+        //user.setRoles(user.getRoles().stream().filter(role -> !role.getRoleName().equals("ROLE_NEWBIE")).toList());
 
         userRepository.save(user);
 
