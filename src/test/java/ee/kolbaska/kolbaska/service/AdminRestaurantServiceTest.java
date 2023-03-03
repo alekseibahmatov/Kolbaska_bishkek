@@ -79,7 +79,7 @@ class AdminRestaurantServiceTest {
         request.setCategories(Arrays.asList("Test Category 1", "Test Category 2"));
         request.setManagerEmail("manager@test.com");
         request.setPhoto(new MockMultipartFile("photo.jpg", "photo.jpg", "image/jpeg", "photo".getBytes()));
-        request.setContact(new MockMultipartFile("contact.pdf", "contact.pdf", "application/pdf", "contact".getBytes()));
+        request.setContract(new MockMultipartFile("contact.pdf", "contact.pdf", "application/pdf", "contact".getBytes()));
 
         User user = new User();
         user.setId(1L);

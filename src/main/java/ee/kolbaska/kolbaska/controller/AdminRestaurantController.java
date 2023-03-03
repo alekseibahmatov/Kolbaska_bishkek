@@ -18,9 +18,9 @@ public class AdminRestaurantController {
 
     private final AdminRestaurantService service;
 
-    @PostMapping("/restaurant")
+    @PostMapping(value = "/restaurant", consumes = "multipart/form-data")
     public ResponseEntity<RestaurantTableResponse> createRestaurant(
-            @NotNull @RequestBody RestaurantRequest request
+            @NotNull @ModelAttribute RestaurantRequest request
     ) throws Exception {
         return ResponseEntity.ok(service.createRestaurant(request));
     }

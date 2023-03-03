@@ -96,7 +96,7 @@ public class Restaurant {
             columnDefinition = "varchar(15)",
             nullable = false
     )
-    @Size(min = 15, max = 15)
+    @Size(min = 12, max = 15)
     private String phone;
 
     @NotNull

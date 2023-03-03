@@ -1,6 +1,5 @@
 package ee.kolbaska.kolbaska.request;
 
-import ee.kolbaska.kolbaska.model.file.File;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -65,5 +64,5 @@ public class RestaurantRequest {
     private MultipartFile photo;
 
     @NotNull
-    private MultipartFile contact;
+    private MultipartFile contract;
 }

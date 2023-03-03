@@ -150,8 +150,6 @@ public class AuthenticationService {
         newRoles.removeIf(role -> role.getRoleName().equals("ROLE_NEWBIE"));
         user.setRoles(newRoles);
 
-        //user.setRoles(user.getRoles().stream().filter(role -> !role.getRoleName().equals("ROLE_NEWBIE")).toList());
-
         userRepository.save(user);
 
         return PersonalDataResponse.builder()

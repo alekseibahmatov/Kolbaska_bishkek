@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
-      id: 1677522016607-1
-      author: Aleksei (generated)
+      id: 1677840248737-1
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -57,8 +57,8 @@ databaseChangeLog:
                   type: varchar(50)
             tableName: address
   - changeSet:
-      id: 1677522016607-2
-      author: Aleksei (generated)
+      id: 1677840248737-2
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -93,8 +93,8 @@ databaseChangeLog:
                   type: varchar(32)
             tableName: category
   - changeSet:
-      id: 1677522016607-3
-      author: Aleksei (generated)
+      id: 1677840248737-3
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -111,8 +111,8 @@ databaseChangeLog:
                   type: BIGINT
             tableName: category_restaurants
   - changeSet:
-      id: 1677522016607-4
-      author: Aleksei (generated)
+      id: 1677840248737-4
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -175,8 +175,8 @@ databaseChangeLog:
                   type: BIGINT
             tableName: certificate
   - changeSet:
-      id: 1677522016607-5
-      author: Aleksei (generated)
+      id: 1677840248737-5
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -215,14 +215,12 @@ databaseChangeLog:
                   name: deleted_at
                   type: DATETIME
               - column:
-                  constraints:
-                    nullable: false
                   name: restaurant_id
                   type: BIGINT
             tableName: file
   - changeSet:
-      id: 1677522016607-6
-      author: Aleksei (generated)
+      id: 1677840248737-6
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -258,8 +256,8 @@ databaseChangeLog:
                   type: TIMESTAMP
             tableName: login
   - changeSet:
-      id: 1677522016607-7
-      author: Aleksei (generated)
+      id: 1677840248737-7
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -328,8 +326,8 @@ databaseChangeLog:
                   type: DATETIME
             tableName: payment
   - changeSet:
-      id: 1677522016607-8
-      author: Aleksei (generated)
+      id: 1677840248737-8
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -410,8 +408,8 @@ databaseChangeLog:
                   type: BIGINT
             tableName: restaurant
   - changeSet:
-      id: 1677522016607-9
-      author: Aleksei (generated)
+      id: 1677840248737-9
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -428,8 +426,8 @@ databaseChangeLog:
                   type: BIGINT
             tableName: restaurant_categories
   - changeSet:
-      id: 1677522016607-10
-      author: Aleksei (generated)
+      id: 1677840248737-10
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -464,8 +462,8 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: role
   - changeSet:
-      id: 1677522016607-11
-      author: Aleksei (generated)
+      id: 1677840248737-11
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -514,8 +512,8 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: transaction
   - changeSet:
-      id: 1677522016607-12
-      author: Aleksei (generated)
+      id: 1677840248737-12
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -581,8 +579,8 @@ databaseChangeLog:
                   type: BIGINT
             tableName: user
   - changeSet:
-      id: 1677522016607-13
-      author: Aleksei (generated)
+      id: 1677840248737-13
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -599,8 +597,8 @@ databaseChangeLog:
                   type: BIGINT
             tableName: user_roles
   - changeSet:
-      id: 1677522016607-14
-      author: Aleksei (generated)
+      id: 1677840248737-14
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
@@ -617,8 +615,8 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: user_transactions
   - changeSet:
-      id: 1677522016607-15
-      author: Aleksei (generated)
+      id: 1677840248737-15
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addUniqueConstraint:
@@ -626,8 +624,8 @@ databaseChangeLog:
             constraintName: uc_user_transactions_transactions
             tableName: user_transactions
   - changeSet:
-      id: 1677522016607-16
-      author: Aleksei (generated)
+      id: 1677840248737-16
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -637,8 +635,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1677522016607-17
-      author: Aleksei (generated)
+      id: 1677840248737-17
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -648,8 +646,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1677522016607-18
-      author: Aleksei (generated)
+      id: 1677840248737-18
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -659,8 +657,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1677522016607-19
-      author: Aleksei (generated)
+      id: 1677840248737-19
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -670,8 +668,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1677522016607-20
-      author: Aleksei (generated)
+      id: 1677840248737-20
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -681,8 +679,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1677522016607-21
-      author: Aleksei (generated)
+      id: 1677840248737-21
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -692,8 +690,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: file
   - changeSet:
-      id: 1677522016607-22
-      author: Aleksei (generated)
+      id: 1677840248737-22
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -703,8 +701,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1677522016607-23
-      author: Aleksei (generated)
+      id: 1677840248737-23
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -714,8 +712,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: file
   - changeSet:
-      id: 1677522016607-24
-      author: Aleksei (generated)
+      id: 1677840248737-24
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -725,8 +723,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: certificate
   - changeSet:
-      id: 1677522016607-25
-      author: Aleksei (generated)
+      id: 1677840248737-25
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -736,8 +734,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1677522016607-26
-      author: Aleksei (generated)
+      id: 1677840248737-26
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -747,8 +745,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1677522016607-27
-      author: Aleksei (generated)
+      id: 1677840248737-27
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -758,8 +756,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1677522016607-28
-      author: Aleksei (generated)
+      id: 1677840248737-28
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -769,8 +767,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1677522016607-29
-      author: Aleksei (generated)
+      id: 1677840248737-29
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -780,8 +778,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1677522016607-30
-      author: Aleksei (generated)
+      id: 1677840248737-30
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -791,8 +789,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1677522016607-31
-      author: Aleksei (generated)
+      id: 1677840248737-31
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -802,8 +800,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1677522016607-32
-      author: Aleksei (generated)
+      id: 1677840248737-32
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -813,8 +811,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1677522016607-33
-      author: Aleksei (generated)
+      id: 1677840248737-33
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -824,8 +822,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: role
   - changeSet:
-      id: 1677522016607-34
-      author: Aleksei (generated)
+      id: 1677840248737-34
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -835,8 +833,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1677522016607-35
-      author: Aleksei (generated)
+      id: 1677840248737-35
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
@@ -846,8 +844,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: transaction
   - changeSet:
-      id: 1677522016607-36
-      author: Aleksei (generated)
+      id: 1677840248737-36
+      author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - addForeignKeyConstraint:
