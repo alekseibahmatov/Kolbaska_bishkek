@@ -2,7 +2,7 @@ package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.config.UserConfiguration;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
-import ee.kolbaska.kolbaska.exception.UserStillOnDutyExceptions;
+import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
@@ -69,7 +69,7 @@ public class ManagerRestaurantService {
         } else {
             waiter = userExists.get();
 
-            if (waiter.getRestaurant() != null) throw new UserStillOnDutyExceptions("User is currently connected to restaurant. Please ask him to disconnect from previous restaurant");
+            if (waiter.getRestaurant() != null) throw new UserStillOnDutyException("User is currently connected to restaurant. Please ask him to disconnect from previous restaurant");
 
             waiter.setRestaurant(restaurant);
         }
