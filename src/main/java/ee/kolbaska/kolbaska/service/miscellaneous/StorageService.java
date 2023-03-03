@@ -21,9 +21,10 @@ public class StorageService {
     private final FileRepository repository;
 
     @Value("${file-storage.basepath}")
-    private final Path basePath = Paths.get(FileSystems.getDefault().getPath(".").toString()).toAbsolutePath().normalize();
+    private String basePath;
 
     public File uploadFile(MultipartFile file, FileType type) throws Exception {
+
         String directory = "";
 
         if (type == FileType.PHOTO) {
@@ -44,7 +45,10 @@ public class StorageService {
 
         newFile = repository.save(newFile);
 
-        Path fullPath = basePath.resolve("documents/%s/%s".formatted(directory, fileName));
+        Path fullPath;
+
+        if(basePath.equals("/")) fullPath = Paths.get(FileSystems.getDefault().getPath(".").toString()).toAbsolutePath().normalize().resolve("documents/%s/%s".formatted(directory, fileName));
+        else fullPath = Paths.get("%s/document/%s/%s".formatted(basePath, directory, fileName)).toAbsolutePath().normalize();
 
         Files.copy(file.getInputStream(), fullPath);
 
