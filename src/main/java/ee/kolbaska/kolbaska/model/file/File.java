@@ -61,8 +61,8 @@ public class File {
     )
     private Date deletedAt;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
 }

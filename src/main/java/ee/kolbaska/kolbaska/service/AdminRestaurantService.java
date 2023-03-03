@@ -7,16 +7,15 @@ import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
-import ee.kolbaska.kolbaska.repository.AddressRepository;
-import ee.kolbaska.kolbaska.repository.CategoryRepository;
-import ee.kolbaska.kolbaska.repository.RestaurantRepository;
-import ee.kolbaska.kolbaska.repository.UserRepository;
+import ee.kolbaska.kolbaska.repository.*;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
+import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +34,10 @@ public class AdminRestaurantService {
 
     private final AddressRepository addressRepository;
 
+    private final EmailService emailService;
+    private final RoleRepository roleRepository;
+
+    @Transactional
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
 
         boolean restaurantExists = restaurantRepository.findByEmail(request.getRestaurantEmail()).isPresent();
@@ -61,10 +64,12 @@ public class AdminRestaurantService {
                 .restaurantCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase())
                 .categories(setupCategories(new HashSet<>(request.getCategories())))
                 .photo(storageService.uploadFile(request.getPhoto(), FileType.PHOTO))
-                .contract(storageService.uploadFile(request.getContact(), FileType.CONTRACT))
+                .contract(storageService.uploadFile(request.getContract(), FileType.CONTRACT))
                 .manager(getUser(request.getManagerEmail()))
                 .address(address)
                 .build();
+
+        restaurantRepository.save(newRestaurant);
 
         return new RestaurantTableResponse(
                 newRestaurant.getRestaurantCode(),
@@ -124,11 +129,17 @@ public class AdminRestaurantService {
 
         if (user.isPresent()) return user.get();
 
+        String activationCode = UUID.randomUUID().toString();
+
         User newUser = User.builder()
                 .email(email)
-                .activationCode(UUID.randomUUID().toString())
+                .activationCode(activationCode)
+                .roles(roleRepository.findByRoleNameIn(List.of("ROLE_MANAGER", "ROLE_NEWBIE")))
                 .activated(true)
+                .deleted(false)
                 .build();
+
+        emailService.sendSimpleMessage(email, "Activate your account", String.format("Here is your uuid to activate you account: %s", activationCode));
 
         return userRepository.save(newUser);
     }

@@ -1,6 +1,5 @@
 package ee.kolbaska.kolbaska.service.miscellaneous;
 
-import ee.kolbaska.kolbaska.exception.FileStorageException;
 import ee.kolbaska.kolbaska.model.file.File;
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.repository.FileRepository;
@@ -9,9 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,19 +21,21 @@ public class StorageService {
     private final FileRepository repository;
 
     @Value("${file-storage.basepath}")
-    private String basePath;
+    private final Path basePath = Paths.get(FileSystems.getDefault().getPath(".").toString()).toAbsolutePath().normalize();
 
     public File uploadFile(MultipartFile file, FileType type) throws Exception {
         String directory = "";
 
         if (type == FileType.PHOTO) {
-            directory = "photos\\";
+            directory = "/photos/";
         }
         else if(type == FileType.CONTRACT) {
-            directory = "contracts\\";
+            directory = "/contracts/";
         }
 
-        String fileName = UUID.randomUUID() + Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+        String[] splittedFileName = Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
+
+        String fileName = "%s.%s".formatted(UUID.randomUUID(), splittedFileName[splittedFileName.length-1]);
 
         File newFile = File.builder()
                 .fileType(type)
@@ -42,9 +44,9 @@ public class StorageService {
 
         newFile = repository.save(newFile);
 
-        String fullPath = basePath + directory + fileName;
+        Path fullPath = basePath.resolve("documents/%s/%s".formatted(directory, fileName));
 
-        file.transferTo(new java.io.File(fullPath));
+        Files.copy(file.getInputStream(), fullPath);
 
         return newFile;
     }

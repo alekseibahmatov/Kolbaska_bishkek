@@ -21,8 +21,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -80,9 +78,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .user(loginUser)
                         .build();
 
-                loginUser.getLogins().add(newLogin);
+                if (loginUser.getLogins() == null) loginUser.setLogins(List.of(newLogin));
+                else {
+                    List<Login> logins = new ArrayList<>(loginUser.getLogins());
+                    logins.add(newLogin);
 
-                loginUser.setLogins(loginUser.getLogins());
+                    loginUser.setLogins(logins);
+                }
 
                 loginRepository.save(newLogin);
                 userRepository.save(loginUser);
