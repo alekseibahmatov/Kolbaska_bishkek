@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.service;
 
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
+import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.FileType;
@@ -124,10 +125,14 @@ public class AdminRestaurantService {
                 .collect(Collectors.toList());
     }
 
-    private User getUser(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
+    private User getUser(String email) throws UserStillOnDutyException {
+        Optional<User> ifUser = userRepository.findByEmail(email);
 
-        if (user.isPresent()) return user.get();
+        if (ifUser.isPresent()) {
+            User user = ifUser.get();
+            if(user.getRestaurant() != null) throw new UserStillOnDutyException("This user is already connected to restaurant, please ask him/her to leave or check whether email is correct");
+            return user;
+        }
 
         String activationCode = UUID.randomUUID().toString();
 
