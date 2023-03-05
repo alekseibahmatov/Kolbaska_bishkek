@@ -15,6 +15,7 @@ import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,8 +115,8 @@ public class AdminRestaurantService {
                 .country(restaurant.getAddress().getCountry())
                 .province(restaurant.getAddress().getState())
                 .postalCode(restaurant.getAddress().getZipCode())
-                .photo(storageService.getFile(restaurant.getPhoto().getFileName(), FileType.PHOTO))
-                .contact(storageService.getFile(restaurant.getContract().getFileName(), FileType.CONTRACT))
+                .photo(restaurant.getPhoto().getFileName())
+                .contact(restaurant.getContract().getFileName())
                 .build();
     }
 
@@ -173,5 +174,10 @@ public class AdminRestaurantService {
             categoryList.add(category.get());
         }
         return categoryList;
+    }
+
+    public Resource downloadFile(String fileName, String type) throws Exception {
+
+        return storageService.getFile(fileName, type.equals("photo") ? FileType.PHOTO : FileType.CONTRACT);
     }
 }
