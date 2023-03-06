@@ -6,17 +6,22 @@ import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
 import ee.kolbaska.kolbaska.mapper.AddressMapper;
 import ee.kolbaska.kolbaska.mapper.LoginMapper;
 import ee.kolbaska.kolbaska.mapper.TransactionMapper;
+import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
+import ee.kolbaska.kolbaska.repository.AddressRepository;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
+import ee.kolbaska.kolbaska.request.ManagerCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.*;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
+import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,11 +42,17 @@ public class ManagerRestaurantService {
 
     private final UserConfiguration userConfiguration;
 
+    private final PasswordEncoder passwordEncoder;
+
+    private final FormatService formatService;
+
     private final LoginMapper loginMapper;
 
     private final TransactionMapper transactionMapper;
 
     private final AddressMapper addressMapper;
+
+    private final AddressRepository addressRepository;
 
     @Transactional
     public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
@@ -180,5 +191,41 @@ public class ManagerRestaurantService {
                 .logins(loginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()));
 
         return response.build();
+    }
+
+    public CustomerUpdateResponse updateWaiter(ManagerCustomerUpdateRequest request) {
+        User manager = userConfiguration.getRequestUser();
+
+        Optional<User> ifUser = userRepository.findById(request.getId());
+
+        if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
+
+        Restaurant restaurant = manager.getRestaurant();
+
+        User user = ifUser.get();
+
+        if (!restaurant.getWaiters().contains(user)) throw new UsernameNotFoundException("Waiter that you request does nopt exists");
+
+        user.setFullName(request.getFullName());
+        if (request.getNewPassword() != null) user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setPhone(formatService.formatE164(request.getPhone()));
+        user.setPersonalCode(request.getPersonalCode());
+
+        Address userAddress = user.getAddress();
+        userAddress.setCity(request.getAddress().getCity());
+        userAddress.setCountry(request.getAddress().getCountry());
+        userAddress.setState(request.getAddress().getState());
+        userAddress.setApartmentNumber(request.getAddress().getApartmentNumber());
+        userAddress.setZipCode(request.getAddress().getZipCode());
+
+        addressRepository.save(userAddress);
+
+        user.setEmail(request.getEmail());
+
+        userRepository.save(user);
+
+        return CustomerUpdateResponse.builder()
+                .message("User was successfully updated!")
+                .build();
     }
 }

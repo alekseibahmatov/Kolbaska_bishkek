@@ -1,7 +1,9 @@
 package ee.kolbaska.kolbaska.controller;
 
+import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
+import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 
 @RestController
@@ -51,6 +54,13 @@ public class AdminRestaurantController {
             @NotNull @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.getWaiter(id));
+    }
+
+    @PutMapping("/restaurant/waiter")
+    public ResponseEntity<CustomerUpdateResponse> updateWaiter(
+            @NotNull @RequestBody AdminCustomerUpdateRequest request
+    ) throws RoleNotFoundException {
+        return ResponseEntity.ok(service.updateWaiter(request));
     }
 
     @GetMapping("/download/{fileName}/{type}")
