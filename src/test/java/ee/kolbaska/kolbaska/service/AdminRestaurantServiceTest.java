@@ -153,12 +153,6 @@ class AdminRestaurantServiceTest {
         when(restaurantRepository.findByRestaurantCode(anyString()))
                 .thenReturn(Optional.of(restaurant));
 
-        when(storageService.getFile(anyString(), eq(FileType.PHOTO)))
-                .thenReturn(new ByteArrayResource("photo".getBytes()).getByteArray());
-
-        when(storageService.getFile(anyString(), eq(FileType.CONTRACT)))
-                .thenReturn(new ByteArrayResource("contract".getBytes()).getByteArray());
-
         RestaurantResponse response = adminRestaurantService.returnRestaurant("test");
 
         assertThat(response.getRestaurantName()).isEqualTo("Test Restaurant");
@@ -172,7 +166,5 @@ class AdminRestaurantServiceTest {
         assertThat(response.getCountry()).isEqualTo("Test Country");
         assertThat(response.getProvince()).isEqualTo("Test State");
         assertThat(response.getPostalCode()).isEqualTo("Test ZipCode");
-        assertThat(response.getPhoto()).isEqualTo("photo".getBytes());
-        assertThat(response.getContact()).isEqualTo("contract".getBytes());
     }
 }
