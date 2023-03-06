@@ -1,8 +1,10 @@
 package ee.kolbaska.kolbaska.controller;
 
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
+import ee.kolbaska.kolbaska.request.ManagerCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
 import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
+import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
 import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.ManagerRestaurantService;
@@ -37,6 +39,13 @@ public class ManagerRestaurantController {
             @NotNull @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.getWaiter(id));
+    }
+
+    @PutMapping("/restaurant/waiter")
+    public ResponseEntity<CustomerUpdateResponse> updateWaiter(
+            @NotNull @RequestBody ManagerCustomerUpdateRequest request
+            ) {
+        return ResponseEntity.ok(service.updateWaiter(request));
     }
 
     @DeleteMapping("/restaurant/waiter/{id}")

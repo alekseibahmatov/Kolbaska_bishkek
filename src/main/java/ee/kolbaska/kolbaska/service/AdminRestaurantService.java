@@ -11,20 +11,26 @@ import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
+import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.*;
+import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
+import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
+import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.RoleNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,6 +59,10 @@ public class AdminRestaurantService {
     private final TransactionMapper transactionMapper;
 
     private final AddressMapper addressMapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final FormatService formatService;
 
     @Transactional
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
@@ -217,5 +227,54 @@ public class AdminRestaurantService {
                 .roleNames(userConfiguration.getRoleNames(user));
 
         return response.build();
+    }
+
+    public CustomerUpdateResponse updateWaiter(AdminCustomerUpdateRequest request) throws RoleNotFoundException {
+        Optional<User> ifUser = userRepository.findById(request.getId());
+
+        if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
+
+        User user = ifUser.get();
+
+        user.setFullName(request.getFullName());
+
+        if (request.getNewPassword() != null) user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        user.setPhone(formatService.formatE164(request.getPhone()));
+        user.setPersonalCode(request.getPersonalCode());
+
+        Address userAddress = user.getAddress();
+        userAddress.setCity(request.getAddress().getCity());
+        userAddress.setCountry(request.getAddress().getCountry());
+        userAddress.setState(request.getAddress().getState());
+        userAddress.setApartmentNumber(request.getAddress().getApartmentNumber());
+        userAddress.setZipCode(request.getAddress().getZipCode());
+
+        addressRepository.save(userAddress);
+
+        user.setEmail(request.getEmail());
+        user.setActivated(request.getActivated());
+        user.setDeleted(request.getDeleted());
+        user.setActivationCode(request.getActivationCode());
+
+        List<Role> userRoles = new ArrayList<>();
+
+        for (String roleName : request.getRoleNames()) {
+            Optional<Role> role = roleRepository.findRoleByRoleName(roleName);
+
+            if (role.isEmpty()) throw new RoleNotFoundException("Role that you trying to assign wasn't not found");
+
+            userRoles.add(role.get());
+        }
+
+        user.setRoles(userRoles);
+
+        user.setActivationCode(request.getActivationCode());
+
+        userRepository.save(user);
+
+        return CustomerUpdateResponse.builder()
+                .message("User was successfully updated!")
+                .build();
     }
 }
