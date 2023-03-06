@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.mapper;
 
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.request.AddressRequest;
+import ee.kolbaska.kolbaska.response.AddressResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -15,4 +16,6 @@ public interface AddressMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     Address toAddress(AddressRequest addressRequest);
+
+    AddressResponse toAddressResponse(Address address);
 }

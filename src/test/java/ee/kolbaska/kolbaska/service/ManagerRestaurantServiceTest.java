@@ -296,5 +296,4 @@ public class ManagerRestaurantServiceTest {
 
         Assertions.assertThrows(RestaurantNotFoundException.class, () -> managerRestaurantService.getWaiters());
     }
-
 }

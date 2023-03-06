@@ -1,8 +1,12 @@
 package ee.kolbaska.kolbaska.service;
 
+import ee.kolbaska.kolbaska.config.UserConfiguration;
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
+import ee.kolbaska.kolbaska.mapper.AddressMapper;
+import ee.kolbaska.kolbaska.mapper.LoginMapper;
+import ee.kolbaska.kolbaska.mapper.TransactionMapper;
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.FileType;
@@ -10,12 +14,14 @@ import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.*;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
+import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +43,16 @@ public class AdminRestaurantService {
     private final AddressRepository addressRepository;
 
     private final EmailService emailService;
+
     private final RoleRepository roleRepository;
+
+    private final UserConfiguration userConfiguration;
+
+    private final LoginMapper loginMapper;
+
+    private final TransactionMapper transactionMapper;
+
+    private final AddressMapper addressMapper;
 
     @Transactional
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
@@ -177,7 +192,30 @@ public class AdminRestaurantService {
     }
 
     public Resource downloadFile(String fileName, String type) throws Exception {
-
         return storageService.getFile(fileName, type.equals("photo") ? FileType.PHOTO : FileType.CONTRACT);
+    }
+
+    public CustomerInformationResponse getWaiter(Long id) {
+        Optional<User> ifUser = userRepository.findById(id);
+
+        if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
+
+        User user = ifUser.get();
+
+        CustomerInformationResponse.CustomerInformationResponseBuilder response = CustomerInformationResponse.builder()
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .address(addressMapper.INSTANCE.toAddressResponse(user.getAddress()))
+                .personalCode(user.getPersonalCode())
+                .activated(user.getActivated())
+                .deleted(user.getDeleted())
+                .activationCode(user.getActivationCode())
+                .restaurantId(user.getRestaurant() == null ? -1 : user.getRestaurant().getId())
+                .transactions(transactionMapper.toTransactionResponse(user.getTransactions().stream()))
+                .logins(loginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()))
+                .roleNames(userConfiguration.getRoleNames(user));
+
+        return response.build();
     }
 }
