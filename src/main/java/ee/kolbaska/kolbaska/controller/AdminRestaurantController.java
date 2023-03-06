@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.controller;
 
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
+import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
@@ -43,6 +44,13 @@ public class AdminRestaurantController {
             @NotNull @PathVariable String code
     ) throws Exception {
         return ResponseEntity.ok(service.returnRestaurant(code));
+    }
+
+    @GetMapping("/restaurant/waiter/{id}")
+    public ResponseEntity<CustomerInformationResponse> getWaiter(
+            @NotNull @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(service.getWaiter(id));
     }
 
     @GetMapping("/download/{fileName}/{type}")

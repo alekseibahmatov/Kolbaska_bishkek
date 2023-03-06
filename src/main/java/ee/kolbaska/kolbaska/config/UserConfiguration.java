@@ -1,5 +1,6 @@
 package ee.kolbaska.kolbaska.config;
 
+import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.security.JwtService;
@@ -8,9 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -33,5 +35,10 @@ public class UserConfiguration {
         } catch (IllegalStateException e) {
             return null;
         }
+    }
+
+    @Bean
+    public List<String> getRoleNames(User user) {
+        return user.getRoles().stream().map(Role::getRoleName).toList();
     }
 }

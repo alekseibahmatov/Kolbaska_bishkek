@@ -3,6 +3,9 @@ package ee.kolbaska.kolbaska.service;
 import ee.kolbaska.kolbaska.config.UserConfiguration;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
+import ee.kolbaska.kolbaska.mapper.AddressMapper;
+import ee.kolbaska.kolbaska.mapper.LoginMapper;
+import ee.kolbaska.kolbaska.mapper.TransactionMapper;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
@@ -10,8 +13,7 @@ import ee.kolbaska.kolbaska.repository.RestaurantRepository;
 import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.WaiterRequest;
-import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
-import ee.kolbaska.kolbaska.response.WaiterResponse;
+import ee.kolbaska.kolbaska.response.*;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,6 +36,12 @@ public class ManagerRestaurantService {
     private final RestaurantRepository restaurantRepository;
 
     private final UserConfiguration userConfiguration;
+
+    private final LoginMapper loginMapper;
+
+    private final TransactionMapper transactionMapper;
+
+    private final AddressMapper addressMapper;
 
     @Transactional
     public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
@@ -96,9 +104,6 @@ public class ManagerRestaurantService {
 
         User waiter = waiterExists.get();
 
-        waiter.setDeleted(true);
-        waiter.setDeletedAt(new Date());
-
         Restaurant restaurant = waiter.getRestaurant();
         restaurant.setWaiters(restaurant.getWaiters().stream().filter((rest) -> !Objects.equals(rest.getId(), waiter.getId())).toList());
 
@@ -145,5 +150,35 @@ public class ManagerRestaurantService {
         }
 
         return response;
+    }
+
+    public CustomerInformationResponse getWaiter(Long id) {
+        User manager = userConfiguration.getRequestUser();
+
+        Optional<User> ifUser = userRepository.findById(id);
+
+        if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
+
+        Restaurant restaurant = manager.getRestaurant();
+
+        User user = ifUser.get();
+
+        if (!restaurant.getWaiters().contains(user)) throw new UsernameNotFoundException("Waiter that you request does nopt exists");
+
+        CustomerInformationResponse.CustomerInformationResponseBuilder response = CustomerInformationResponse.builder()
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phone(user.getPhone());
+
+        AddressResponse addressResponse = addressMapper.INSTANCE.toAddressResponse(user.getAddress());
+
+        response.address(addressResponse);
+
+        response
+                .personalCode(user.getPersonalCode())
+                .transactions(transactionMapper.toTransactionResponse(user.getTransactions().stream()))
+                .logins(loginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()));
+
+        return response.build();
     }
 }
