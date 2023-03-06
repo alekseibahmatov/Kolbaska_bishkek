@@ -31,7 +31,7 @@ public class File {
     @NotNull
     @Column(
             name = "file_name",
-            columnDefinition = "varchar(40)",
+            columnDefinition = "varchar(50)", // todo: rebuild database
             nullable = false
     )
     private String fileName;

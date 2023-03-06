@@ -57,9 +57,9 @@ public class RestaurantResponse {
     private List<String> categories;
 
     @NotNull
-    private byte[] photo;
+    private String photo;
 
     @NotNull
-    private byte[] contact;
+    private String contact;
 
 }

@@ -5,13 +5,19 @@ import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -55,18 +61,21 @@ public class StorageService {
         return newFile;
     }
 
-    public byte[] getFile(String fileName, FileType type) throws Exception {
+    public Resource getFile(String fileName, FileType type) throws Exception {
         String directory = "";
 
         if (type == FileType.PHOTO) {
-            directory = "photos\\";
+            directory = "/photos/";
         }
         else if(type == FileType.CONTRACT) {
-            directory = "contracts\\";
+            directory = "/contracts/";
         }
 
-        String fullPath = basePath + directory + fileName;
+        Path fullPath;
 
-        return Files.readAllBytes(new java.io.File(fullPath).toPath());
+        if(basePath.equals("/")) fullPath = Paths.get(FileSystems.getDefault().getPath(".").toString()).toAbsolutePath().normalize().resolve("documents/%s/%s".formatted(directory, fileName));
+        else fullPath = Paths.get("%s/document/%s/%s".formatted(basePath, directory, fileName)).toAbsolutePath().normalize();
+
+        return new ByteArrayResource(Files.readAllBytes(fullPath));
     }
 }
