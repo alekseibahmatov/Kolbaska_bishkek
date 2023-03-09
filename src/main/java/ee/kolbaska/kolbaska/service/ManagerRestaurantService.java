@@ -110,13 +110,9 @@ public class ManagerRestaurantService {
 
         User waiter = waiterExists.get();
 
-        Restaurant restaurant = waiter.getRestaurant();
-        restaurant.setWaiters(restaurant.getWaiters().stream().filter((rest) -> !Objects.equals(rest.getId(), waiter.getId())).toList());
-
         waiter.setRestaurant(null);
 
         userRepository.save(waiter);
-        restaurantRepository.save(restaurant);
 
         return WaiterDeletedResponse.builder()
                 .id(id)
