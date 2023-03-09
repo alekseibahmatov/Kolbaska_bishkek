@@ -46,12 +46,6 @@ public class ManagerRestaurantService {
 
     private final FormatService formatService;
 
-    private final LoginMapper loginMapper;
-
-    private final TransactionMapper transactionMapper;
-
-    private final AddressMapper addressMapper;
-
     private final AddressRepository addressRepository;
 
     @Transactional
@@ -181,14 +175,14 @@ public class ManagerRestaurantService {
                 .email(user.getEmail())
                 .phone(user.getPhone());
 
-        AddressResponse addressResponse = addressMapper.INSTANCE.toAddressResponse(user.getAddress());
+        AddressResponse addressResponse = AddressMapper.INSTANCE.toAddressResponse(user.getAddress());
 
         response.address(addressResponse);
 
         response
                 .personalCode(user.getPersonalCode())
-                .transactions(transactionMapper.toTransactionResponse(user.getTransactions().stream()))
-                .logins(loginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()));
+                .transactions(TransactionMapper.INSTANCE.toTransactionResponse(user.getTransactions().stream()))
+                .logins(LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()));
 
         return response.build();
     }

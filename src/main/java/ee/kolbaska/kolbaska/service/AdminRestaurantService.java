@@ -54,12 +54,6 @@ public class AdminRestaurantService {
 
     private final UserConfiguration userConfiguration;
 
-    private final LoginMapper loginMapper;
-
-    private final TransactionMapper transactionMapper;
-
-    private final AddressMapper addressMapper;
-
     private final PasswordEncoder passwordEncoder;
 
     private final FormatService formatService;
@@ -216,14 +210,14 @@ public class AdminRestaurantService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .address(addressMapper.INSTANCE.toAddressResponse(user.getAddress()))
+                .address(AddressMapper.INSTANCE.toAddressResponse(user.getAddress()))
                 .personalCode(user.getPersonalCode())
                 .activated(user.getActivated())
                 .deleted(user.getDeleted())
                 .activationCode(user.getActivationCode())
                 .restaurantId(user.getRestaurant() == null ? -1 : user.getRestaurant().getId())
-                .transactions(transactionMapper.toTransactionResponse(user.getTransactions().stream()))
-                .logins(loginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()))
+                .transactions(TransactionMapper.INSTANCE.toTransactionResponse(user.getTransactions().stream()))
+                .logins(LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()))
                 .roleNames(userConfiguration.getRoleNames(user));
 
         return response.build();
