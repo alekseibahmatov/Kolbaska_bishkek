@@ -1,6 +1,8 @@
 package ee.kolbaska.kolbaska.service;
 
+import com.google.zxing.WriterException;
 import ee.kolbaska.kolbaska.config.UserConfiguration;
+import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
@@ -9,21 +11,25 @@ import ee.kolbaska.kolbaska.mapper.LoginMapper;
 import ee.kolbaska.kolbaska.mapper.TransactionMapper;
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
+import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.*;
+import ee.kolbaska.kolbaska.request.AddressRequest;
+import ee.kolbaska.kolbaska.request.AdminCertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
-import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
-import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
-import ee.kolbaska.kolbaska.response.RestaurantResponse;
-import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
+import ee.kolbaska.kolbaska.response.*;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
+import ee.kolbaska.kolbaska.service.miscellaneous.QrCodeService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
+import freemarker.template.TemplateException;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,12 +37,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.RoleNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AdminRestaurantService {
+
+    @Value("${api.baseurl}")
+    private String API_BASEURL = "http://localhost:8080";
 
     private final UserRepository userRepository;
 
@@ -57,6 +68,10 @@ public class AdminRestaurantService {
     private final PasswordEncoder passwordEncoder;
 
     private final FormatService formatService;
+
+    private final QrCodeService qrCodeService;
+
+    private final CertificateRepository certificateRepository;
 
     @Transactional
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
@@ -230,23 +245,7 @@ public class AdminRestaurantService {
 
         User user = ifUser.get();
 
-        user.setFullName(request.getFullName());
-
-        if (request.getNewPassword() != null) user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-
-        user.setPhone(formatService.formatE164(request.getPhone()));
-        user.setPersonalCode(request.getPersonalCode());
-
-        Address userAddress = user.getAddress();
-        userAddress.setCity(request.getAddress().getCity());
-        userAddress.setCountry(request.getAddress().getCountry());
-        userAddress.setState(request.getAddress().getState());
-        userAddress.setApartmentNumber(request.getAddress().getApartmentNumber());
-        userAddress.setZipCode(request.getAddress().getZipCode());
-
-        addressRepository.save(userAddress);
-
-        user.setEmail(request.getEmail());
+        updateWaiterImpl(user, request.getFullName(), request.getNewPassword(), passwordEncoder, formatService, request.getPhone(), request.getPersonalCode(), request.getAddress(), addressRepository, request.getEmail());
         user.setActivated(request.getActivated());
         user.setDeleted(request.getDeleted());
         user.setActivationCode(request.getActivationCode());
@@ -270,5 +269,151 @@ public class AdminRestaurantService {
         return CustomerUpdateResponse.builder()
                 .message("User was successfully updated!")
                 .build();
+    }
+
+    static void updateWaiterImpl(User user, String fullName, String newPassword, PasswordEncoder passwordEncoder, FormatService formatService, String phone, String personalCode, AddressRequest address, AddressRepository addressRepository, String email) {
+        user.setFullName(fullName);
+
+        if (newPassword != null) user.setPassword(passwordEncoder.encode(newPassword));
+
+        user.setPhone(formatService.formatE164(phone));
+        user.setPersonalCode(personalCode);
+
+        Address userAddress = user.getAddress();
+        userAddress.setCity(address.getCity());
+        userAddress.setCountry(address.getCountry());
+        userAddress.setState(address.getState());
+        userAddress.setApartmentNumber(address.getApartmentNumber());
+        userAddress.setZipCode(address.getZipCode());
+
+        addressRepository.save(userAddress);
+
+        user.setEmail(email);
+    }
+
+    @Transactional
+    public AdminCertificateCreationResponse createCertificate(AdminCertificateCreationRequest request) throws RoleNotFoundException, IOException, WriterException, MessagingException, TemplateException {
+        User admin = userConfiguration.getRequestUser();
+
+        Optional<User> ifHolder = userRepository.findByEmail(request.getToEmail());
+
+        User holder;
+
+        if (ifHolder.isEmpty()) {
+            Address address = AddressMapper.INSTANCE.toAddress(request.getAddress());
+
+            address = addressRepository.save(address);
+
+            holder = User.builder()
+                    .email(request.getToEmail())
+                    .address(address)
+                    .fullName(request.getToFullName())
+                    .phone(formatService.formatE164(request.getToPhone()))
+                    .deleted(false)
+                    .activated(false)
+                    .roles(
+                            List.of(roleRepository.findRoleByRoleName("ROLE_CUSTOMER").orElseThrow(
+                                    ()-> new RoleNotFoundException()
+                            ))
+                    )
+                    .build();
+
+            holder = userRepository.save(holder);
+        } else {
+            holder = ifHolder.get();
+        }
+
+        String certificateId = UUID.randomUUID().toString();
+
+        Certificate newCertificate = Certificate.builder()
+                .value(request.getValue())
+                .validUntil(request.getValidUntil())
+                .active(true)
+                .sender(admin)
+                .holder(holder)
+                .description(request.getDescription())
+                .id(certificateId)
+                .build();
+
+        certificateRepository.save(newCertificate);
+
+        String qrCodeUrl = "%s/api/v1/certificate/%s".formatted(API_BASEURL, certificateId);
+
+        byte[] qrCodeImage = qrCodeService.createQrCode(qrCodeUrl);
+
+        Map<String, Object> content = new HashMap<>();
+
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+
+        content.put("qrCode", qrCodeImage);
+        content.put("value", "%d€".formatted(request.getValue()));
+        content.put("valid_until", sf.format(request.getValidUntil()));
+        content.put("from", "Support Team");
+        content.put("to", request.getToFullName());
+        content.put("description", request.getDescription());
+
+        emailService.sendHTMLEmail(
+                request.getToEmail(),
+                "Congratulations you received restaurant certificate",
+                "successfulCertificatePayment",
+                content
+        );
+
+        return AdminCertificateCreationResponse.builder().message("Certificate was successfully created").build();
+    }
+
+    public List<AdminCertificateResponse> getCertificates() {
+        List<Certificate> certificateList = certificateRepository.findAll();
+
+        if (certificateList.isEmpty()) return List.of();
+
+        List<AdminCertificateResponse> response = new ArrayList<>();
+
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (Certificate certificate : certificateList) {
+            AdminCertificateResponse tempCertificate = AdminCertificateResponse.builder()
+                    .id(certificate.getId())
+                    .remainingValue(certificate.getRemainingValue())
+                    .holder(certificate.getHolder().getFullName())
+                    .sender(certificate.getSender().getFullName())
+                    .value(certificate.getValue())
+                    .validUntil(sf.format(certificate.getValidUntil()))
+                    .build();
+
+            response.add(tempCertificate);
+        }
+
+        return response;
+    }
+
+    public AdminCertificateInformationResponse getCertificate(String id) throws CertificateNotFoundException {
+        Optional<Certificate> ifCertificate = certificateRepository.findById(id);
+
+        if (ifCertificate.isEmpty()) throw new CertificateNotFoundException("Certificate do not found");
+
+        Certificate certificate = ifCertificate.get();
+
+        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+
+        AdminCertificateInformationResponse response = AdminCertificateInformationResponse.builder()
+                .toFullName(certificate.getHolder().getFullName())
+                .toEmail(certificate.getHolder().getEmail())
+                .toPhone(certificate.getHolder().getPhone())
+                .remainingValue(certificate.getRemainingValue())
+                .description(certificate.getDescription())
+                .createdAt(certificate.getCreatedAt())
+                .value(certificate.getValue())
+                .validUntil(sf.format(certificate.getValidUntil()))
+                .transactions(TransactionMapper.INSTANCE.toTransactionResponse(certificate.getTransactions().stream()))
+                .build();
+
+        if (certificate.getCreatedByAdmin()) {}
+        else {
+            response.setFromFullName(certificate.getSender().getFullName());
+            response.setFromEmail(certificate.getSender().getEmail());
+            response.setToPhone(certificate.getSender().getPhone());
+        }
+        return response;
     }
 }

@@ -1,13 +1,11 @@
 package ee.kolbaska.kolbaska.model.certificate;
 
-import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +69,14 @@ public class Certificate {
             nullable = false
     )
     private Date validUntil;
+
+    @NotNull
+    @Column(
+            name = "created_by_admin",
+            columnDefinition = "bool",
+            nullable = false
+    )
+    private Boolean createdByAdmin;
 
     @NotNull
     @ManyToOne

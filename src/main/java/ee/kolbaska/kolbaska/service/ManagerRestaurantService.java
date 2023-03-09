@@ -6,7 +6,6 @@ import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
 import ee.kolbaska.kolbaska.mapper.AddressMapper;
 import ee.kolbaska.kolbaska.mapper.LoginMapper;
 import ee.kolbaska.kolbaska.mapper.TransactionMapper;
-import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
@@ -27,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.*;
+
+import static ee.kolbaska.kolbaska.service.AdminRestaurantService.updateWaiterImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -200,21 +201,7 @@ public class ManagerRestaurantService {
 
         if (!restaurant.getWaiters().contains(user)) throw new UsernameNotFoundException("Waiter that you request does nopt exists");
 
-        user.setFullName(request.getFullName());
-        if (request.getNewPassword() != null) user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        user.setPhone(formatService.formatE164(request.getPhone()));
-        user.setPersonalCode(request.getPersonalCode());
-
-        Address userAddress = user.getAddress();
-        userAddress.setCity(request.getAddress().getCity());
-        userAddress.setCountry(request.getAddress().getCountry());
-        userAddress.setState(request.getAddress().getState());
-        userAddress.setApartmentNumber(request.getAddress().getApartmentNumber());
-        userAddress.setZipCode(request.getAddress().getZipCode());
-
-        addressRepository.save(userAddress);
-
-        user.setEmail(request.getEmail());
+        updateWaiterImpl(user, request.getFullName(), request.getNewPassword(), passwordEncoder, formatService, request.getPhone(), request.getPersonalCode(), request.getAddress(), addressRepository, request.getEmail());
 
         userRepository.save(user);
 
