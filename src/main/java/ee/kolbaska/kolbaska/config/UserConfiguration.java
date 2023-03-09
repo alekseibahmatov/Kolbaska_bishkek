@@ -39,6 +39,10 @@ public class UserConfiguration {
 
     @Bean
     public List<String> getRoleNames(User user) {
-        return user.getRoles().stream().map(Role::getRoleName).toList();
+        try {
+            return user.getRoles().stream().map(Role::getRoleName).toList();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 }
