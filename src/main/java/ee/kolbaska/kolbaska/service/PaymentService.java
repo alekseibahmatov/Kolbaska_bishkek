@@ -129,6 +129,7 @@ public class PaymentService {
                     .value(payment.getValue())
                     .validUntil(cal.getTime())
                     .active(true)
+                    .createdByAdmin(false)
                     .build();
 
             certificateRepository.save(newCertificate);

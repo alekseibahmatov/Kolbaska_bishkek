@@ -220,7 +220,6 @@ public class ManagerRestaurantServiceTest {
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(waiter));
         when(userRepository.save(any(User.class))).thenReturn(User.builder().id(id).deleted(true).build());
-        when(restaurantRepository.save(any(Restaurant.class))).thenReturn(Restaurant.builder().id(1L).build());
 
         WaiterDeletedResponse response = managerRestaurantService.deleteWaiter(id);
 

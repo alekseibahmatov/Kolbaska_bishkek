@@ -1,12 +1,14 @@
 package ee.kolbaska.kolbaska.controller;
 
+import com.google.zxing.WriterException;
+import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
+import ee.kolbaska.kolbaska.request.AdminCertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
-import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
-import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
-import ee.kolbaska.kolbaska.response.RestaurantResponse;
-import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
+import ee.kolbaska.kolbaska.response.*;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
+import freemarker.template.TemplateException;
+import jakarta.mail.MessagingException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.RoleNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,6 +64,25 @@ public class AdminRestaurantController {
             @NotNull @RequestBody AdminCustomerUpdateRequest request
     ) throws RoleNotFoundException {
         return ResponseEntity.ok(service.updateWaiter(request));
+    }
+
+    @PostMapping("/certificate")
+    public ResponseEntity<AdminCertificateCreationResponse> createCertificate(
+            @NotNull @RequestBody AdminCertificateCreationRequest request
+    ) throws RoleNotFoundException, MessagingException, TemplateException, IOException, WriterException {
+        return ResponseEntity.ok(service.createCertificate(request));
+    }
+
+    @GetMapping("/certificate")
+    public ResponseEntity<List<AdminCertificateResponse>> getCertificates() {
+        return ResponseEntity.ok(service.getCertificates());
+    }
+
+    @GetMapping("/certificate/{id}")
+    public ResponseEntity<AdminCertificateInformationResponse> getCertificate(
+            @NotNull @PathVariable String id
+    ) throws CertificateNotFoundException {
+        return ResponseEntity.ok(service.getCertificate(id));
     }
 
     @GetMapping("/download/{fileName}/{type}")
