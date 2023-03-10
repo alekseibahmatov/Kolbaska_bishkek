@@ -5,6 +5,7 @@ import ee.kolbaska.kolbaska.mapper.AddressMapper;
 import ee.kolbaska.kolbaska.mapper.LoginMapper;
 import ee.kolbaska.kolbaska.mapper.TransactionMapper;
 import ee.kolbaska.kolbaska.model.address.Address;
+import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.AddressRepository;
@@ -14,6 +15,7 @@ import ee.kolbaska.kolbaska.request.AddressRequest;
 import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
 import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
 import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
+import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -118,4 +120,30 @@ public class AdminWaiterService {
         user.setEmail(email);
     }
 
+    public List<WaiterResponse> getWaiters() {
+        List<User> waiters = userRepository.findAllWaiters();
+
+        List<WaiterResponse> responses = new ArrayList<>();
+
+        for (User waiter : waiters) {
+            WaiterResponse waiterResponse = new WaiterResponse();
+
+            waiterResponse.setId(waiter.getId());
+            waiterResponse.setFullName(waiter.getFullName());
+            waiterResponse.setEmail(waiter.getEmail());
+            waiterResponse.setPhone(waiter.getPhone());
+
+            double turnover = 0.0;
+
+            for (Transaction t: waiter.getTransactions()) {
+                turnover += t.getValue();
+            }
+
+            waiterResponse.setTurnover(turnover);
+
+            responses.add(waiterResponse);
+        }
+
+        return responses;
+    }
 }
