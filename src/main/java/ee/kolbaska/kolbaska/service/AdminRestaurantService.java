@@ -3,6 +3,7 @@ package ee.kolbaska.kolbaska.service;
 import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserStillOnDutyException;
+import ee.kolbaska.kolbaska.mapper.AddressMapper;
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.FileType;
@@ -10,12 +11,15 @@ import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.*;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
+import ee.kolbaska.kolbaska.request.RestaurantUpdateRequest;
 import ee.kolbaska.kolbaska.response.RestaurantDisableResponse;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
+import ee.kolbaska.kolbaska.response.RestaurantUpdateResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,10 +117,8 @@ public class AdminRestaurantService {
                 .managerId(restaurant.getManager().getId())
                 .categories(categories)
                 .workingHours(restaurant.getWorkingHours())
-                .city(restaurant.getAddress().getCity())
-                .country(restaurant.getAddress().getCountry())
-                .province(restaurant.getAddress().getState())
-                .postalCode(restaurant.getAddress().getZipCode())
+                .averageBill(restaurant.getAverageBill())
+                .address(AddressMapper.INSTANCE.toAddressResponse(restaurant.getAddress()))
                 .photo(restaurant.getPhoto().getFileName())
                 .contact(restaurant.getContract().getFileName())
                 .build();
@@ -196,6 +198,51 @@ public class AdminRestaurantService {
 
         return RestaurantDisableResponse.builder()
                 .message("Restaurant was successfully disabled")
+                .build();
+    }
+
+    public RestaurantUpdateResponse updateRestaurant(RestaurantUpdateRequest request) throws Exception {
+        Restaurant restaurant = restaurantRepository.findByRestaurantCode(request.getRestaurantCode()).orElseThrow(
+                () -> new RestaurantNotFoundException("Restaurant with given code not found!")
+        );
+
+        Optional<Address> ifCurrentAddress = addressRepository.findByStreetAndCityAndApartmentNumberAndCountryAndStateAndZipCode(
+                restaurant.getAddress().getStreet(),
+                restaurant.getAddress().getCity(),
+                restaurant.getAddress().getApartmentNumber(),
+                restaurant.getAddress().getCountry(),
+                restaurant.getAddress().getState(),
+                restaurant.getAddress().getZipCode()
+        );
+
+        Address currentAddress;
+
+        if (ifCurrentAddress.isPresent()) currentAddress = ifCurrentAddress.get();
+        else {
+            currentAddress = addressRepository.save(AddressMapper.INSTANCE.toAddress(request.getAddress()));
+        }
+
+        restaurant.setAddress(currentAddress);
+        restaurant.setName(request.getRestaurantName());
+        restaurant.setDescription(request.getRestaurantDescription());
+        restaurant.setEmail(request.getRestaurantEmail());
+        restaurant.setPhone(request.getRestaurantPhone());
+
+        User manager = userRepository.findById(request.getManagerId()).orElseThrow(
+                () -> new UsernameNotFoundException("Manager not found!")
+        );
+
+        restaurant.setManager(manager);
+        restaurant.setWorkingHours(request.getWorkingHours());
+        restaurant.setAverageBill(request.getAverageBill());
+        restaurant.setCategories(setupCategories(new HashSet<>(request.getCategories())));
+        restaurant.setPhoto(storageService.uploadFile(request.getPhoto(), FileType.PHOTO));
+        restaurant.setContract(storageService.uploadFile(request.getContact(), FileType.CONTRACT));
+
+        restaurantRepository.save(restaurant);
+
+        return RestaurantUpdateResponse.builder()
+                .message("Restaurant updated successfully")
                 .build();
     }
 }

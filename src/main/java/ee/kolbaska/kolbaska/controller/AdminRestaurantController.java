@@ -2,9 +2,11 @@ package ee.kolbaska.kolbaska.controller;
 
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
+import ee.kolbaska.kolbaska.request.RestaurantUpdateRequest;
 import ee.kolbaska.kolbaska.response.RestaurantDisableResponse;
 import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
+import ee.kolbaska.kolbaska.response.RestaurantUpdateResponse;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,13 @@ public class AdminRestaurantController {
             @NotNull @PathVariable String code
     ) throws Exception {
         return ResponseEntity.ok(service.returnRestaurant(code));
+    }
+
+    @PutMapping(value = "/restaurant", consumes = "multipart/form-data")
+    public ResponseEntity<RestaurantUpdateResponse> updateRestaurant(
+            @NotNull @ModelAttribute RestaurantUpdateRequest request
+    ) {
+        return ResponseEntity.ok(service.updateRestaurant(request));
     }
 
     @DeleteMapping("/restaurant/{code}")
