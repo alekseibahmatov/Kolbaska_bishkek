@@ -1,25 +1,16 @@
 package ee.kolbaska.kolbaska.controller;
 
-import com.google.zxing.WriterException;
-import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
-import ee.kolbaska.kolbaska.request.AdminCertificateCreationRequest;
-import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
-import ee.kolbaska.kolbaska.request.AdminUpdateCertificateInformationRequest;
+import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
-import ee.kolbaska.kolbaska.response.*;
+import ee.kolbaska.kolbaska.response.RestaurantDisableResponse;
+import ee.kolbaska.kolbaska.response.RestaurantResponse;
+import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
-import freemarker.template.TemplateException;
-import jakarta.mail.MessagingException;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.management.relation.RoleNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -53,71 +44,10 @@ public class AdminRestaurantController {
         return ResponseEntity.ok(service.returnRestaurant(code));
     }
 
-    @GetMapping("/restaurant/waiter/{id}")
-    public ResponseEntity<CustomerInformationResponse> getWaiter(
-            @NotNull @PathVariable Long id
-    ) {
-        return ResponseEntity.ok(service.getWaiter(id));
-    }
-
-    @PutMapping("/restaurant/waiter")
-    public ResponseEntity<CustomerUpdateResponse> updateWaiter(
-            @NotNull @RequestBody AdminCustomerUpdateRequest request
-    ) throws RoleNotFoundException {
-        return ResponseEntity.ok(service.updateWaiter(request));
-    }
-
-    @PostMapping("/certificate")
-    public ResponseEntity<AdminCertificateCreationResponse> createCertificate(
-            @NotNull @RequestBody AdminCertificateCreationRequest request
-    ) throws RoleNotFoundException, MessagingException, TemplateException, IOException, WriterException {
-        return ResponseEntity.ok(service.createCertificate(request));
-    }
-
-    @GetMapping("/certificate")
-    public ResponseEntity<List<AdminCertificateResponse>> getCertificates() {
-        return ResponseEntity.ok(service.getCertificates());
-    }
-
-    @GetMapping("/certificate/{id}")
-    public ResponseEntity<AdminCertificateInformationResponse> getCertificate(
-            @NotNull @PathVariable String id
-    ) throws CertificateNotFoundException {
-        return ResponseEntity.ok(service.getCertificate(id));
-    }
-
-    @PutMapping("/certificate")
-    public ResponseEntity<AdminUpdateCertificateInformationResponse> updateCertificate(
-            @NotNull @RequestBody AdminUpdateCertificateInformationRequest request
-    ) throws CertificateNotFoundException {
-        return ResponseEntity.ok(service.updateCertificate(request));
-    }
-
-    @DeleteMapping("/certificate/{id}")
-    public ResponseEntity<AdminUpdateCertificateInformationResponse> disableCertificate(
-            @NotNull @PathVariable String id
-    ) throws CertificateNotFoundException {
-        return ResponseEntity.ok(service.disableCertificate(id));
-    }
-
-    @GetMapping("/download/{fileName}/{type}")
-    public ResponseEntity<Resource> downloadFile(
-            @NotNull @PathVariable String fileName,
-            @NotNull @PathVariable String type
-    ) throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(fileName));
-        headers.setCacheControl("no-cache, no-store, must-revalidate");
-        headers.setPragma("no-cache");
-        headers.setExpires(0);
-        headers.set("filename", "image.png");
-
-        Resource file = service.downloadFile(fileName, type);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(file.contentLength())
-                .contentType(type.equals("photo") ? MediaType.IMAGE_PNG : MediaType.APPLICATION_PDF)
-                .body(file);
+    @DeleteMapping("/restaurant/{code}")
+    public ResponseEntity<RestaurantDisableResponse> disableRestaurant(
+            @NotNull @PathVariable String code
+    ) throws RestaurantNotFoundException {
+        return ResponseEntity.ok(service.disableRestaurant(code));
     }
 }

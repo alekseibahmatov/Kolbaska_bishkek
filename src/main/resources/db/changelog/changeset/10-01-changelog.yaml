@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1678470410447-3
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: active
+                  type: bool
+            tableName: restaurant
+  - changeSet:
+      id: 1678470410447-4
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addNotNullConstraint:
+            columnDataType: bool
+            columnName: active
+            tableName: restaurant
+  - changeSet:
+      id: 1678470410447-1
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - dropColumn:
+            columnName: value
+            tableName: transaction
+  - changeSet:
+      id: 1678470410447-2
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    validateNullable: true
+                  name: value
+                  type: double(4,2)
+            tableName: transaction
+

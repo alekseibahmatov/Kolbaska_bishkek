@@ -110,6 +110,14 @@ public class Restaurant {
 
     @NotNull
     @Column(
+            name = "active",
+            columnDefinition = "bool",
+            nullable = false
+    )
+    private Boolean active;
+
+    @NotNull
+    @Column(
             name = "restaurant_code",
             columnDefinition = "varchar(6)",
             nullable = false
