@@ -70,6 +70,7 @@ public class AdminRestaurantService {
                 .contract(storageService.uploadFile(request.getContract(), FileType.CONTRACT))
                 .manager(getUser(request.getManagerEmail()))
                 .address(address)
+                .active(true)
                 .build();
 
         restaurantRepository.save(newRestaurant);
