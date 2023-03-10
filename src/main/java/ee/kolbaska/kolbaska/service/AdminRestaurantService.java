@@ -17,10 +17,7 @@ import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.*;
-import ee.kolbaska.kolbaska.request.AddressRequest;
-import ee.kolbaska.kolbaska.request.AdminCertificateCreationRequest;
-import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
-import ee.kolbaska.kolbaska.request.RestaurantRequest;
+import ee.kolbaska.kolbaska.request.*;
 import ee.kolbaska.kolbaska.response.*;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
@@ -295,33 +292,9 @@ public class AdminRestaurantService {
     public AdminCertificateCreationResponse createCertificate(AdminCertificateCreationRequest request) throws RoleNotFoundException, IOException, WriterException, MessagingException, TemplateException {
         User admin = userConfiguration.getRequestUser();
 
-        Optional<User> ifHolder = userRepository.findByEmail(request.getToEmail());
-
-        User holder;
-
-        if (ifHolder.isEmpty()) {
-            Address address = AddressMapper.INSTANCE.toAddress(request.getAddress());
-
-            address = addressRepository.save(address);
-
-            holder = User.builder()
-                    .email(request.getToEmail())
-                    .address(address)
-                    .fullName(request.getToFullName())
-                    .phone(formatService.formatE164(request.getToPhone()))
-                    .deleted(false)
-                    .activated(false)
-                    .roles(
-                            List.of(roleRepository.findRoleByRoleName("ROLE_CUSTOMER").orElseThrow(
-                                    ()-> new RoleNotFoundException()
-                            ))
-                    )
-                    .build();
-
-            holder = userRepository.save(holder);
-        } else {
-            holder = ifHolder.get();
-        }
+        User holder = userRepository.findById(request.getHolderUserId()).orElseThrow(
+                () -> new UsernameNotFoundException("Holder not found!")
+        );
 
         String certificateId = UUID.randomUUID().toString();
 
@@ -349,11 +322,11 @@ public class AdminRestaurantService {
         content.put("value", "%d€".formatted(request.getValue()));
         content.put("valid_until", sf.format(request.getValidUntil()));
         content.put("from", "Support Team");
-        content.put("to", request.getToFullName());
+        content.put("to", holder.getFullName());
         content.put("description", request.getDescription());
 
         emailService.sendHTMLEmail(
-                request.getToEmail(),
+                holder.getEmail(),
                 "Congratulations you received restaurant certificate",
                 "successfulCertificatePayment",
                 content
@@ -412,8 +385,54 @@ public class AdminRestaurantService {
         else {
             response.setFromFullName(certificate.getSender().getFullName());
             response.setFromEmail(certificate.getSender().getEmail());
-            response.setToPhone(certificate.getSender().getPhone());
+            response.setFromPhone(certificate.getSender().getPhone());
         }
         return response;
+    }
+
+    public AdminUpdateCertificateInformationResponse updateCertificate(AdminUpdateCertificateInformationRequest request) throws CertificateNotFoundException {
+        Optional<Certificate> ifCertificate = certificateRepository.findById(request.getId());
+
+        if (ifCertificate.isEmpty()) throw new CertificateNotFoundException("Certificate with given id not found!");
+
+        Certificate certificate = ifCertificate.get();
+
+        certificate.setValidUntil(request.getValidUntil());
+        certificate.setValue(request.getValue());
+        certificate.setDescription(request.getDescription());
+        certificate.setRemainingValue(request.getRemainingValue());
+
+        User sender = userRepository.findById(request.getSenderUserId()).orElseThrow(
+                () -> new UsernameNotFoundException("Sender not found!")
+        );
+
+        certificate.setSender(sender);
+
+        User holder = userRepository.findById(request.getHolderUserId()).orElseThrow(
+                () -> new UsernameNotFoundException("Holder not found!")
+        );
+
+        certificate.setHolder(holder);
+
+        certificateRepository.save(certificate);
+
+        return AdminUpdateCertificateInformationResponse.builder()
+                .message("Certificate was successfully updated")
+                .build();
+    }
+
+    public AdminUpdateCertificateInformationResponse disableCertificate(String id) throws CertificateNotFoundException {
+        Certificate certificate = certificateRepository.findById(id).orElseThrow(
+                () -> new CertificateNotFoundException("Certificate with given id wasn't found")
+        );
+
+        certificate.setActive(false);
+        certificate.setDeletedAt(new Date());
+
+        certificateRepository.save(certificate);
+
+        return AdminUpdateCertificateInformationResponse.builder()
+                .message("Certificate was successfully disabled")
+                .build();
     }
 }
