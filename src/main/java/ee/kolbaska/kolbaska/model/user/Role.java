@@ -48,5 +48,5 @@ public class Role {
     private String roleName;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new LinkedHashSet<>();
+    private Set<User> users;
 }
