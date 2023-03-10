@@ -49,7 +49,7 @@ public class AdminRestaurantController {
     @PutMapping(value = "/restaurant", consumes = "multipart/form-data")
     public ResponseEntity<RestaurantUpdateResponse> updateRestaurant(
             @NotNull @ModelAttribute RestaurantUpdateRequest request
-    ) {
+    ) throws Exception {
         return ResponseEntity.ok(service.updateRestaurant(request));
     }
 
