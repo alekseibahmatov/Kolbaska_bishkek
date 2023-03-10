@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.management.relation.RoleNotFoundException;
 import java.util.*;
 
-import static ee.kolbaska.kolbaska.service.AdminRestaurantService.updateWaiterImpl;
+import static ee.kolbaska.kolbaska.service.AdminWaiterService.updateWaiterImpl;
 
 @Service
 @RequiredArgsConstructor
@@ -178,7 +178,7 @@ public class ManagerRestaurantService {
 
         response
                 .personalCode(user.getPersonalCode())
-                .transactions(TransactionMapper.INSTANCE.toTransactionResponse(user.getTransactions().stream()))
+                .transactions(TransactionMapper.INSTANCE.toTransactionResponseList(user.getTransactions()))
                 .logins(LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()));
 
         return response.build();
