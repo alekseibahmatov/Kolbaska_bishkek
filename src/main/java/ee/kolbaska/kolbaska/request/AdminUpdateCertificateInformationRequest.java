@@ -14,7 +14,13 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminCertificateCreationRequest {
+public class AdminUpdateCertificateInformationRequest {
+
+    @NotNull
+    private String id;
+
+    @NotNull
+    private Long senderUserId;
 
     @NotNull
     private Long holderUserId;
@@ -23,9 +29,11 @@ public class AdminCertificateCreationRequest {
     private Integer value;
 
     @NotNull
+    private Double remainingValue;
+
+    @NotNull
     private Date validUntil;
 
     @NotNull
     private String description;
-
 }

@@ -15,9 +15,9 @@ import java.util.List;
 public class AdminCertificateInformationResponse {
     private String toFullName;
 
-    private String toPhone;
-
     private String toEmail;
+
+    private String toPhone;
 
     private Integer value;
 
@@ -29,9 +29,11 @@ public class AdminCertificateInformationResponse {
 
     private String description;
 
+    private String fromFullName;
+
     private String fromEmail;
 
-    private String fromFullName;
+    private String fromPhone;
 
     private List<TransactionResponse> transactions;
 }

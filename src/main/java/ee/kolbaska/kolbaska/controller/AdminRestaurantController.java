@@ -4,6 +4,7 @@ import com.google.zxing.WriterException;
 import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
 import ee.kolbaska.kolbaska.request.AdminCertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.AdminCustomerUpdateRequest;
+import ee.kolbaska.kolbaska.request.AdminUpdateCertificateInformationRequest;
 import ee.kolbaska.kolbaska.request.RestaurantRequest;
 import ee.kolbaska.kolbaska.response.*;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
@@ -83,6 +84,20 @@ public class AdminRestaurantController {
             @NotNull @PathVariable String id
     ) throws CertificateNotFoundException {
         return ResponseEntity.ok(service.getCertificate(id));
+    }
+
+    @PutMapping("/certificate")
+    public ResponseEntity<AdminUpdateCertificateInformationResponse> updateCertificate(
+            @NotNull @RequestBody AdminUpdateCertificateInformationRequest request
+    ) throws CertificateNotFoundException {
+        return ResponseEntity.ok(service.updateCertificate(request));
+    }
+
+    @DeleteMapping("/certificate/{id}")
+    public ResponseEntity<AdminUpdateCertificateInformationResponse> disableCertificate(
+            @NotNull @PathVariable String id
+    ) throws CertificateNotFoundException {
+        return ResponseEntity.ok(service.disableCertificate(id));
     }
 
     @GetMapping("/download/{fileName}/{type}")
