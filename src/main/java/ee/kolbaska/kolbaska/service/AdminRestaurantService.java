@@ -46,10 +46,10 @@ public class AdminRestaurantService {
 
     @Transactional
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
-
         boolean restaurantExists = restaurantRepository.findByEmail(request.getRestaurantEmail()).isPresent();
-
-        if (restaurantExists) throw new RestaurantAlreadyExistsException("Restaurant with following email is already exists, please check restaurant list");
+        if (restaurantExists) {
+            throw new RestaurantAlreadyExistsException("Restaurant with following email is already exists, please check restaurant list");
+        }
 
         Address address = Address.builder()
                 .street(request.getStreet())
@@ -77,7 +77,7 @@ public class AdminRestaurantService {
                 .active(true)
                 .build();
 
-        restaurantRepository.save(newRestaurant);
+        newRestaurant = restaurantRepository.save(newRestaurant);
 
         return new RestaurantTableResponse(
                 newRestaurant.getRestaurantCode(),
@@ -119,8 +119,9 @@ public class AdminRestaurantService {
                 .workingHours(restaurant.getWorkingHours())
                 .averageBill(restaurant.getAverageBill())
                 .address(AddressMapper.INSTANCE.toAddressResponse(restaurant.getAddress()))
-                .photo(restaurant.getPhoto().getFileName())
-                .contact(restaurant.getContract().getFileName())
+                .photo(restaurant.getPhoto().getId())
+                .contact(restaurant.getContract().getId())
+                .active(restaurant.getActive())
                 .build();
     }
 
@@ -131,11 +132,12 @@ public class AdminRestaurantService {
     }
 
     private User getUser(String email) throws UserStillOnDutyException {
-        Optional<User> ifUser = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        if (ifUser.isPresent()) {
-            User user = ifUser.get();
-            if(user.getRestaurant() != null) throw new UserStillOnDutyException("This user is already connected to restaurant, please ask him/her to leave or check whether email is correct");
+        if (user != null) {
+            if (user.getRestaurant() != null) {
+                throw new UserStillOnDutyException("This user is already connected to a restaurant, please ask them to leave or check if the email is correct.");
+            }
             return user;
         }
 
@@ -187,12 +189,19 @@ public class AdminRestaurantService {
         );
 
         restaurant.setActive(false);
-        restaurant.setWaiters(null);
+        restaurant.setDeletedAt(new Date());
+        restaurant.getWaiters().forEach(waiter -> {
+            waiter.setRestaurant(null);
+            waiter.setDeleted(true);
+            waiter.setDeletedAt(new Date());
+        });
 
+        userRepository.saveAll(restaurant.getWaiters());
         restaurantRepository.save(restaurant);
 
         User manager = restaurant.getManager();
         manager.setDeleted(true);
+        manager.setDeletedAt(new Date());
 
         userRepository.save(manager);
 
@@ -217,10 +226,7 @@ public class AdminRestaurantService {
 
         Address currentAddress;
 
-        if (ifCurrentAddress.isPresent()) currentAddress = ifCurrentAddress.get();
-        else {
-            currentAddress = addressRepository.save(AddressMapper.INSTANCE.toAddress(request.getAddress()));
-        }
+        currentAddress = ifCurrentAddress.orElseGet(() -> addressRepository.save(AddressMapper.INSTANCE.toAddress(request.getAddress())));
 
         restaurant.setAddress(currentAddress);
         restaurant.setName(request.getRestaurantName());

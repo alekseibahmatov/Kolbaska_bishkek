@@ -52,4 +52,7 @@ public class RestaurantResponse {
     @NotNull
     private String contact;
 
+    @NotNull
+    private Boolean active;
+
 }

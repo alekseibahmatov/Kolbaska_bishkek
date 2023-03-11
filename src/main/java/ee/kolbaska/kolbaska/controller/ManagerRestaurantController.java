@@ -11,6 +11,7 @@ import ee.kolbaska.kolbaska.service.ManagerRestaurantService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class ManagerRestaurantController {
     @PutMapping("/restaurant/waiter")
     public ResponseEntity<CustomerUpdateResponse> updateWaiter(
             @NotNull @RequestBody ManagerCustomerUpdateRequest request
-            ) {
+            ) throws UsernameNotFoundException {
         return ResponseEntity.ok(service.updateWaiter(request));
     }
 

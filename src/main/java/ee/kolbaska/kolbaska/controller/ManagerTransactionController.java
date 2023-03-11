@@ -6,7 +6,7 @@ import ee.kolbaska.kolbaska.exception.CertificateIsOutDatedException;
 import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
 import ee.kolbaska.kolbaska.request.CertificateActivationRequest;
 import ee.kolbaska.kolbaska.response.CertificateActivationResponse;
-import ee.kolbaska.kolbaska.service.TransactionService;
+import ee.kolbaska.kolbaska.service.ManagerTransactionService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +20,9 @@ import java.nio.file.AccessDeniedException;
 @RestController
 @RequestMapping("${api.basepath}/transaction")
 @RequiredArgsConstructor
-public class TransactionController {
+public class ManagerTransactionController {
 
-    private final TransactionService service;
+    private final ManagerTransactionService service;
 
     @PostMapping("/certificate")
     public ResponseEntity<CertificateActivationResponse> activateCertificate(

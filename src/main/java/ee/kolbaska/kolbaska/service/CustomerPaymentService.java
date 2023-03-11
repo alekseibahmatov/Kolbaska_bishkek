@@ -35,7 +35,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class PaymentService {
+public class CustomerPaymentService {
 
     private final CertificateRepository certificateRepository;
     private final UserRepository userRepository;

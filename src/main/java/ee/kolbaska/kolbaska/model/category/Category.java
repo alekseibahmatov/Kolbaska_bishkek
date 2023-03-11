@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,9 +54,7 @@ public class Category {
     )
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "category_restaurants",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "restaurants_id"))
+    @ManyToMany(mappedBy = "categories")
     private List<Restaurant> restaurants;
+
 }

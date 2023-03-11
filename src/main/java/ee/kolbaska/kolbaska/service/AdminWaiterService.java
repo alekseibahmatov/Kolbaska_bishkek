@@ -103,7 +103,7 @@ public class AdminWaiterService {
     static void updateWaiterImpl(User user, String fullName, String newPassword, PasswordEncoder passwordEncoder, FormatService formatService, String phone, String personalCode, AddressRequest address, AddressRepository addressRepository, String email) {
         user.setFullName(fullName);
 
-        if (newPassword != null) user.setPassword(passwordEncoder.encode(newPassword));
+        if (newPassword != null && !newPassword.equals("")) user.setPassword(passwordEncoder.encode(newPassword));
 
         user.setPhone(formatService.formatE164(phone));
         user.setPersonalCode(personalCode);
@@ -121,7 +121,7 @@ public class AdminWaiterService {
     }
 
     public List<WaiterResponse> getWaiters() {
-        List<User> waiters = userRepository.findAllWaiters();
+        List<User> waiters = userRepository.findUsersByRestaurantIsNotNull();
 
         List<WaiterResponse> responses = new ArrayList<>();
 

@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionService {
+public class ManagerTransactionService {
 
     private final UserConfiguration userConfiguration;
 

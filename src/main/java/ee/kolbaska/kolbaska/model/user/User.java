@@ -49,11 +49,7 @@ public class User implements UserDetails {
     )
     private Date updatedAt;
 
-    @Column(
-            name = "deleted_at",
-            insertable = false,
-            updatable = false
-    )
+    @Column(name = "deleted_at")
     private Date deletedAt;
 
     @Column(
@@ -127,13 +123,16 @@ public class User implements UserDetails {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
+    @OneToOne(mappedBy = "manager")
+    private Restaurant managedRestaurant;
+
     @OneToMany(mappedBy = "user", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Login> logins;
 
     @OneToMany(mappedBy = "sender", orphanRemoval = true)
     private List<Certificate> sent_certificates;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
