@@ -1,5 +1,6 @@
-package ee.kolbaska.kolbaska.response;
+package ee.kolbaska.kolbaska.request;
 
+import ee.kolbaska.kolbaska.response.AddressResponse;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,7 +16,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantResponse {
+public class RestaurantUpdateRequest {
+    private String restaurantCode;
 
     @NotNull
     private String restaurantName;
@@ -34,7 +37,7 @@ public class RestaurantResponse {
     private Long managerId;
 
     @NotNull
-    private AddressResponse address;
+    private AddressRequest address;
 
     @NotNull
     @Size(max = 120)
@@ -47,9 +50,8 @@ public class RestaurantResponse {
     private List<String> categories;
 
     @NotNull
-    private String photo;
+    private MultipartFile photo;
 
     @NotNull
-    private String contact;
-
+    private MultipartFile contact;
 }
