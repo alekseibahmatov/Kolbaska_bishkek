@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1678091045647-1
+      id: 1678548688711-1
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -57,7 +57,7 @@ databaseChangeLog:
                   type: varchar(50)
             tableName: address
   - changeSet:
-      id: 1678091045647-2
+      id: 1678548688711-2
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -93,25 +93,7 @@ databaseChangeLog:
                   type: varchar(32)
             tableName: category
   - changeSet:
-      id: 1678091045647-3
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  constraints:
-                    nullable: false
-                  name: category_id
-                  type: BIGINT
-              - column:
-                  constraints:
-                    nullable: false
-                  name: restaurants_id
-                  type: BIGINT
-            tableName: category_restaurants
-  - changeSet:
-      id: 1678091045647-4
+      id: 1678548688711-3
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -157,6 +139,11 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  name: created_by_admin
+                  type: bool
+              - column:
+                  constraints:
+                    nullable: false
                   name: user_holder
                   type: BIGINT
               - column:
@@ -175,20 +162,19 @@ databaseChangeLog:
                   type: BIGINT
             tableName: certificate
   - changeSet:
-      id: 1678091045647-5
+      id: 1678548688711-4
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
         - createTable:
             columns:
               - column:
-                  autoIncrement: true
                   constraints:
                     nullable: false
                     primaryKey: true
                     primaryKeyName: pk_file
                   name: id
-                  type: BIGINT
+                  type: VARCHAR(255)
               - column:
                   constraints:
                     nullable: false
@@ -219,7 +205,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: file
   - changeSet:
-      id: 1678091045647-6
+      id: 1678548688711-5
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -256,7 +242,7 @@ databaseChangeLog:
                   type: TIMESTAMP
             tableName: login
   - changeSet:
-      id: 1678091045647-7
+      id: 1678548688711-6
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -326,7 +312,7 @@ databaseChangeLog:
                   type: DATETIME
             tableName: payment
   - changeSet:
-      id: 1678091045647-8
+      id: 1678548688711-7
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -393,22 +379,25 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: restaurant_code
-                  type: varchar(6)
+                  name: active
+                  type: bool
               - column:
                   constraints:
                     nullable: false
+                  name: restaurant_code
+                  type: varchar(6)
+              - column:
                   name: manager_id
                   type: BIGINT
               - column:
                   name: photo_id
-                  type: BIGINT
+                  type: VARCHAR(255)
               - column:
                   name: contract_id
-                  type: BIGINT
+                  type: VARCHAR(255)
             tableName: restaurant
   - changeSet:
-      id: 1678091045647-9
+      id: 1678548688711-8
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -417,16 +406,16 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: restaurant_id
+                  name: categories_id
                   type: BIGINT
               - column:
                   constraints:
                     nullable: false
-                  name: categories_id
+                  name: restaurant_id
                   type: BIGINT
             tableName: restaurant_categories
   - changeSet:
-      id: 1678091045647-10
+      id: 1678548688711-9
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -453,16 +442,13 @@ databaseChangeLog:
                   name: updated_at
                   type: TIMESTAMP
               - column:
-                  name: deleted_at
-                  type: DATETIME
-              - column:
                   constraints:
                     nullable: false
                   name: role_name
                   type: VARCHAR(255)
             tableName: role
   - changeSet:
-      id: 1678091045647-11
+      id: 1678548688711-10
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -512,7 +498,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: transaction
   - changeSet:
-      id: 1678091045647-12
+      id: 1678548688711-11
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -579,7 +565,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: user
   - changeSet:
-      id: 1678091045647-13
+      id: 1678548688711-12
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -597,7 +583,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: user_roles
   - changeSet:
-      id: 1678091045647-14
+      id: 1678548688711-13
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -615,7 +601,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: user_transactions
   - changeSet:
-      id: 1678091045647-15
+      id: 1678548688711-14
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -624,7 +610,7 @@ databaseChangeLog:
             constraintName: uc_user_transactions_transactions
             tableName: user_transactions
   - changeSet:
-      id: 1678091045647-16
+      id: 1678548688711-15
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -635,7 +621,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1678091045647-17
+      id: 1678548688711-16
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -646,7 +632,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1678091045647-18
+      id: 1678548688711-17
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -657,7 +643,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1678091045647-19
+      id: 1678548688711-18
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -668,7 +654,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1678091045647-20
+      id: 1678548688711-19
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -679,7 +665,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1678091045647-21
+      id: 1678548688711-20
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -690,7 +676,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: file
   - changeSet:
-      id: 1678091045647-22
+      id: 1678548688711-21
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -701,7 +687,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1678091045647-23
+      id: 1678548688711-22
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -712,7 +698,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: file
   - changeSet:
-      id: 1678091045647-24
+      id: 1678548688711-23
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -723,7 +709,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: certificate
   - changeSet:
-      id: 1678091045647-25
+      id: 1678548688711-24
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -734,7 +720,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1678091045647-26
+      id: 1678548688711-25
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -745,7 +731,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1678091045647-27
+      id: 1678548688711-26
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -756,7 +742,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1678091045647-28
+      id: 1678548688711-27
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -767,29 +753,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1678091045647-29
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: category_id
-            baseTableName: category_restaurants
-            constraintName: fk_catres_on_category
-            referencedColumnNames: id
-            referencedTableName: category
-  - changeSet:
-      id: 1678091045647-30
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: restaurants_id
-            baseTableName: category_restaurants
-            constraintName: fk_catres_on_restaurant
-            referencedColumnNames: id
-            referencedTableName: restaurant
-  - changeSet:
-      id: 1678091045647-31
+      id: 1678548688711-28
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -800,7 +764,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1678091045647-32
+      id: 1678548688711-29
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -811,7 +775,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1678091045647-33
+      id: 1678548688711-30
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -822,7 +786,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: role
   - changeSet:
-      id: 1678091045647-34
+      id: 1678548688711-31
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -833,7 +797,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1678091045647-35
+      id: 1678548688711-32
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -844,7 +808,7 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: transaction
   - changeSet:
-      id: 1678091045647-36
+      id: 1678548688711-33
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:

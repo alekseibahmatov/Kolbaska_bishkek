@@ -6,18 +6,16 @@ import ee.kolbaska.kolbaska.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -30,21 +28,17 @@ public class StorageService {
     private String basePath;
 
     public File uploadFile(MultipartFile file, FileType type) throws Exception {
-
-        String directory = "";
-
-        if (type == FileType.PHOTO) {
-            directory = "/photos/";
-        }
-        else if(type == FileType.CONTRACT) {
-            directory = "/contracts/";
-        }
+        String directory = switch (type) {
+            case PHOTO -> "/photos/";
+            case CONTRACT -> "/contracts/";
+        };
 
         String[] splittedFileName = Objects.requireNonNull(file.getOriginalFilename()).split("\\.");
 
         String fileName = "%s.%s".formatted(UUID.randomUUID(), splittedFileName[splittedFileName.length-1]);
 
         File newFile = File.builder()
+                .id(UUID.randomUUID().toString())
                 .fileType(type)
                 .fileName(fileName)
                 .build();
@@ -53,29 +47,54 @@ public class StorageService {
 
         Path fullPath;
 
-        if(basePath.equals("/")) fullPath = Paths.get(FileSystems.getDefault().getPath(".").toString()).toAbsolutePath().normalize().resolve("documents/%s/%s".formatted(directory, fileName));
-        else fullPath = Paths.get("%s/document/%s/%s".formatted(basePath, directory, fileName)).toAbsolutePath().normalize();
+        if(basePath.equals("/")) {
+            fullPath = Paths.get(FileSystems.getDefault().getPath(".").toString())
+                    .toAbsolutePath()
+                    .normalize()
+                    .resolve("documents/%s/%s".formatted(directory, fileName));
+        } else {
+            fullPath = Paths.get("%s/document/%s/%s".formatted(basePath, directory, fileName))
+                    .toAbsolutePath()
+                    .normalize();
+        }
 
         Files.copy(file.getInputStream(), fullPath);
 
         return newFile;
     }
 
-    public Resource getFile(String fileName, FileType type) throws Exception {
-        String directory = "";
 
-        if (type == FileType.PHOTO) {
-            directory = "/photos/";
-        }
-        else if(type == FileType.CONTRACT) {
-            directory = "/contracts/";
-        }
+    public Map<String, Object> getFile(String fileId) throws Exception {
+
+
+        File file = repository.findById(fileId).orElseThrow(
+                () -> new FileNotFoundException("File with following id not found")
+        );
+
+        String directory = switch (file.getFileType()) {
+            case PHOTO -> "/photos/";
+            case CONTRACT -> "/contracts/";
+        };
 
         Path fullPath;
 
-        if(basePath.equals("/")) fullPath = Paths.get(FileSystems.getDefault().getPath(".").toString()).toAbsolutePath().normalize().resolve("documents/%s/%s".formatted(directory, fileName));
-        else fullPath = Paths.get("%s/document/%s/%s".formatted(basePath, directory, fileName)).toAbsolutePath().normalize();
+        if(basePath.equals("/")) {
+            fullPath = Paths.get(FileSystems.getDefault().getPath(".").toString())
+                    .toAbsolutePath()
+                    .normalize()
+                    .resolve("documents/%s/%s".formatted(directory, file.getFileName()));
+        } else {
+            fullPath = Paths.get("%s/document/%s/%s".formatted(basePath, directory, file.getFileName()))
+                    .toAbsolutePath()
+                    .normalize();
+        }
 
-        return new ByteArrayResource(Files.readAllBytes(fullPath));
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("file", new ByteArrayResource(Files.readAllBytes(fullPath)));
+        response.put("fileType", file.getFileType());
+
+        return response;
     }
+
 }

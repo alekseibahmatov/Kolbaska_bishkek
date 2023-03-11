@@ -7,7 +7,7 @@ import ee.kolbaska.kolbaska.request.CertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.CertificateVerificationRequest;
 import ee.kolbaska.kolbaska.response.CertificateCreationResponse;
 import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
-import ee.kolbaska.kolbaska.service.PaymentService;
+import ee.kolbaska.kolbaska.service.CustomerPaymentService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.constraints.NotNull;
@@ -23,9 +23,9 @@ import java.io.IOException;
 @RestController
 @RequestMapping("${api.basepath}/payment")
 @RequiredArgsConstructor
-public class PaymentController {
+public class CustomerPaymentController {
 
-    private final PaymentService service;
+    private final CustomerPaymentService service;
 
     @PostMapping("/initiateCreation")
     public ResponseEntity<CertificateCreationResponse> initiateCreation(

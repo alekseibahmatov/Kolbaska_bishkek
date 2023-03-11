@@ -125,15 +125,14 @@ public class Restaurant {
     private String restaurantCode;
 
     @NotNull
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "restaurant_categories",
-            joinColumns = @JoinColumn(name = "Restaurant_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"))
     private List<Category> categories;
 
     @OneToMany(mappedBy = "restaurant")
     private List<User> waiters;
 
-    @NotNull
     @OneToOne
     @JoinColumn(name = "manager_id")
     private User manager;

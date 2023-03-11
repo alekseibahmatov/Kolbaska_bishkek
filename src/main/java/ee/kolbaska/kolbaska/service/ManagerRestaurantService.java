@@ -8,6 +8,7 @@ import ee.kolbaska.kolbaska.mapper.LoginMapper;
 import ee.kolbaska.kolbaska.mapper.TransactionMapper;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
+import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
 import ee.kolbaska.kolbaska.repository.AddressRepository;
 import ee.kolbaska.kolbaska.repository.RestaurantRepository;
@@ -51,45 +52,53 @@ public class ManagerRestaurantService {
 
     @Transactional
     public WaiterResponse createWaiter(WaiterRequest request) throws Exception {
-
         User manager = userConfiguration.getRequestUser();
 
-        if (manager.getRestaurant() == null) throw new RestaurantNotFoundException("This manager is not assigned to any restaurant");
+        if (manager.getManagedRestaurant() == null) {
+            throw new RestaurantNotFoundException("This manager is not assigned to any restaurant");
+        }
 
         Optional<User> userExists = userRepository.findByEmail(request.getEmail());
-
-        Restaurant restaurant = manager.getRestaurant();
-
+        Restaurant restaurant = manager.getManagedRestaurant();
         User waiter;
 
         if (userExists.isEmpty()) {
-
             String activationCode = UUID.randomUUID().toString();
+            Role waiterRole = roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new);
+            Role newbieRole = roleRepository.findRoleByRoleName("ROLE_NEWBIE").orElseThrow(RoleNotFoundException::new);
 
             waiter = User.builder()
                     .email(request.getEmail())
-                    .roles(List.of(roleRepository.findRoleByRoleName("ROLE_WAITER").orElseThrow(RoleNotFoundException::new), roleRepository.findRoleByRoleName("ROLE_NEWBIE").orElseThrow(RoleNotFoundException::new)))
+                    .roles(List.of(waiterRole, newbieRole))
                     .activationCode(activationCode)
                     .activated(true)
                     .deleted(false)
                     .restaurant(restaurant)
                     .build();
 
-            emailService.sendSimpleMessage(request.getEmail(), "Activate your account", String.format("Here is your uuid to activate you account: %s", activationCode));
-
+            emailService.sendSimpleMessage(
+                    request.getEmail(),
+                    "Activate your account",
+                    String.format("Here is your uuid to activate your account: %s", activationCode)
+            );
 
             waiter = userRepository.save(waiter);
 
         } else {
             waiter = userExists.get();
 
-            if (waiter.getRestaurant() != null) throw new UserStillOnDutyException("User is currently connected to restaurant. Please ask him to disconnect from previous restaurant");
+            if (waiter.getRestaurant() != null) {
+                throw new UserStillOnDutyException("User is currently connected to a restaurant. Please ask them to disconnect from their previous restaurant.");
+            }
 
             waiter.setRestaurant(restaurant);
         }
 
-        if(restaurant.getWaiters() == null) restaurant.setWaiters(List.of(waiter));
-        else restaurant.getWaiters().add(waiter);
+        if (restaurant.getWaiters() == null) {
+            restaurant.setWaiters(List.of(waiter));
+        } else {
+            restaurant.getWaiters().add(waiter);
+        }
 
         restaurantRepository.save(restaurant);
 
@@ -100,15 +109,20 @@ public class ManagerRestaurantService {
                 .email(waiter.getEmail())
                 .fullName(waiter.getFullName())
                 .build();
-
     }
 
     public WaiterDeletedResponse deleteWaiter(Long id) {
         Optional<User> waiterExists = userRepository.findById(id);
 
-        if (waiterExists.isEmpty()) throw new UsernameNotFoundException(String.format("User with id: %x not found", id));
+        if (waiterExists.isEmpty()) throw new UsernameNotFoundException("Waiter not found!");
 
         User waiter = waiterExists.get();
+
+        User manager = userConfiguration.getRequestUser();
+
+        Restaurant restaurant = manager.getManagedRestaurant();
+
+        if (!restaurant.getWaiters().contains(waiter)) throw new UsernameNotFoundException("Waiter not found!");
 
         waiter.setRestaurant(null);
 
@@ -124,27 +138,24 @@ public class ManagerRestaurantService {
 
         User manager = userConfiguration.getRequestUser();
 
-        Restaurant restaurant = manager.getRestaurant();
+        Restaurant restaurant = manager.getManagedRestaurant();
 
         if (restaurant == null) throw new RestaurantNotFoundException("This manager is not associated with any restaurant!");
 
-        List<User> usersWithoutManager = restaurant.getWaiters().stream()
-                .filter(user -> !Objects.equals(user.getEmail(), manager.getEmail())).toList();
+        List<User> waiters = restaurant.getWaiters();
 
         List<WaiterResponse> response = new ArrayList<>();
 
-        for (User u: usersWithoutManager) {
-            double turnover = 0.0;
-
-            for (Transaction t: u.getTransactions()) {
-                turnover += t.getValue();
-            }
+        for (User user : waiters) {
+            double turnover = user.getTransactions().stream()
+                    .mapToDouble(Transaction::getValue)
+                    .sum();
 
             WaiterResponse waiterResponse = WaiterResponse.builder()
-                    .id(u.getId())
-                    .fullName(u.getFullName())
-                    .phone(u.getPhone())
-                    .email(u.getEmail())
+                    .id(user.getId())
+                    .fullName(user.getFullName())
+                    .phone(user.getPhone())
+                    .email(user.getEmail())
                     .turnover(turnover)
                     .build();
 
@@ -156,42 +167,42 @@ public class ManagerRestaurantService {
 
     public CustomerInformationResponse getWaiter(Long id) {
         User manager = userConfiguration.getRequestUser();
+        Optional<User> optionalUser = userRepository.findById(id);
 
-        Optional<User> ifUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("Waiter with such id was not found");
+        }
 
-        if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
+        User user = optionalUser.get();
+        Restaurant restaurant = manager.getManagedRestaurant();
 
-        Restaurant restaurant = manager.getRestaurant();
+        if (!restaurant.getWaiters().contains(user)) {
+            throw new UsernameNotFoundException("Waiter that you requested does not exist");
+        }
 
-        User user = ifUser.get();
-
-        if (!restaurant.getWaiters().contains(user)) throw new UsernameNotFoundException("Waiter that you request does nopt exists");
+        AddressResponse addressResponse = AddressMapper.INSTANCE.toAddressResponse(user.getAddress());
+        List<LoginResponse> loginResponses = LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream());
 
         CustomerInformationResponse.CustomerInformationResponseBuilder response = CustomerInformationResponse.builder()
                 .fullName(user.getFullName())
                 .email(user.getEmail())
-                .phone(user.getPhone());
-
-        AddressResponse addressResponse = AddressMapper.INSTANCE.toAddressResponse(user.getAddress());
-
-        response.address(addressResponse);
-
-        response
+                .phone(user.getPhone())
+                .address(addressResponse)
                 .personalCode(user.getPersonalCode())
                 .transactions(TransactionMapper.INSTANCE.toTransactionResponseList(user.getTransactions()))
-                .logins(LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()));
+                .logins(loginResponses);
 
         return response.build();
     }
 
-    public CustomerUpdateResponse updateWaiter(ManagerCustomerUpdateRequest request) {
+    public CustomerUpdateResponse updateWaiter(ManagerCustomerUpdateRequest request) throws UsernameNotFoundException {
         User manager = userConfiguration.getRequestUser();
 
         Optional<User> ifUser = userRepository.findById(request.getId());
 
         if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
 
-        Restaurant restaurant = manager.getRestaurant();
+        Restaurant restaurant = manager.getManagedRestaurant();
 
         User user = ifUser.get();
 

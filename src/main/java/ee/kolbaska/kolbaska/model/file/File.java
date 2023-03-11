@@ -16,9 +16,9 @@ import java.util.Date;
 @AllArgsConstructor
 public class File {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private String id;
 
     @NotNull
     @Column(
