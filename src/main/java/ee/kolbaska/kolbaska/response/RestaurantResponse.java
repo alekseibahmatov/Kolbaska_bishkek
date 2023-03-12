@@ -50,7 +50,7 @@ public class RestaurantResponse {
     private String photo;
 
     @NotNull
-    private String contact;
+    private String contract;
 
     @NotNull
     private Boolean active;
