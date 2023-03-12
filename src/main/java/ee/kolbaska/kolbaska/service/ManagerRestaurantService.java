@@ -122,7 +122,7 @@ public class ManagerRestaurantService {
 
         Restaurant restaurant = manager.getManagedRestaurant();
 
-        if (!restaurant.getWaiters().contains(waiter)) throw new UsernameNotFoundException("Waiter not found!");
+        if (restaurant.getWaiters() == null || !restaurant.getWaiters().contains(waiter)) throw new UsernameNotFoundException("Waiter not found!");
 
         waiter.setRestaurant(null);
 
