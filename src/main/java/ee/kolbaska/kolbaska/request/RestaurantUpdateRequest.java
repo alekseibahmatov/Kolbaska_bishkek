@@ -17,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantUpdateRequest {
+
+    @NotNull
     private String restaurantCode;
 
     @NotNull

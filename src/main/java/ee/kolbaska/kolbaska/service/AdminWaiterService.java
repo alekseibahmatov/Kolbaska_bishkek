@@ -108,12 +108,7 @@ public class AdminWaiterService {
         user.setPhone(formatService.formatE164(phone));
         user.setPersonalCode(personalCode);
 
-        Address userAddress = user.getAddress();
-        userAddress.setCity(address.getCity());
-        userAddress.setCountry(address.getCountry());
-        userAddress.setState(address.getState());
-        userAddress.setApartmentNumber(address.getApartmentNumber());
-        userAddress.setZipCode(address.getZipCode());
+        Address userAddress = AddressMapper.INSTANCE.toAddress(address);
 
         addressRepository.save(userAddress);
 
@@ -133,17 +128,18 @@ public class AdminWaiterService {
             waiterResponse.setEmail(waiter.getEmail());
             waiterResponse.setPhone(waiter.getPhone());
 
-            double turnover = 0.0;
+            double turnover;
 
-            for (Transaction t: waiter.getTransactions()) {
-                turnover += t.getValue();
-            }
+            if (waiter.getTransactions() != null) {
+                turnover = waiter.getTransactions().stream()
+                        .mapToDouble(Transaction::getValue)
+                        .sum();
+            } else turnover = 0.0;
 
             waiterResponse.setTurnover(turnover);
 
             responses.add(waiterResponse);
         }
-
         return responses;
     }
 }
