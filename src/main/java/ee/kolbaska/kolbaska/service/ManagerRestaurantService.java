@@ -147,9 +147,13 @@ public class ManagerRestaurantService {
         List<WaiterResponse> response = new ArrayList<>();
 
         for (User user : waiters) {
-            double turnover = user.getTransactions().stream()
-                    .mapToDouble(Transaction::getValue)
-                    .sum();
+            double turnover;
+
+            if (user.getTransactions() != null) {
+                turnover = user.getTransactions().stream()
+                        .mapToDouble(Transaction::getValue)
+                        .sum();
+            } else turnover = 0.0;
 
             WaiterResponse waiterResponse = WaiterResponse.builder()
                     .id(user.getId())
@@ -176,7 +180,7 @@ public class ManagerRestaurantService {
         User user = optionalUser.get();
         Restaurant restaurant = manager.getManagedRestaurant();
 
-        if (!restaurant.getWaiters().contains(user)) {
+        if (restaurant.getWaiters() == null || !restaurant.getWaiters().contains(user)) {
             throw new UsernameNotFoundException("Waiter that you requested does not exist");
         }
 
