@@ -120,7 +120,7 @@ public class AdminRestaurantService {
                 .averageBill(restaurant.getAverageBill())
                 .address(AddressMapper.INSTANCE.toAddressResponse(restaurant.getAddress()))
                 .photo(restaurant.getPhoto().getId())
-                .contact(restaurant.getContract().getId())
+                .contract(restaurant.getContract().getId())
                 .active(restaurant.getActive())
                 .build();
     }

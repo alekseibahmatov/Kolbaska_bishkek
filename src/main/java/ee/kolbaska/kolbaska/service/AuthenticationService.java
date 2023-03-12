@@ -84,7 +84,9 @@ public class AuthenticationService {
                         request.getPassword()
                 ));
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        );
 
         Map<String, Object> claims = new HashMap<>();
 
