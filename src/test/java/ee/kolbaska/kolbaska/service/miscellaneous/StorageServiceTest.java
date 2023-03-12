@@ -14,6 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,9 +38,14 @@ class StorageServiceTest {
     private StorageService storageService;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(storageService, "basePath", "/");
+
+        String currentDir = System.getProperty("user.dir");
+        Path directoryPath = Paths.get(currentDir, "documents", "contracts");
+        Files.createDirectories(directoryPath);
+
     }
 
     @Test
@@ -71,11 +77,9 @@ class StorageServiceTest {
         String fileName = "testfile.txt";
 
         // create the necessary directories
-
         String currentDir = System.getProperty("user.dir");
         Path directoryPath = Paths.get(currentDir, "documents", "contracts");
         Path filePath = directoryPath.resolve(fileName);
-        Files.createDirectories(directoryPath);
 
         // create the file
         File file = File.builder()
