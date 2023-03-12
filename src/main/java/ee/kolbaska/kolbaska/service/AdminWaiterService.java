@@ -59,7 +59,7 @@ public class AdminWaiterService {
                 .activated(user.getActivated())
                 .deleted(user.getDeleted())
                 .activationCode(user.getActivationCode())
-                .restaurantId(user.getRestaurant() == null ? -1 : user.getRestaurant().getId())
+                .restaurantCode(user.getRestaurant() == null ? "" : user.getRestaurant().getRestaurantCode())
                 .transactions(TransactionMapper.INSTANCE.toTransactionResponseList(user.getTransactions()))
                 .logins(LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()))
                 .roleNames(userConfiguration.getRoleNames(user));

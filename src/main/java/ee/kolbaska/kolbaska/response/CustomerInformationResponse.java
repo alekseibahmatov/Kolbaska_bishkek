@@ -30,7 +30,7 @@ public class CustomerInformationResponse {
 
     private List<TransactionResponse> transactions;
 
-    private Long restaurantId;
+    private String restaurantCode;
 
     private List<LoginResponse> logins;
 
