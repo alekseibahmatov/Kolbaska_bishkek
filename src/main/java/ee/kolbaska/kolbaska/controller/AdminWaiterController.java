@@ -5,7 +5,7 @@ import ee.kolbaska.kolbaska.response.CustomerInformationResponse;
 import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.AdminWaiterService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +27,14 @@ public class AdminWaiterController {
 
     @GetMapping("/waiter/{id}")
     public ResponseEntity<CustomerInformationResponse> getWaiter(
-            @NotNull @PathVariable Long id
+            @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.getWaiter(id));
     }
 
     @PutMapping("/waiter")
     public ResponseEntity<CustomerUpdateResponse> updateWaiter(
-            @NotNull @RequestBody AdminCustomerUpdateRequest request
+            @Valid @RequestBody AdminCustomerUpdateRequest request
     ) throws RoleNotFoundException {
         return ResponseEntity.ok(service.updateWaiter(request));
     }

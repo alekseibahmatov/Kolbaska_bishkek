@@ -135,7 +135,7 @@ public class AdminRestaurantService {
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user != null) {
-            if (user.getRestaurant() != null) {
+            if (user.getManagedRestaurant() != null) {
                 throw new UserStillOnDutyException("This user is already connected to a restaurant, please ask them to leave or check if the email is correct.");
             }
             return user;
@@ -216,12 +216,12 @@ public class AdminRestaurantService {
         );
 
         Optional<Address> ifCurrentAddress = addressRepository.findByStreetAndCityAndApartmentNumberAndCountryAndStateAndZipCode(
-                restaurant.getAddress().getStreet(),
-                restaurant.getAddress().getCity(),
-                restaurant.getAddress().getApartmentNumber(),
-                restaurant.getAddress().getCountry(),
-                restaurant.getAddress().getState(),
-                restaurant.getAddress().getZipCode()
+                request.getAddress().getStreet(),
+                request.getAddress().getCity(),
+                request.getAddress().getApartmentNumber(),
+                request.getAddress().getCountry(),
+                request.getAddress().getState(),
+                request.getAddress().getZipCode()
         );
 
         Address currentAddress;

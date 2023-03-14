@@ -2,7 +2,6 @@ package ee.kolbaska.kolbaska.controller;
 
 import ee.kolbaska.kolbaska.model.file.FileType;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
@@ -24,7 +23,7 @@ public class FileController {
     private final StorageService service;
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@NotNull @PathVariable String fileId) throws Exception {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) throws Exception {
         Map<String, Object> fileMap = service.getFile(fileId);
         Resource file = (Resource) fileMap.get("file");
         FileType fileType = (FileType) fileMap.get("fileType");

@@ -7,7 +7,7 @@ import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
 import ee.kolbaska.kolbaska.request.CertificateActivationRequest;
 import ee.kolbaska.kolbaska.response.CertificateActivationResponse;
 import ee.kolbaska.kolbaska.service.ManagerTransactionService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,7 @@ public class ManagerTransactionController {
 
     @PostMapping("/certificate")
     public ResponseEntity<CertificateActivationResponse> activateCertificate(
-            @NotNull @RequestBody CertificateActivationRequest request
+            @Valid @RequestBody CertificateActivationRequest request
     ) throws AccessDeniedException, CertificateNotFoundException, CertificateInsufficientFundsException, CertificateIsDisabledException, CertificateIsOutDatedException {
         return ResponseEntity.ok(service.activateCertificate(request));
     }
