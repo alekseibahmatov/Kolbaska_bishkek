@@ -11,7 +11,7 @@ import ee.kolbaska.kolbaska.response.AdminUpdateCertificateInformationResponse;
 import ee.kolbaska.kolbaska.service.AdminCertificateService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class AdminCertificateController {
 
     @PostMapping("/certificate")
     public ResponseEntity<AdminCertificateCreationResponse> createCertificate(
-            @NotNull @RequestBody AdminCertificateCreationRequest request
+            @Valid @RequestBody AdminCertificateCreationRequest request
     ) throws MessagingException, TemplateException, IOException, WriterException {
         return ResponseEntity.ok(service.createCertificate(request));
     }
@@ -40,21 +40,21 @@ public class AdminCertificateController {
 
     @GetMapping("/certificate/{id}")
     public ResponseEntity<AdminCertificateInformationResponse> getCertificate(
-            @NotNull @PathVariable String id
+            @Valid @PathVariable String id
     ) throws CertificateNotFoundException {
         return ResponseEntity.ok(service.getCertificate(id));
     }
 
     @PutMapping("/certificate")
     public ResponseEntity<AdminUpdateCertificateInformationResponse> updateCertificate(
-            @NotNull @RequestBody AdminUpdateCertificateInformationRequest request
+            @Valid @RequestBody AdminUpdateCertificateInformationRequest request
     ) throws CertificateNotFoundException {
         return ResponseEntity.ok(service.updateCertificate(request));
     }
 
     @DeleteMapping("/certificate/{id}")
     public ResponseEntity<AdminUpdateCertificateInformationResponse> disableCertificate(
-            @NotNull @PathVariable String id
+            @Valid @PathVariable String id
     ) throws CertificateNotFoundException {
         return ResponseEntity.ok(service.disableCertificate(id));
     }

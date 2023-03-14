@@ -8,7 +8,7 @@ import ee.kolbaska.kolbaska.response.RestaurantResponse;
 import ee.kolbaska.kolbaska.response.RestaurantTableResponse;
 import ee.kolbaska.kolbaska.response.RestaurantUpdateResponse;
 import ee.kolbaska.kolbaska.service.AdminRestaurantService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ public class AdminRestaurantController {
 
     @PostMapping(value = "/restaurant", consumes = "multipart/form-data")
     public ResponseEntity<RestaurantTableResponse> createRestaurant(
-            @NotNull @ModelAttribute RestaurantRequest request
+            @Valid @ModelAttribute RestaurantRequest request
     ) throws Exception {
         return ResponseEntity.ok(service.createRestaurant(request));
     }
@@ -41,21 +41,21 @@ public class AdminRestaurantController {
 
     @GetMapping("/restaurant/{code}")
     public ResponseEntity<RestaurantResponse> returnRestaurant(
-            @NotNull @PathVariable String code
+            @Valid @PathVariable String code
     ) throws Exception {
         return ResponseEntity.ok(service.returnRestaurant(code));
     }
 
     @PutMapping(value = "/restaurant", consumes = "multipart/form-data")
     public ResponseEntity<RestaurantUpdateResponse> updateRestaurant(
-            @NotNull @ModelAttribute RestaurantUpdateRequest request
+            @Valid @ModelAttribute RestaurantUpdateRequest request
     ) throws Exception {
         return ResponseEntity.ok(service.updateRestaurant(request));
     }
 
     @DeleteMapping("/restaurant/{code}")
     public ResponseEntity<RestaurantDisableResponse> disableRestaurant(
-            @NotNull @PathVariable String code
+            @Valid @PathVariable String code
     ) throws RestaurantNotFoundException {
         return ResponseEntity.ok(service.disableRestaurant(code));
     }

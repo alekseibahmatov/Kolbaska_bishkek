@@ -8,7 +8,7 @@ import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
 import ee.kolbaska.kolbaska.response.WaiterDeletedResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.ManagerRestaurantService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +25,7 @@ public class ManagerRestaurantController {
 
     @PostMapping("/restaurant/waiter")
     public ResponseEntity<WaiterResponse> createWaiter(
-            @NotNull @RequestBody WaiterRequest request
+            @Valid @RequestBody WaiterRequest request
             ) throws Exception {
         return ResponseEntity.ok(service.createWaiter(request));
     }
@@ -37,21 +37,21 @@ public class ManagerRestaurantController {
 
     @GetMapping("/restaurant/waiter/{id}")
     public ResponseEntity<CustomerInformationResponse> getWaiter(
-            @NotNull @PathVariable Long id
+            @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.getWaiter(id));
     }
 
     @PutMapping("/restaurant/waiter")
     public ResponseEntity<CustomerUpdateResponse> updateWaiter(
-            @NotNull @RequestBody ManagerCustomerUpdateRequest request
+            @Valid @RequestBody ManagerCustomerUpdateRequest request
             ) throws UsernameNotFoundException {
         return ResponseEntity.ok(service.updateWaiter(request));
     }
 
     @DeleteMapping("/restaurant/waiter/{id}")
     public ResponseEntity<WaiterDeletedResponse> deleteWaiter(
-            @NotNull @PathVariable Long id
+            @PathVariable Long id
     ) {
         return ResponseEntity.ok(service.deleteWaiter(id));
     }

@@ -10,7 +10,7 @@ import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
 import ee.kolbaska.kolbaska.service.CustomerPaymentService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,14 +29,14 @@ public class CustomerPaymentController {
 
     @PostMapping("/initiateCreation")
     public ResponseEntity<CertificateCreationResponse> initiateCreation(
-            @NotNull @RequestBody CertificateCreationRequest request
+            @Valid @RequestBody CertificateCreationRequest request
     ) {
         return ResponseEntity.ok(service.initiateCreation(request));
     }
 
     @PostMapping("/verificationCreation")
     public ResponseEntity<CertificateVerificationResponse> verificationCreation(
-            @NotNull @RequestBody CertificateVerificationRequest request
+            @Valid @RequestBody CertificateVerificationRequest request
     ) throws PaymentNotFoundException, PaymentException, MessagingException, IOException, WriterException, TemplateException {
         return ResponseEntity.ok(service.verificationCreation(request));
     }
