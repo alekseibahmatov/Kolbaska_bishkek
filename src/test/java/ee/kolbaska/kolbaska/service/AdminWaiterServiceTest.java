@@ -19,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -91,18 +90,22 @@ class AdminWaiterServiceTest {
         assertEquals("John Doe", response.getFullName());
         assertEquals("johndoe@example.com", response.getEmail());
         assertEquals("123456789", response.getPhone());
+
         assertNotNull(response.getAddress());
         assertEquals("1234", response.getPersonalCode());
         assertTrue(response.getActivated());
         assertFalse(response.getDeleted());
+
         assertEquals("xyz", response.getActivationCode());
         assertEquals("ABC", response.getRestaurantCode());
         assertNotNull(response.getTransactions());
         assertTrue(response.getTransactions().isEmpty());
+
         assertNotNull(response.getLogins());
         assertTrue(response.getLogins().isEmpty());
         assertNotNull(response.getRoleNames());
         assertTrue(response.getRoleNames().isEmpty());
+
         verify(userRepository).findById(1L);
     }
 
@@ -168,10 +171,12 @@ class AdminWaiterServiceTest {
         assertEquals("User was successfully updated!", response.getMessage());
         assertEquals(fullName, user.getFullName());
         assertEquals(newPassword, user.getPassword());
+
         assertEquals(phone, user.getPhone());
         assertEquals(personalCode, user.getPersonalCode());
         assertEquals(email, user.getEmail());
         assertEquals(activated, user.getActivated());
+
         assertEquals(deleted, user.getDeleted());
         assertEquals(activationCode, user.getActivationCode());
         assertEquals(roles, user.getRoles());
@@ -214,27 +219,34 @@ class AdminWaiterServiceTest {
     void testGetWaiters_ReturnsWaiterResponseList() {
         // Mock repository to return a list of waiters
         List<User> waiters = new ArrayList<>();
-        User waiter1 = new User();
-        waiter1.setId(1L);
-        waiter1.setFullName("John Doe");
-        waiter1.setEmail("john.doe@example.com");
-        waiter1.setPhone("+1234567890");
-        Transaction transaction1 = new Transaction();
-        transaction1.setValue(10.0);
-        Transaction transaction2 = new Transaction();
-        transaction2.setValue(15.0);
+        User waiter1 = User.builder()
+                .id(1L)
+                .fullName("John Doe")
+                .email("john.doe@example.com")
+                .phone("+1234567890")
+                .build();
+
+        Transaction transaction1 = Transaction.builder().value(10.0).build();
+        Transaction transaction2 = Transaction.builder().value(15.0).build();
+
         waiter1.setTransactions(Arrays.asList(transaction1, transaction2));
+
         waiters.add(waiter1);
-        User waiter2 = new User();
-        waiter2.setId(2L);
-        waiter2.setFullName("Jane Doe");
-        waiter2.setEmail("jane.doe@example.com");
-        waiter2.setPhone("+9876543210");
-        Transaction transaction3 = new Transaction();
-        transaction3.setValue(20.0);
+
+        User waiter2 = User.builder()
+                .id(2L)
+                .fullName("Jane Doe")
+                .email("jane.doe@example.com")
+                .phone("+9876543210")
+                .build();
+
+        Transaction transaction3 = Transaction.builder().value(20.0).build();
+
         waiter2.setTransactions(Collections.singletonList(transaction3));
+
         waiters.add(waiter2);
-        Mockito.when(userRepository.findUsersByRestaurantIsNotNull()).thenReturn(waiters);
+
+        when(userRepository.findUsersByRestaurantIsNotNull()).thenReturn(waiters);
 
         // Call the method
         List<WaiterResponse> response = adminWaiterService.getWaiters();
@@ -244,14 +256,17 @@ class AdminWaiterServiceTest {
         WaiterResponse waiterResponse1 = response.get(0);
         assertEquals(1L, waiterResponse1.getId());
         assertEquals("John Doe", waiterResponse1.getFullName());
+
         assertEquals("john.doe@example.com", waiterResponse1.getEmail());
         assertEquals("+1234567890", waiterResponse1.getPhone());
         assertEquals(25.0, waiterResponse1.getTurnover());
         WaiterResponse waiterResponse2 = response.get(1);
+
         assertEquals(2L, waiterResponse2.getId());
         assertEquals("Jane Doe", waiterResponse2.getFullName());
         assertEquals("jane.doe@example.com", waiterResponse2.getEmail());
         assertEquals("+9876543210", waiterResponse2.getPhone());
+
         assertEquals(20.0, waiterResponse2.getTurnover());
     }
 
