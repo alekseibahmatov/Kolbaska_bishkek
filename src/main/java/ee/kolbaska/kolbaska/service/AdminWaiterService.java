@@ -18,6 +18,8 @@ import ee.kolbaska.kolbaska.response.CustomerUpdateResponse;
 import ee.kolbaska.kolbaska.response.WaiterResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.FormatService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,11 @@ public class AdminWaiterService {
 
     private final AddressRepository addressRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminWaiterService.class);
+
     public CustomerInformationResponse getWaiter(Long id) {
+        LOGGER.info("Getting information for waiter with id {}", id);
+
         Optional<User> ifUser = userRepository.findById(id);
 
         if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
@@ -64,10 +70,14 @@ public class AdminWaiterService {
                 .logins(LoginMapper.INSTANCE.toLoginResponse(user.getLogins().stream()))
                 .roleNames(userConfiguration.getRoleNames(user));
 
+        LOGGER.info("Returning information for waiter with id {}: {}", id, response.build());
+
         return response.build();
     }
 
     public CustomerUpdateResponse updateWaiter(AdminCustomerUpdateRequest request) throws RoleNotFoundException {
+        LOGGER.info("Updating waiter with request {}", request);
+
         Optional<User> ifUser = userRepository.findById(request.getId());
 
         if (ifUser.isEmpty()) throw new UsernameNotFoundException("Waiter with such id wasn't found");
@@ -95,12 +105,18 @@ public class AdminWaiterService {
 
         userRepository.save(user);
 
-        return CustomerUpdateResponse.builder()
+        CustomerUpdateResponse response = CustomerUpdateResponse.builder()
                 .message("User was successfully updated!")
                 .build();
+
+        LOGGER.info("Waiter updated: {}", response);
+
+        return response;
     }
 
     static void updateWaiterImpl(User user, String fullName, String newPassword, PasswordEncoder passwordEncoder, FormatService formatService, String phone, String personalCode, AddressRequest address, AddressRepository addressRepository, String email) {
+        LOGGER.info("Updating waiter {} with fullName = {}, phone = {}, personalCode = {}, email = {}", user.getId(), fullName, phone, personalCode, email);
+
         user.setFullName(fullName);
 
         if (newPassword != null && !newPassword.equals("")) user.setPassword(passwordEncoder.encode(newPassword));
@@ -113,9 +129,13 @@ public class AdminWaiterService {
         addressRepository.save(userAddress);
 
         user.setEmail(email);
+
+        LOGGER.info("Waiter updated: {}", user);
     }
 
     public List<WaiterResponse> getWaiters() {
+        LOGGER.info("Getting list of waiters");
+
         List<User> waiters = userRepository.findUsersByRestaurantIsNotNull();
 
         List<WaiterResponse> responses = new ArrayList<>();
@@ -140,6 +160,8 @@ public class AdminWaiterService {
 
             responses.add(waiterResponse);
         }
+        LOGGER.info("Returning list of waiters: {}", responses);
+
         return responses;
     }
 }

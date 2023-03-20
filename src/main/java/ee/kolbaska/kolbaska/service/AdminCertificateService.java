@@ -19,6 +19,8 @@ import ee.kolbaska.kolbaska.service.miscellaneous.QrCodeService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -45,8 +47,12 @@ public class AdminCertificateService {
 
     private final CertificateRepository certificateRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminCertificateService.class);
+
     @Transactional
     public AdminCertificateCreationResponse createCertificate(AdminCertificateCreationRequest request) throws IOException, WriterException, MessagingException, TemplateException {
+        LOGGER.info("Creating a new certificate for the holder with ID {}", request.getHolderUserId());
+
         User admin = userConfiguration.getRequestUser();
 
         User holder = userRepository.findById(request.getHolderUserId()).orElseThrow(
@@ -89,10 +95,14 @@ public class AdminCertificateService {
                 content
         );
 
+        LOGGER.info("Successfully created a new certificate with ID {}", certificateId);
+
         return AdminCertificateCreationResponse.builder().message("Certificate was successfully created").build();
     }
 
     public List<AdminCertificateResponse> getCertificates() {
+        LOGGER.info("Retrieving all certificates");
+
         List<Certificate> certificateList = certificateRepository.findAll();
 
         if (certificateList.isEmpty()) return List.of();
@@ -114,10 +124,14 @@ public class AdminCertificateService {
             response.add(tempCertificate);
         }
 
+        LOGGER.info("Successfully retrieved {} certificates", response.size());
+
         return response;
     }
 
     public AdminCertificateInformationResponse getCertificate(String id) throws CertificateNotFoundException {
+        LOGGER.info("Retrieving certificate with ID {}", id);
+
         Optional<Certificate> ifCertificate = certificateRepository.findById(id);
 
         if (ifCertificate.isEmpty()) throw new CertificateNotFoundException("Certificate do not found");
@@ -127,9 +141,7 @@ public class AdminCertificateService {
         SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
 
         AdminCertificateInformationResponse response = AdminCertificateInformationResponse.builder()
-                .toFullName(certificate.getHolder().getFullName())
-                .toEmail(certificate.getHolder().getEmail())
-                .toPhone(certificate.getHolder().getPhone())
+                .toId(certificate.getHolder().getId())
                 .remainingValue(certificate.getRemainingValue())
                 .description(certificate.getDescription())
                 .createdAt(certificate.getCreatedAt())
@@ -140,14 +152,17 @@ public class AdminCertificateService {
 
         if (certificate.getCreatedByAdmin()) {}
         else {
-            response.setFromFullName(certificate.getSender().getFullName());
-            response.setFromEmail(certificate.getSender().getEmail());
-            response.setFromPhone(certificate.getSender().getPhone());
+            response.setFromId(certificate.getSender().getId());
         }
+
+        LOGGER.info("Successfully retrieved certificate with ID {}", id);
+
         return response;
     }
 
     public AdminUpdateCertificateInformationResponse updateCertificate(AdminUpdateCertificateInformationRequest request) throws CertificateNotFoundException {
+        LOGGER.info("Updating certificate with ID {}", request.getId());
+
         Optional<Certificate> ifCertificate = certificateRepository.findById(request.getId());
 
         if (ifCertificate.isEmpty()) throw new CertificateNotFoundException("Certificate with given id not found!");
@@ -173,12 +188,16 @@ public class AdminCertificateService {
 
         certificateRepository.save(certificate);
 
+        LOGGER.info("Successfully updated certificate with ID {}", request.getId());
+
         return AdminUpdateCertificateInformationResponse.builder()
                 .message("Certificate was successfully updated")
                 .build();
     }
 
     public AdminUpdateCertificateInformationResponse disableCertificate(String id) throws CertificateNotFoundException {
+        LOGGER.info("Disabling certificate with ID {}", id);
+
         Certificate certificate = certificateRepository.findById(id).orElseThrow(
                 () -> new CertificateNotFoundException("Certificate with given id wasn't found")
         );
@@ -187,6 +206,8 @@ public class AdminCertificateService {
         certificate.setDeletedAt(new Date());
 
         certificateRepository.save(certificate);
+
+        LOGGER.info("Successfully disabled certificate with ID {}", id);
 
         return AdminUpdateCertificateInformationResponse.builder()
                 .message("Certificate was successfully disabled")
