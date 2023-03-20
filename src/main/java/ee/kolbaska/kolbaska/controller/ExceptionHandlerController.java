@@ -4,11 +4,13 @@ import ee.kolbaska.kolbaska.exception.RestaurantAlreadyExistsException;
 import ee.kolbaska.kolbaska.exception.RestaurantNotFoundException;
 import ee.kolbaska.kolbaska.exception.UserAlreadyExistsException;
 import ee.kolbaska.kolbaska.response.ErrorResponse;
+import ee.kolbaska.kolbaska.service.AuthenticationService;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -19,8 +21,12 @@ import java.util.Date;
 @ControllerAdvice
 public class ExceptionHandlerController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
+
     @ExceptionHandler(RestaurantAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleRestaurantAlreadyExistsException(Exception ex) {
+        LOGGER.error("Restaurant already exists: {}", ex.getMessage(), ex);
+
         ErrorResponse error = new ErrorResponse();
 
         error.setMessage(ex.getMessage());
@@ -32,6 +38,8 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(RestaurantNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRestaurantNotFoundException(Exception ex) {
+        LOGGER.error("Restaurant not found: {}", ex.getMessage(), ex);
+
         ErrorResponse error = new ErrorResponse();
 
         error.setMessage(ex.getMessage());
@@ -43,6 +51,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(Exception ex) {
+        LOGGER.error("User already exists: {}", ex.getMessage(), ex);
         ErrorResponse error = new ErrorResponse();
 
         error.setMessage(ex.getMessage());
@@ -54,6 +63,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRoleNotFoundException(Exception ex) {
+        LOGGER.error("Role not found: {}", ex.getMessage(), ex);
         ErrorResponse error = new ErrorResponse();
 
         error.setMessage(ex.getMessage());
@@ -65,6 +75,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+        LOGGER.error("Constraint error: {}", new ArrayList<>(e.getConstraintViolations()).get(0).getMessageTemplate(), e);
         ErrorResponse error = new ErrorResponse();
 
         error.setMessage(new ArrayList<>(e.getConstraintViolations()).get(0).getMessageTemplate());
@@ -76,6 +87,8 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(Exception ex) {
+        LOGGER.error("User not found: {}", ex.getMessage(), ex);
+
         ErrorResponse error = new ErrorResponse();
 
         error.setMessage(ex.getMessage());
@@ -87,6 +100,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleExceptions(Exception ex) {
+        LOGGER.error(ex.getMessage(), ex);
 
         ErrorResponse error = new ErrorResponse();
 

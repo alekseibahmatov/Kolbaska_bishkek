@@ -38,10 +38,15 @@ import java.util.*;
 public class CustomerPaymentService {
 
     private final CertificateRepository certificateRepository;
+
     private final UserRepository userRepository;
+
     private final PaymentRepository paymentRepository;
+
     private final QrCodeService qrCodeService;
+
     private final EmailService emailService;
+
     private final RoleRepository roleRepository;
 
 

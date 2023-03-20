@@ -19,6 +19,8 @@ import ee.kolbaska.kolbaska.response.RestaurantUpdateResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +46,12 @@ public class AdminRestaurantService {
 
     private final RoleRepository roleRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminRestaurantService.class);
+
     @Transactional
     public RestaurantTableResponse createRestaurant(RestaurantRequest request) throws Exception {
+        LOGGER.info("Creating restaurant with request {}", request);
+
         boolean restaurantExists = restaurantRepository.findByEmail(request.getRestaurantEmail()).isPresent();
         if (restaurantExists) {
             throw new RestaurantAlreadyExistsException("Restaurant with following email is already exists, please check restaurant list");
@@ -79,16 +85,21 @@ public class AdminRestaurantService {
 
         newRestaurant = restaurantRepository.save(newRestaurant);
 
-        return new RestaurantTableResponse(
+        RestaurantTableResponse response = new RestaurantTableResponse(
                 newRestaurant.getRestaurantCode(),
                 newRestaurant.getName(),
                 newRestaurant.getEmail(),
                 newRestaurant.getPhone(),
                 newRestaurant.getAverageBill()
         );
+
+        LOGGER.info("Restaurant created: {}", response);
+
+        return response;
     }
 
     public List<RestaurantTableResponse> returnRestaurantList() {
+        LOGGER.info("Returning restaurant list");
 
         return restaurantRepository.findAll()
                 .stream().map(restaurant -> new RestaurantTableResponse(
@@ -102,6 +113,8 @@ public class AdminRestaurantService {
     }
 
     public RestaurantResponse returnRestaurant(String code) throws Exception {
+        LOGGER.info("Returning restaurant with code {}", code);
+
         Restaurant restaurant = restaurantRepository.findByRestaurantCode(code).orElseThrow(
                 () -> new RestaurantNotFoundException("Restaurant with such code wasn't found")
         );
@@ -109,7 +122,7 @@ public class AdminRestaurantService {
         List<String> categories = restaurant.getCategories().stream()
                 .map(Category::getName).toList();
 
-        return RestaurantResponse.builder()
+        RestaurantResponse response = RestaurantResponse.builder()
                 .restaurantName(restaurant.getName())
                 .restaurantEmail(restaurant.getEmail())
                 .restaurantPhone(restaurant.getPhone())
@@ -123,21 +136,32 @@ public class AdminRestaurantService {
                 .contract(restaurant.getContract().getId())
                 .active(restaurant.getActive())
                 .build();
+
+        LOGGER.info("Returned restaurant: {}", response);
+
+        return response;
     }
 
     public List<String> getCategories() {
+        LOGGER.info("Returning categories");
+
         return categoryRepository.findAll().stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());
     }
 
     private User getUser(String email) throws UserStillOnDutyException {
+        LOGGER.info("Getting user with email {}", email);
+
         User user = userRepository.findByEmail(email).orElse(null);
 
         if (user != null) {
             if (user.getRestaurant() != null) {
                 throw new UserStillOnDutyException("This user is already connected to a restaurant, please ask them to leave or check if the email is correct.");
             }
+
+            LOGGER.info("Got user: {}", user);
+
             return user;
         }
 
@@ -153,10 +177,13 @@ public class AdminRestaurantService {
 
         emailService.sendSimpleMessage(email, "Activate your account", String.format("Here is your uuid to activate you account: %s", activationCode));
 
+        LOGGER.info("Created new user: {}", newUser);
+
         return userRepository.save(newUser);
     }
 
     private List<Category> setupCategories(Set<String> categories) {
+        LOGGER.info("Setting up categories with set {}", categories);
 
         if (categories.isEmpty()) throw new NullPointerException("Categories are empty");
 
@@ -179,11 +206,15 @@ public class AdminRestaurantService {
 
             categoryList.add(category.get());
         }
+        LOGGER.info("Categories set up: {}", categoryList);
+
         return categoryList;
     }
 
     @Transactional
     public RestaurantDisableResponse disableRestaurant(String code) throws RestaurantNotFoundException {
+        LOGGER.info("Disabling restaurant with code {}", code);
+
         Restaurant restaurant = restaurantRepository.findByRestaurantCode(code).orElseThrow(
                 () -> new RestaurantNotFoundException("Restaurant with given code do not found!")
         );
@@ -191,6 +222,7 @@ public class AdminRestaurantService {
         restaurant.setActive(false);
         restaurant.setDeletedAt(new Date());
         restaurant.getWaiters().forEach(waiter -> {
+            LOGGER.info("Disabling user with email {}", waiter.getEmail());
             waiter.setRestaurant(null);
             waiter.setDeleted(true);
             waiter.setDeletedAt(new Date());
@@ -205,12 +237,18 @@ public class AdminRestaurantService {
 
         userRepository.save(manager);
 
-        return RestaurantDisableResponse.builder()
+        RestaurantDisableResponse response = RestaurantDisableResponse.builder()
                 .message("Restaurant was successfully disabled")
                 .build();
+
+        LOGGER.info("Restaurant disabled: {}", response);
+
+        return response;
     }
 
     public RestaurantUpdateResponse updateRestaurant(RestaurantUpdateRequest request) throws Exception {
+        LOGGER.info("Updating restaurant with request {}", request);
+
         Restaurant restaurant = restaurantRepository.findByRestaurantCode(request.getRestaurantCode()).orElseThrow(
                 () -> new RestaurantNotFoundException("Restaurant with given code not found!")
         );
@@ -247,8 +285,12 @@ public class AdminRestaurantService {
 
         restaurantRepository.save(restaurant);
 
-        return RestaurantUpdateResponse.builder()
+        RestaurantUpdateResponse response = RestaurantUpdateResponse.builder()
                 .message("Restaurant updated successfully")
                 .build();
+
+        LOGGER.info("Restaurant updated: {}", response);
+
+        return response;
     }
 }

@@ -1,0 +1,19 @@
+<configuration>
+    <appender name="INFLUXDB" class="ee.kolbaska.kolbaska.appender.InfluxDBAppender">
+        <url>http://influxdb:8086</url>
+        <token>T6LvfJodCK7l3-tAvNh6af2sVlntQunONR_886gkVWAjwYhjAIDLYnO12n4Ly85qVkjsIvAdQu91oqMX4Y2Cnw==</token>
+        <org>Maitsetuur</org>
+        <bucket>springboot</bucket>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="INFLUXDB" />
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

@@ -13,11 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdminCertificateInformationResponse {
-    private String toFullName;
+    private Long fromId;
 
-    private String toEmail;
-
-    private String toPhone;
+    private Long toId;
 
     private Integer value;
 
@@ -28,12 +26,6 @@ public class AdminCertificateInformationResponse {
     private Date createdAt;
 
     private String description;
-
-    private String fromFullName;
-
-    private String fromEmail;
-
-    private String fromPhone;
 
     private List<TransactionResponse> transactions;
 }

@@ -13,6 +13,8 @@ import ee.kolbaska.kolbaska.repository.TransactionRepository;
 import ee.kolbaska.kolbaska.request.CertificateActivationRequest;
 import ee.kolbaska.kolbaska.response.CertificateActivationResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +34,12 @@ public class ManagerTransactionService {
 
     private final TransactionRepository transactionRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManagerRestaurantService.class);
+
     @Transactional
     public CertificateActivationResponse activateCertificate(CertificateActivationRequest request) throws AccessDeniedException, CertificateNotFoundException, CertificateInsufficientFundsException, CertificateIsDisabledException, CertificateIsOutDatedException {
         User worker = userConfiguration.getRequestUser();
+        LOGGER.info("Attempting to activate certificate with unique code: {} for restaurant: {}", request.getUniqueCode(), worker.getRestaurant().getName());
 
         if (worker.getRestaurant() == null) throw new AccessDeniedException("You are not allowed to make this action");
 
@@ -68,6 +73,8 @@ public class ManagerTransactionService {
         }
 
         certificateRepository.save(certificate);
+
+        LOGGER.info("Certificate with unique code: {} has been successfully activated for restaurant: {}", request.getUniqueCode(), worker.getRestaurant().getName());
 
         return CertificateActivationResponse.builder()
                 .message("QR Code was successfully activated!")
