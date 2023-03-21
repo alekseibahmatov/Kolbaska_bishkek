@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,5 +20,9 @@ public class TransactionResponse {
 
     private String restaurantCode;
 
-    private String certificateId;
+    private Long waiterId;
+
+    private String waiterEmail;
+
+    private Date createdAt;
 }

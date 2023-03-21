@@ -19,7 +19,9 @@ public interface TransactionMapper {
                 .value(transaction.getValue())
                 .restaurantCode(transaction.getRestaurant().getRestaurantCode())
                 .restaurantName(transaction.getRestaurant().getName())
-                .certificateId(transaction.getCertificate().getId())
+                .waiterId(transaction.getWaiter().getId())
+                .waiterEmail(transaction.getWaiter().getEmail())
+                .createdAt(transaction.getCreatedAt())
                 .build();
     }
 }
