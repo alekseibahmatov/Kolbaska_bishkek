@@ -59,8 +59,6 @@ public class AdminCertificateService {
                 () -> new UsernameNotFoundException("Holder not found!")
         );
 
-        String certificateId = UUID.randomUUID().toString();
-
         Certificate newCertificate = Certificate.builder()
                 .value(request.getValue())
                 .validUntil(request.getValidUntil())
@@ -68,12 +66,12 @@ public class AdminCertificateService {
                 .sender(admin)
                 .holder(holder)
                 .description(request.getDescription())
-                .id(certificateId)
+                .createdByAdmin(true)
                 .build();
 
-        certificateRepository.save(newCertificate);
+        newCertificate = certificateRepository.save(newCertificate);
 
-        String qrCodeUrl = "%s/api/v1/certificate/%s".formatted(API_BASEURL, certificateId);
+        String qrCodeUrl = "%s/api/v1/certificate/%s".formatted(API_BASEURL, newCertificate.getId());
 
         byte[] qrCodeImage = qrCodeService.createQrCode(qrCodeUrl);
 
@@ -95,7 +93,7 @@ public class AdminCertificateService {
                 content
         );
 
-        LOGGER.info("Successfully created a new certificate with ID {}", certificateId);
+        LOGGER.info("Successfully created a new certificate with ID {}", newCertificate.getId());
 
         return AdminCertificateCreationResponse.builder().message("Certificate was successfully created").build();
     }
@@ -134,7 +132,7 @@ public class AdminCertificateService {
 
         Optional<Certificate> ifCertificate = certificateRepository.findById(id);
 
-        if (ifCertificate.isEmpty()) throw new CertificateNotFoundException("Certificate do not found");
+        if (ifCertificate.isEmpty()) throw new CertificateNotFoundException("Certificate can not be found");
 
         Certificate certificate = ifCertificate.get();
 
@@ -150,8 +148,7 @@ public class AdminCertificateService {
                 .transactions(TransactionMapper.INSTANCE.toTransactionResponseList(certificate.getTransactions()))
                 .build();
 
-        if (certificate.getCreatedByAdmin()) {}
-        else {
+        if (!certificate.getCreatedByAdmin()) {
             response.setFromId(certificate.getSender().getId());
         }
 
@@ -174,11 +171,13 @@ public class AdminCertificateService {
         certificate.setDescription(request.getDescription());
         certificate.setRemainingValue(request.getRemainingValue());
 
-        User sender = userRepository.findById(request.getSenderUserId()).orElseThrow(
-                () -> new UsernameNotFoundException("Sender not found!")
-        );
+        if (!certificate.getCreatedByAdmin()) {
+            User sender = userRepository.findById(request.getSenderUserId()).orElseThrow(
+                    () -> new UsernameNotFoundException("Sender not found!")
+            );
 
-        certificate.setSender(sender);
+            certificate.setSender(sender);
+        }
 
         User holder = userRepository.findById(request.getHolderUserId()).orElseThrow(
                 () -> new UsernameNotFoundException("Holder not found!")
