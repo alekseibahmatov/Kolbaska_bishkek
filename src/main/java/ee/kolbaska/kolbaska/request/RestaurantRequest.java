@@ -58,6 +58,9 @@ public class RestaurantRequest {
     private Integer averageBill;
 
     @NotNull
+    private Integer maitsetuurShare;
+
+    @NotNull
     private List<String> categories;
 
     @NotNull

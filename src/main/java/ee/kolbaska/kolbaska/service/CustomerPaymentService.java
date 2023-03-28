@@ -53,9 +53,6 @@ public class CustomerPaymentService {
     @Value("${jwt.payment.secret}")
     private String JWT_SECRET = "supersecret";
 
-    @Value("${api.baseurl}")
-    private String API_BASEURL = "http://localhost:8080";
-
     @Transactional
     public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) {
 
@@ -141,9 +138,13 @@ public class CustomerPaymentService {
             payment.setStatus(Status.PAID);
             paymentRepository.save(payment);
 
-            String qrCodeUrl = "%s/api/v1/certificate/%s".formatted(API_BASEURL, id);
+            Map<String, String> payload = new HashMap<>();
 
-            byte[] qrCodeImage = qrCodeService.createQrCode(qrCodeUrl);
+            payload.put("certificate_id", id);
+            payload.put("name", holder.getFullName());
+            payload.put("remainingValue", payment.getValue().toString());
+
+            byte[] qrCodeImage = qrCodeService.createQrCode(payload.toString());
 
             Map<String, Object> content = new HashMap<>();
 

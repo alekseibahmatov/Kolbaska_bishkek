@@ -14,7 +14,7 @@ import java.util.Date;
 public class TransactionResponse {
     private String id;
 
-    private Double value;
+    private String value;
 
     private String restaurantName;
 
@@ -23,6 +23,8 @@ public class TransactionResponse {
     private Long waiterId;
 
     private String waiterEmail;
+
+    private String profit;
 
     private Date createdAt;
 }
