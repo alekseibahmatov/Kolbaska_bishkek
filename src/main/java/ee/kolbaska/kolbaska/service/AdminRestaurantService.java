@@ -74,6 +74,7 @@ public class AdminRestaurantService {
                 .averageBill(request.getAverageBill())
                 .phone(request.getRestaurantPhone())
                 .email(request.getRestaurantEmail())
+                .maitsetuurShare(request.getMaitsetuurShare())
                 .restaurantCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase())
                 .categories(setupCategories(new HashSet<>(request.getCategories())))
                 .photo(storageService.uploadFile(request.getPhoto(), FileType.PHOTO))
@@ -128,6 +129,7 @@ public class AdminRestaurantService {
                 .restaurantPhone(restaurant.getPhone())
                 .restaurantDescription(restaurant.getDescription())
                 .managerId(restaurant.getManager().getId())
+                .maitsetuurShare(restaurant.getMaitsetuurShare())
                 .categories(categories)
                 .workingHours(restaurant.getWorkingHours())
                 .averageBill(restaurant.getAverageBill())
@@ -277,6 +279,7 @@ public class AdminRestaurantService {
         );
 
         restaurant.setManager(manager);
+        restaurant.setMaitsetuurShare(restaurant.getMaitsetuurShare());
         restaurant.setWorkingHours(request.getWorkingHours());
         restaurant.setAverageBill(request.getAverageBill());
         restaurant.setCategories(setupCategories(new HashSet<>(request.getCategories())));

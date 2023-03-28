@@ -41,7 +41,6 @@ public class Transaction {
 
     @Column(
             name = "deleted_at",
-            nullable = false,
             insertable = false,
             updatable = false
     )

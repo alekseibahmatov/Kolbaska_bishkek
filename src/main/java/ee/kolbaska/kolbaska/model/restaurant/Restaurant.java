@@ -125,6 +125,14 @@ public class Restaurant {
     private String restaurantCode;
 
     @NotNull
+    @Column(
+            name = "maitsetuur_share",
+            columnDefinition = "int",
+            nullable = false
+    )
+    private Integer maitsetuurShare;
+
+    @NotNull
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "restaurant_categories",
             joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"))

@@ -16,7 +16,7 @@ public interface TransactionMapper {
 
         return TransactionResponse.builder()
                 .id(transaction.getId())
-                .value(transaction.getValue())
+                .value(String.format("%.2f", transaction.getValue()))
                 .restaurantCode(transaction.getRestaurant().getRestaurantCode())
                 .restaurantName(transaction.getRestaurant().getName())
                 .waiterId(transaction.getWaiter().getId())
