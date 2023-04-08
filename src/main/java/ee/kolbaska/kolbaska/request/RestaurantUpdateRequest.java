@@ -54,5 +54,5 @@ public class RestaurantUpdateRequest {
     private MultipartFile photo;
 
     @NotNull
-    private MultipartFile contact;
+    private MultipartFile contract;
 }

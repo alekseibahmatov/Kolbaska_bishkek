@@ -284,7 +284,7 @@ public class AdminRestaurantService {
         restaurant.setAverageBill(request.getAverageBill());
         restaurant.setCategories(setupCategories(new HashSet<>(request.getCategories())));
         restaurant.setPhoto(storageService.uploadFile(request.getPhoto(), FileType.PHOTO));
-        restaurant.setContract(storageService.uploadFile(request.getContact(), FileType.CONTRACT));
+        restaurant.setContract(storageService.uploadFile(request.getContract(), FileType.CONTRACT));
 
         restaurantRepository.save(restaurant);
 
