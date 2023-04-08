@@ -480,7 +480,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: value
-                  type: double(4,2)
+                  type: double(6,2)
               - column:
                   constraints:
                     nullable: false
