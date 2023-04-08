@@ -46,9 +46,9 @@ public class ManagerCertificateService {
     @Transactional
     public CertificateActivationResponse activateCertificate(CertificateActivationRequest request) throws IOException, CertificateNotFoundException, CertificateIsDisabledException, CertificateIsOutDatedException, WriterException, MessagingException, TemplateException {
         User worker = userConfiguration.getRequestUser();
-        LOGGER.info("Attempting to activate certificate with unique code: {} for restaurant: {}", request.getUniqueCode(), worker.getRestaurant().getName());
+        LOGGER.info("Attempting to activate certificate with unique code: {} for restaurant: {}", request.getUniqueCode(), worker.getRestaurant() == null ? worker.getManagedRestaurant().getName() : worker.getRestaurant().getName());
 
-        if (worker.getRestaurant() == null) throw new AccessDeniedException("You are not allowed to make this action");
+        if (worker.getRestaurant() == null && worker.getManagedRestaurant() == null) throw new AccessDeniedException("You are not allowed to make this action");
 
         Optional<Certificate> isCertificate = certificateRepository.findById(request.getUniqueCode());
 
@@ -67,7 +67,7 @@ public class ManagerCertificateService {
         Transaction newTransaction = Transaction.builder()
                 .certificate(certificate)
                 .value(transactionValue)
-                .restaurant(worker.getRestaurant())
+                .restaurant(worker.getRestaurant() == null ? worker.getManagedRestaurant(): worker.getRestaurant())
                 .waiter(worker)
                 .certificate(certificate)
                 .build();
@@ -75,17 +75,10 @@ public class ManagerCertificateService {
         certificate.setRemainingValue(certificate.getRemainingValue() - request.getAmount());
         certificate.setActivatedAt(new Date());
 
-        newTransaction = transactionRepository.save(newTransaction);
-        if (certificate.getTransactions() == null) certificate.setTransactions(List.of(newTransaction));
-        else {
-            List<Transaction> transactions = new ArrayList<>(certificate.getTransactions());
-            transactions.add(newTransaction);
-            certificate.setTransactions(transactions);
-        }
-
+        transactionRepository.save(newTransaction);
         certificateRepository.save(certificate);
 
-        LOGGER.info("Certificate with unique code: {} has been successfully activated for restaurant: {}", request.getUniqueCode(), worker.getRestaurant().getName());
+        LOGGER.info("Certificate with unique code: {} has been successfully activated for restaurant: {}", request.getUniqueCode(), worker.getRestaurant() == null ? worker.getManagedRestaurant().getName() : worker.getRestaurant().getName());
 
         Map<String, String> payload = new HashMap<>();
 

@@ -469,7 +469,7 @@ class AdminRestaurantServiceTest {
         request.setManagerId(restaurant.getManager().getId());
         request.setCategories(Arrays.asList("Chinese", "French"));
         request.setPhoto(new MockMultipartFile("testphoto.jpg", new byte[]{}));
-        request.setContact(new MockMultipartFile("testcontract.pdf", new byte[]{}));
+        request.setContract(new MockMultipartFile("testcontract.pdf", new byte[]{}));
 
         // Act
         RestaurantUpdateResponse response = service.updateRestaurant(request);

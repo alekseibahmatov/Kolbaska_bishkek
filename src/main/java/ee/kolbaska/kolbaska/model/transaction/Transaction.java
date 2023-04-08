@@ -49,7 +49,7 @@ public class Transaction {
     @NotNull
     @Column(
             name = "value",
-            columnDefinition = "double(4,2)",
+            columnDefinition = "double(6,2)",
             nullable = false
     )
     private Double value;
