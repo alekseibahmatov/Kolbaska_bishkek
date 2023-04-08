@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.service;
 
 import com.google.zxing.WriterException;
 import ee.kolbaska.kolbaska.config.UserConfiguration;
+import ee.kolbaska.kolbaska.exception.CertificateInsufficientFundsException;
 import ee.kolbaska.kolbaska.exception.CertificateIsDisabledException;
 import ee.kolbaska.kolbaska.exception.CertificateIsOutDatedException;
 import ee.kolbaska.kolbaska.exception.CertificateNotFoundException;
@@ -44,7 +45,7 @@ public class ManagerCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerRestaurantService.class);
 
     @Transactional
-    public CertificateActivationResponse activateCertificate(CertificateActivationRequest request) throws IOException, CertificateNotFoundException, CertificateIsDisabledException, CertificateIsOutDatedException, WriterException, MessagingException, TemplateException {
+    public CertificateActivationResponse activateCertificate(CertificateActivationRequest request) throws IOException, CertificateNotFoundException, CertificateIsDisabledException, CertificateIsOutDatedException, WriterException, MessagingException, TemplateException, CertificateInsufficientFundsException {
         User worker = userConfiguration.getRequestUser();
         LOGGER.info("Attempting to activate certificate with unique code: {} for restaurant: {}", request.getUniqueCode(), worker.getRestaurant() == null ? worker.getManagedRestaurant().getName() : worker.getRestaurant().getName());
 
@@ -58,6 +59,7 @@ public class ManagerCertificateService {
 
         if (certificate.getValidUntil().before(new Date())) throw new CertificateIsOutDatedException("This certificate is no longer active");
         if (!certificate.getActive()) throw new CertificateIsDisabledException("This certificate is disabled");
+        if (certificate.getRemainingValue() == 0.0) throw new CertificateInsufficientFundsException("Certificate is already empty");
 
         Double transactionValue;
 
