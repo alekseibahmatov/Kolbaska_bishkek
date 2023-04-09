@@ -67,7 +67,6 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(List.of(role))
-                .deleted(false)
                 .activated(true)
                 .fullName("Zalupka") //TODO change fullName when we decide to open registration for regular customer
                 .build();

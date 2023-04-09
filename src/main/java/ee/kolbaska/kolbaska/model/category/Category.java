@@ -1,11 +1,14 @@
 package ee.kolbaska.kolbaska.model.category;
 
+import ee.kolbaska.kolbaska.model.baseentity.DefaultModel;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,36 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
-
-    @Column(
-            name = "updated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date updatedAt;
-
-    @Column(
-            name = "deleted_at",
-            insertable = false,
-            updatable = false
-    )
-    private Date deletedAt;
+public class Category extends DefaultModel {
 
     @NotNull
     @Column(

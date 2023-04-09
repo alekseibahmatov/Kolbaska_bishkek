@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -57,7 +58,7 @@ public class ManagerCertificateService {
 
         Certificate certificate = isCertificate.get();
 
-        if (certificate.getValidUntil().before(new Date())) throw new CertificateIsOutDatedException("This certificate is no longer active");
+        if (certificate.getValidUntil().isBefore(LocalDate.now())) throw new CertificateIsOutDatedException("This certificate is no longer active");
         if (!certificate.getActive()) throw new CertificateIsDisabledException("This certificate is disabled");
         if (certificate.getRemainingValue() == 0.0) throw new CertificateInsufficientFundsException("Certificate is already empty");
 
@@ -75,7 +76,6 @@ public class ManagerCertificateService {
                 .build();
 
         certificate.setRemainingValue(certificate.getRemainingValue() - request.getAmount());
-        certificate.setActivatedAt(new Date());
 
         transactionRepository.save(newTransaction);
         certificateRepository.save(certificate);
@@ -84,7 +84,7 @@ public class ManagerCertificateService {
 
         Map<String, String> payload = new HashMap<>();
 
-        payload.put("certificate_id", certificate.getId());
+        payload.put("certificate_id", certificate.getId().toString());
         payload.put("name", certificate.getHolder().getFullName());
         payload.put("remainingValue", certificate.getRemainingValue().toString());
 

@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.model.user;
 
 import ee.kolbaska.kolbaska.model.address.Address;
+import ee.kolbaska.kolbaska.model.baseentity.DefaultModel;
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import ee.kolbaska.kolbaska.model.login.Login;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
@@ -15,7 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,32 +25,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails {
+public class User extends DefaultModel implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
-
-    @Column(
-            name = "updated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date updatedAt;
-
-    @Column(name = "deleted_at")
-    private Date deletedAt;
 
     @Column(
             name = "password",
@@ -105,14 +81,6 @@ public class User implements UserDetails {
     )
     private String activationCode;
 
-    @NotNull
-    @Column(
-            name = "deleted",
-            columnDefinition = "bool",
-            nullable = false
-    )
-    private Boolean deleted;
-
     @OneToMany
     private List<Transaction> transactions;
 
@@ -155,7 +123,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !deleted;
+        return !isDeleted();
     }
 
     @Override

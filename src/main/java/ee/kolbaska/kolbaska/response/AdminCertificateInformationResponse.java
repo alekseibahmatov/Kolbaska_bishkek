@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -21,9 +22,9 @@ public class AdminCertificateInformationResponse {
 
     private Double remainingValue;
 
-    private String validUntil;
+    private LocalDate validUntil;
 
-    private Date createdAt;
+    private Instant createdAt;
 
     private String description;
 

@@ -64,21 +64,27 @@ class AdminWaiterServiceTest {
 
     @Test
     void testGetWaiter_Success() {
+
+
+        Restaurant restaurant = Restaurant.builder()
+                .restaurantCode("ABC").build();
+        restaurant.setId(1L);
+
         // Arrange
         User user = User.builder()
-                .id(1L)
                 .fullName("John Doe")
                 .email("johndoe@example.com")
                 .phone("123456789")
                 .personalCode("1234")
                 .activated(true)
-                .deleted(false)
                 .activationCode("xyz")
                 .address(Address.builder().build())
-                .restaurant(Restaurant.builder().id(1L).restaurantCode("ABC").build())
+                .restaurant(restaurant)
                 .transactions(Collections.emptyList())
                 .logins(Collections.emptyList())
                 .build();
+        user.setId(1L);
+        user.setDeleted(false);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
@@ -134,10 +140,10 @@ class AdminWaiterServiceTest {
         String activationCode = "abc123";
 
         User user = User.builder()
-                .id(id)
                 .fullName("Jane Doe")
                 .email("janedoe@example.com")
                 .build();
+        user.setId(1L);
 
         AdminCustomerUpdateRequest request = AdminCustomerUpdateRequest.builder()
                 .id(id)
@@ -177,7 +183,7 @@ class AdminWaiterServiceTest {
         assertEquals(email, user.getEmail());
         assertEquals(activated, user.getActivated());
 
-        assertEquals(deleted, user.getDeleted());
+        assertEquals(deleted, user.isDeleted());
         assertEquals(activationCode, user.getActivationCode());
         assertEquals(roles, user.getRoles());
     }
@@ -191,6 +197,7 @@ class AdminWaiterServiceTest {
         AdminCustomerUpdateRequest request = AdminCustomerUpdateRequest.builder()
                 .id(id)
                 .roleNames(roleNames)
+                .deleted(false)
                 .build();
 
         when(userRepository.findById(id)).thenReturn(Optional.of(new User()));
@@ -220,11 +227,11 @@ class AdminWaiterServiceTest {
         // Mock repository to return a list of waiters
         List<User> waiters = new ArrayList<>();
         User waiter1 = User.builder()
-                .id(1L)
                 .fullName("John Doe")
                 .email("john.doe@example.com")
                 .phone("+1234567890")
                 .build();
+        waiter1.setId(1L);
 
         Transaction transaction1 = Transaction.builder().value(10.0).build();
         Transaction transaction2 = Transaction.builder().value(15.0).build();
@@ -234,11 +241,11 @@ class AdminWaiterServiceTest {
         waiters.add(waiter1);
 
         User waiter2 = User.builder()
-                .id(2L)
                 .fullName("Jane Doe")
                 .email("jane.doe@example.com")
                 .phone("+9876543210")
                 .build();
+        waiter2.setId(2L);
 
         Transaction transaction3 = Transaction.builder().value(20.0).build();
 

@@ -30,8 +30,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +61,7 @@ public class CustomerPaymentService {
     @Transactional
     public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) {
 
-        Payment.PaymentBuilder newPayment = Payment.builder()
+        Payment newPayment = Payment.builder()
                 .value(request.getValue())
                 .toEmail(request.getToEmail())
                 .fromEmail(request.getFromEmail())
@@ -64,15 +69,16 @@ public class CustomerPaymentService {
                 .fromFullName(request.getFromFullName())
                 .phone(request.getToPhone())
                 .description(request.getCongratsText())
-                .status(Status.PENDING);
+                .status(Status.PENDING)
+                .build();
 
 
         //TODO here add implementation of montonio payment system.
         // Has to be payload creation method, jwt signing method and method that will send request to montonio servers to register new order
 
-        newPayment.id(UUID.randomUUID().toString()); //TODO when montonio is connected change this to its UUID from response
+        //newPayment.id(UUID.randomUUID().toString()); //TODO when montonio is connected change this to its UUID from response
 
-        paymentRepository.save(newPayment.build());
+        paymentRepository.save(newPayment);
 
         return CertificateCreationResponse.builder()
                 .redirectUrl("https://dummymontonio.com/someshittyoreder")
@@ -104,7 +110,6 @@ public class CustomerPaymentService {
                     .fullName(payment.getToFullName())
                     .phone(payment.getPhone())
                     .email(payment.getToEmail())
-                    .deleted(false)
                     .activated(false)
                     .roles(List.of(customerRole))
                     .build()));
@@ -112,35 +117,29 @@ public class CustomerPaymentService {
             User sender = ifSender.orElseGet(() -> userRepository.save(User.builder()
                     .email(payment.getFromEmail())
                     .fullName(payment.getToFullName())
-                    .deleted(false)
                     .activated(false)
                     .roles(List.of(customerRole))
                     .build()));
 
-            Calendar cal = Calendar.getInstance();
-
-            cal.add(Calendar.YEAR, 1);
-
-            String id = UUID.randomUUID().toString();
+            LocalDate validUntilDate = LocalDate.now().minusYears(1);
 
             Certificate newCertificate = Certificate.builder()
-                    .id(id)
                     .holder(holder)
                     .sender(sender)
                     .description(payment.getDescription())
                     .value(payment.getValue())
-                    .validUntil(cal.getTime())
+                    .validUntil(validUntilDate)
                     .active(true)
                     .createdByAdmin(false)
                     .build();
 
-            certificateRepository.save(newCertificate);
+            newCertificate = certificateRepository.save(newCertificate);
             payment.setStatus(Status.PAID);
             paymentRepository.save(payment);
 
             Map<String, String> payload = new HashMap<>();
 
-            payload.put("certificate_id", id);
+            payload.put("certificate_id", newCertificate.getId().toString());
             payload.put("name", holder.getFullName());
             payload.put("remainingValue", payment.getValue().toString());
 
@@ -148,11 +147,11 @@ public class CustomerPaymentService {
 
             Map<String, Object> content = new HashMap<>();
 
-            SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+            DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
             content.put("qrCode", qrCodeImage);
             content.put("value", "%d€".formatted(payment.getValue()));
-            content.put("valid_until", sf.format(cal.getTime()));
+            content.put("valid_until", validUntilDate.format(dtf));
             content.put("from", payment.getFromFullName());
             content.put("to", payment.getToFullName());
             content.put("description", payment.getDescription());

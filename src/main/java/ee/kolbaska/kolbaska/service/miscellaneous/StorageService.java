@@ -38,7 +38,6 @@ public class StorageService {
         String fileName = "%s.%s".formatted(UUID.randomUUID(), splittedFileName[splittedFileName.length-1]);
 
         File newFile = File.builder()
-                .id(UUID.randomUUID().toString())
                 .fileType(type)
                 .fileName(fileName)
                 .build();

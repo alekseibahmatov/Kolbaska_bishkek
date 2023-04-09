@@ -79,7 +79,6 @@ public class ManagerRestaurantService {
                     .roles(List.of(waiterRole, newbieRole))
                     .activationCode(activationCode)
                     .activated(true)
-                    .deleted(false)
                     .restaurant(restaurant)
                     .build();
 

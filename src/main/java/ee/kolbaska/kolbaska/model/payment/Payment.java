@@ -1,12 +1,11 @@
 package ee.kolbaska.kolbaska.model.payment;
 
-import jakarta.persistence.*;
+import ee.kolbaska.kolbaska.model.baseentity.UUIDModel;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "payment")
@@ -15,10 +14,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class Payment extends UUIDModel {
 
     @NotNull
     @Column(
@@ -82,29 +78,4 @@ public class Payment {
             nullable = false
     )
     private Status status;
-
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
-
-    @Column(
-            name = "updated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date updatedAt;
-
-    @Column(
-            name = "deleted_at",
-            insertable = false,
-            updatable = false
-    )
-    private Date deletedAt;
 }
