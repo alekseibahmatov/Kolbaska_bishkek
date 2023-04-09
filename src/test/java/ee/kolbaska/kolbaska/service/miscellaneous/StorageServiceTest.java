@@ -55,10 +55,10 @@ class StorageServiceTest {
         FileType type = FileType.CONTRACT;
 
         File newFile = File.builder()
-                .id(UUID.randomUUID().toString())
                 .fileType(type)
                 .fileName("testfile.txt")
                 .build();
+        newFile.setId(UUID.randomUUID());
 
         when(fileRepository.save(any(File.class))).thenReturn(newFile);
 
@@ -83,10 +83,11 @@ class StorageServiceTest {
 
         // create the file
         File file = File.builder()
-                .id(fileId)
                 .fileType(FileType.CONTRACT)
                 .fileName(fileName)
                 .build();
+        file.setId(UUID.randomUUID());
+
         Files.write(filePath, "Test file content".getBytes());
         when(fileRepository.findById(fileId)).thenReturn(Optional.of(file));
 

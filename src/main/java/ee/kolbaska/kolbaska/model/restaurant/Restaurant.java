@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.model.restaurant;
 
 import ee.kolbaska.kolbaska.model.address.Address;
+import ee.kolbaska.kolbaska.model.baseentity.DefaultModel;
 import ee.kolbaska.kolbaska.model.category.Category;
 import ee.kolbaska.kolbaska.model.file.File;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
@@ -20,36 +21,7 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Restaurant {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
-
-    @Column(
-            name = "updated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date updatedAt;
-
-    @Column(
-            name = "deleted_at",
-            insertable = false,
-            updatable = false
-    )
-    private Date deletedAt;
+public class Restaurant extends DefaultModel {
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private Set<Transaction> transactions;

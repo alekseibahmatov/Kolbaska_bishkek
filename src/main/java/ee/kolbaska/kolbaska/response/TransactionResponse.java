@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @Builder
@@ -26,5 +26,5 @@ public class TransactionResponse {
 
     private String profit;
 
-    private Date createdAt;
+    private Instant createdAt;
 }

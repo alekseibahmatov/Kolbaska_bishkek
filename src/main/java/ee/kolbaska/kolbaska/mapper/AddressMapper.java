@@ -11,10 +11,10 @@ import org.mapstruct.factory.Mappers;
 public interface AddressMapper {
     AddressMapper INSTANCE = Mappers.getMapper(AddressMapper.class);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "deletedAt", ignore = true)
+    @Mapping(target = "DefaultModel.id", ignore = true)
+    @Mapping(target = "TimeControl.createdAt", ignore = true)
+    @Mapping(target = "TimeControl.updatedAt", ignore = true)
+    @Mapping(target = "TimeControl.deletedAt", ignore = true)
     Address toAddress(AddressRequest addressRequest);
 
     AddressResponse toAddressResponse(Address address);

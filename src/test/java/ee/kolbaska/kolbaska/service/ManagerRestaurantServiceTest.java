@@ -81,10 +81,13 @@ class ManagerRestaurantServiceTest {
                 .email("waiter@example.com")
                 .build();
 
+        Restaurant managedRestaurant = Restaurant.builder().build();
+        managedRestaurant.setId(2L);
+
         User manager = User.builder()
-                .id(1L)
-                .managedRestaurant(Restaurant.builder().id(2L).build())
+                .managedRestaurant(managedRestaurant)
                 .build();
+        manager.setId(1L);
 
         when(userConfiguration.getRequestUser()).thenReturn(manager);
         when(userRepository.findByEmail(waiterRequest.getEmail())).thenReturn(Optional.empty());
@@ -109,12 +112,24 @@ class ManagerRestaurantServiceTest {
                 .email("waiter@example.com")
                 .build();
 
-        User manager = User.builder()
-                .id(1L)
-                .managedRestaurant(Restaurant.builder().id(2L).build())
-                .build();
+        Restaurant managedRestaurant = Restaurant.builder().build();
+        managedRestaurant.setId(2L);
 
-        User existingUser = User.builder().id(3L).restaurant(Restaurant.builder().id(4L).build()).build();
+        User manager = User.builder()
+                .managedRestaurant(managedRestaurant)
+                .build();
+        manager.setId(1L);
+
+        Restaurant anotherRestaurant = Restaurant.builder().build();
+        anotherRestaurant.setId(4L);
+
+
+
+        User existingUser = User.builder()
+                .restaurant(anotherRestaurant)
+                .build();
+        existingUser.setId(2L);
+
         when(userConfiguration.getRequestUser()).thenReturn(manager);
         when(userRepository.findByEmail(waiterRequest.getEmail())).thenReturn(Optional.of(existingUser));
 
@@ -129,7 +144,9 @@ class ManagerRestaurantServiceTest {
         WaiterRequest waiterRequest = WaiterRequest.builder()
                 .email("waiter@example.com")
                 .build();
-        User manager = User.builder().id(1L).build();
+        User manager = User.builder().build();
+        manager.setId(1L);
+
         when(userConfiguration.getRequestUser()).thenReturn(manager);
 
         // Act & Assert
@@ -142,9 +159,8 @@ class ManagerRestaurantServiceTest {
         Long waiterId = 1L;
 
         // Arrange
-        Restaurant restaurant = Restaurant.builder()
-                .id(1L)
-                .build();
+        Restaurant restaurant = Restaurant.builder().build();
+        restaurant.setId(1L);
 
         User manager = new User();
         manager.setManagedRestaurant(restaurant);
@@ -209,10 +225,14 @@ class ManagerRestaurantServiceTest {
         // Arrange
         User manager = new User();
         Restaurant restaurant = new Restaurant();
-        restaurant.setWaiters(List.of(
-                User.builder().id(1L).fullName("John Doe").email("john@example.com").phone("+37254535251").build(),
-                User.builder().id(2L).fullName("Jane Smith").email("jane@example.com").phone("+37254535252").build()
-        ));
+
+        User user1 = User.builder().fullName("John Doe").email("john@example.com").phone("+37254535251").build();
+        user1.setId(1L);
+
+        User user2 = User.builder().fullName("Jane Smith").email("jane@example.com").phone("+37254535252").build();
+        user2.setId(2L);
+
+        restaurant.setWaiters(List.of(user1, user2));
 
         manager.setManagedRestaurant(restaurant);
         when(userConfiguration.getRequestUser()).thenReturn(manager);
@@ -254,7 +274,6 @@ class ManagerRestaurantServiceTest {
         manager.setManagedRestaurant(new Restaurant());
 
         User waiter = User.builder()
-                .id(1L)
                 .fullName("John Doe")
                 .email("johndoe@example.com")
                 .phone("+37256545351")
@@ -263,6 +282,7 @@ class ManagerRestaurantServiceTest {
                 .transactions(Collections.emptyList())
                 .logins(Collections.emptyList())
                 .build();
+        waiter.setId(1L);
 
         Restaurant restaurant = manager.getManagedRestaurant();
         restaurant.setWaiters(List.of(waiter));
@@ -328,7 +348,6 @@ class ManagerRestaurantServiceTest {
                 .build();
 
         User user = User.builder()
-                .id(1L)
                 .email("john.smith@example.com")
                 .roles(List.of(Role.builder().roleName("ROLE_WAITER").build()))
                 .fullName("John")
@@ -336,6 +355,7 @@ class ManagerRestaurantServiceTest {
                 .personalCode("123456789")
                 .address(Address.builder().city("New York").street("4th Avenue").build())
                 .build();
+        user.setId(1L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userConfiguration.getRequestUser()).thenReturn(User.builder().managedRestaurant(Restaurant.builder().waiters(List.of(user)).build()).build());
@@ -384,7 +404,6 @@ class ManagerRestaurantServiceTest {
                 .build();
 
         User user = User.builder()
-                .id(1L)
                 .email("john.smith@example.com")
                 .roles(List.of(Role.builder().roleName("ROLE_WAITER").build()))
                 .fullName("John")
@@ -392,6 +411,7 @@ class ManagerRestaurantServiceTest {
                 .personalCode("123456789")
                 .address(Address.builder().city("New York").street("4th Avenue").build())
                 .build();
+        user.setId(1L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userConfiguration.getRequestUser()).thenReturn(User.builder().managedRestaurant(Restaurant.builder().waiters(Collections.emptyList()).build()).build());

@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -21,8 +21,8 @@ public class AdminTransactionReportResponse {
 
     private String overallIncomeNetto;
 
-    private Date startFrom;
+    private LocalDate startFrom;
 
-    private Date endTo;
+    private LocalDate endTo;
 
 }

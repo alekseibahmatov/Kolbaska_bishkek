@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.management.relation.RoleNotFoundException;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
@@ -31,7 +31,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
@@ -44,7 +44,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.NOT_FOUND.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -56,7 +56,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
@@ -68,7 +68,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.NOT_FOUND.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -80,7 +80,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(new ArrayList<>(e.getConstraintViolations()).get(0).getMessageTemplate());
         error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
@@ -93,7 +93,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.NOT_FOUND.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
@@ -106,7 +106,7 @@ public class ExceptionHandlerController {
 
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.value());
-        error.setTimestamp(new Date());
+        error.setTimestamp(Instant.now());
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

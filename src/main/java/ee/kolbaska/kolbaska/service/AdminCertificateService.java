@@ -27,7 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 
 @Service
@@ -77,11 +78,11 @@ public class AdminCertificateService {
 
         Map<String, Object> content = new HashMap<>();
 
-        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+        DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
         content.put("qrCode", qrCodeImage);
         content.put("value", "%d€".formatted(request.getValue()));
-        content.put("valid_until", sf.format(request.getValidUntil()));
+        content.put("valid_until", request.getValidUntil().format(dtf));
         content.put("from", "Support Team");
         content.put("to", holder.getFullName());
         content.put("description", request.getDescription());
@@ -107,16 +108,16 @@ public class AdminCertificateService {
 
         List<AdminCertificateResponse> response = new ArrayList<>();
 
-        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+        DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
         for (Certificate certificate : certificateList) {
             AdminCertificateResponse tempCertificate = AdminCertificateResponse.builder()
-                    .id(certificate.getId())
+                    .id(certificate.getId().toString())
                     .remainingValue(certificate.getRemainingValue())
                     .holder(certificate.getHolder().getFullName())
                     .sender(certificate.getSender().getFullName())
                     .value(certificate.getValue())
-                    .validUntil(sf.format(certificate.getValidUntil()))
+                    .validUntil(certificate.getValidUntil().format(dtf))
                     .build();
 
             response.add(tempCertificate);
@@ -136,15 +137,13 @@ public class AdminCertificateService {
 
         Certificate certificate = ifCertificate.get();
 
-        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
-
         AdminCertificateInformationResponse response = AdminCertificateInformationResponse.builder()
                 .toId(certificate.getHolder().getId())
                 .remainingValue(certificate.getRemainingValue())
                 .description(certificate.getDescription())
                 .createdAt(certificate.getCreatedAt())
                 .value(certificate.getValue())
-                .validUntil(sf.format(certificate.getValidUntil()))
+                .validUntil(certificate.getValidUntil())
                 .transactions(TransactionMapper.INSTANCE.toTransactionResponseList(certificate.getTransactions()))
                 .build();
 
@@ -202,7 +201,7 @@ public class AdminCertificateService {
         );
 
         certificate.setActive(false);
-        certificate.setDeletedAt(new Date());
+        certificate.setDeleted(true);
 
         certificateRepository.save(certificate);
 

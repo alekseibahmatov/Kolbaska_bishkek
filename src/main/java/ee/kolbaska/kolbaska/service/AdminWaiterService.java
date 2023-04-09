@@ -63,7 +63,7 @@ public class AdminWaiterService {
                 .address(AddressMapper.INSTANCE.toAddressResponse(user.getAddress()))
                 .personalCode(user.getPersonalCode())
                 .activated(user.getActivated())
-                .deleted(user.getDeleted())
+                .deleted(user.isDeleted())
                 .activationCode(user.getActivationCode())
                 .restaurantCode(user.getRestaurant() == null ? "" : user.getRestaurant().getRestaurantCode())
                 .transactions(TransactionMapper.INSTANCE.toTransactionResponseList(user.getTransactions()))

@@ -134,8 +134,8 @@ public class AdminRestaurantService {
                 .workingHours(restaurant.getWorkingHours())
                 .averageBill(restaurant.getAverageBill())
                 .address(AddressMapper.INSTANCE.toAddressResponse(restaurant.getAddress()))
-                .photo(restaurant.getPhoto().getId())
-                .contract(restaurant.getContract().getId())
+                .photo(restaurant.getPhoto().getId().toString())
+                .contract(restaurant.getContract().getId().toString())
                 .active(restaurant.getActive())
                 .build();
 
@@ -174,7 +174,6 @@ public class AdminRestaurantService {
                 .activationCode(activationCode)
                 .roles(roleRepository.findByRoleNameIn(List.of("ROLE_MANAGER", "ROLE_NEWBIE")))
                 .activated(true)
-                .deleted(false)
                 .build();
 
         emailService.sendSimpleMessage(email, "Activate your account", String.format("Here is your uuid to activate you account: %s", activationCode));
@@ -222,12 +221,11 @@ public class AdminRestaurantService {
         );
 
         restaurant.setActive(false);
-        restaurant.setDeletedAt(new Date());
+        restaurant.setDeleted(true);
         restaurant.getWaiters().forEach(waiter -> {
             LOGGER.info("Disabling user with email {}", waiter.getEmail());
             waiter.setRestaurant(null);
             waiter.setDeleted(true);
-            waiter.setDeletedAt(new Date());
         });
 
         userRepository.saveAll(restaurant.getWaiters());
@@ -235,7 +233,6 @@ public class AdminRestaurantService {
 
         User manager = restaurant.getManager();
         manager.setDeleted(true);
-        manager.setDeletedAt(new Date());
 
         userRepository.save(manager);
 

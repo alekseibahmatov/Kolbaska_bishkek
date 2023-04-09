@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 
 @RestController
 @RequestMapping("${api.basepath}/admin")
@@ -19,8 +21,8 @@ public class AdminTransactionController {
 
     @GetMapping("/transaction")
     public ResponseEntity<AdminTransactionReportResponse> getTransactions(
-            @RequestParam(required = false) String startFrom,
-            @RequestParam(required = false) String endTo
+            @RequestParam(required = false) LocalDate startFrom,
+            @RequestParam(required = false) LocalDate endTo
     ) {
         return ResponseEntity.ok(service.getTransactions(startFrom, endTo));
     }

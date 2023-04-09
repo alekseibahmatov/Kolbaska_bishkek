@@ -102,22 +102,22 @@ class AdminRestaurantServiceTest {
                 .build();
 
         Address address = Address.builder()
-                .id(1L)
                 .country(request.getCountry())
                 .city(request.getCity())
                 .state(request.getState())
                 .street(request.getStreet())
                 .build();
+        address.setId(1L);
 
         Category category1 = Category.builder()
-                .id(1L)
                 .name(categories.get(0))
                 .build();
+        category1.setId(1L);
 
         Category category2 = Category.builder()
-                .id(2L)
                 .name(categories.get(1))
                 .build();
+        category2.setId(2L);
 
         User manager = User.builder()
                 .email(request.getManagerEmail())
@@ -185,29 +185,29 @@ class AdminRestaurantServiceTest {
                 .build();
 
         Address address = Address.builder()
-                .id(1L)
                 .country(request.getCountry())
                 .city(request.getCity())
                 .state(request.getState())
                 .street(request.getStreet())
                 .build();
+        address.setId(1L);
 
         Category category1 = Category.builder()
-                .id(1L)
                 .name(categories.get(0))
                 .build();
+        category1.setId(1L);
 
         Category category2 = Category.builder()
-                .id(2L)
                 .name(categories.get(1))
                 .build();
+        category2.setId(2L);
 
         User manager = User.builder()
                 .email(request.getManagerEmail())
                 .activationCode(UUID.randomUUID().toString())
                 .activated(true)
-                .deleted(false)
                 .build();
+        manager.setDeleted(false);
 
         Restaurant restaurant = Restaurant.builder()
                 .name(request.getRestaurantName())
@@ -282,9 +282,9 @@ class AdminRestaurantServiceTest {
                 .email(request.getManagerEmail())
                 .activationCode(UUID.randomUUID().toString())
                 .activated(true)
-                .deleted(false)
                 .managedRestaurant(restaurant)
                 .build();
+        manager.setDeleted(false);
 
         when(restaurantRepository.findByEmail(request.getRestaurantEmail())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(request.getManagerEmail())).thenReturn(Optional.of(manager));
@@ -312,22 +312,35 @@ class AdminRestaurantServiceTest {
     public void testReturnRestaurantSuccess() throws Exception {
         // arrange
         String code = "ABC123";
+
+        User manager = User.builder().build();
+        manager.setId(1L);
+
+        Address address = Address.builder().build();
+        address.setId(1L);
+
+        File photo = File.builder().build();
+        photo.setId(UUID.randomUUID());
+
+        File contract = File.builder().build();
+        contract.setId(UUID.randomUUID());
+
         Restaurant restaurant = Restaurant.builder()
-                .id(1L)
                 .name("McDonalds")
                 .email("mcdonalds@test.com")
                 .phone("+37258535156")
                 .description("Best restaurant")
-                .manager(User.builder().id(1L).build())
+                .manager(manager)
                 .categories(List.of(Category.builder().name("Fast food").build()))
                 .workingHours("24/7")
                 .averageBill(10)
-                .address(Address.builder().id(1L).build())
-                .photo(File.builder().id(UUID.randomUUID().toString()).build())
-                .contract(File.builder().id(UUID.randomUUID().toString()).build())
+                .address(address)
+                .photo(photo)
+                .contract(contract)
                 .active(true)
                 .restaurantCode(code)
                 .build();
+        restaurant.setId(1L);
 
         when(restaurantRepository.findByRestaurantCode(code)).thenReturn(Optional.of(restaurant));
 
@@ -345,8 +358,8 @@ class AdminRestaurantServiceTest {
         assertEquals(restaurant.getWorkingHours(), response.getWorkingHours());
         assertEquals(restaurant.getAverageBill(), response.getAverageBill());
         assertEquals(AddressMapper.INSTANCE.toAddressResponse(restaurant.getAddress()), response.getAddress());
-        assertEquals(restaurant.getPhoto().getId(), response.getPhoto());
-        assertEquals(restaurant.getContract().getId(), response.getContract());
+        assertEquals(restaurant.getPhoto().getId().toString(), response.getPhoto());
+        assertEquals(restaurant.getContract().getId().toString(), response.getContract());
         assertEquals(restaurant.getActive(), response.getActive());
     }
 

@@ -1,10 +1,9 @@
 package ee.kolbaska.kolbaska.model.login;
 
+import ee.kolbaska.kolbaska.model.baseentity.DefaultModel;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "login")
@@ -13,11 +12,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class Login extends DefaultModel {
 
     @Column(
             name = "ip",
@@ -37,14 +32,5 @@ public class Login {
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
 
 }

@@ -1,12 +1,13 @@
 package ee.kolbaska.kolbaska.model.certificate;
 
+import ee.kolbaska.kolbaska.model.baseentity.UUIDModel;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -16,29 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Certificate {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
-
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
-
-    @Column(
-            name = "updated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date updatedAt;
+public class Certificate extends UUIDModel {
 
     @NotNull
     @Column(
@@ -68,7 +47,7 @@ public class Certificate {
             columnDefinition = "date",
             nullable = false
     )
-    private Date validUntil;
+    private LocalDate validUntil;
 
     @NotNull
     @Column(
@@ -90,19 +69,6 @@ public class Certificate {
             nullable = false
     )
     private Boolean active;
-
-    @Column(
-            name = "activated_at",
-            columnDefinition = "date"
-    )
-    private Date activatedAt;
-
-    @Column(
-            name = "deleted_at",
-            insertable = false,
-            updatable = false
-    )
-    private Date deletedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_sender")

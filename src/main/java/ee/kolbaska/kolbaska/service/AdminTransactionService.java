@@ -7,13 +7,11 @@ import ee.kolbaska.kolbaska.response.TransactionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,20 +20,15 @@ public class AdminTransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public AdminTransactionReportResponse getTransactions(String startFrom, String endTo) {
-        Date parsedStartFrom, parsedEndTo;
+    public AdminTransactionReportResponse getTransactions(LocalDate startFrom, LocalDate endTo) {
+        Instant parsedStartFrom, parsedEndTo;
 
         if (startFrom == null || endTo == null) {
-            parsedEndTo = new Date();
-
-            Calendar c = Calendar.getInstance();
-            c.setTime(parsedEndTo);
-            c.add(Calendar.YEAR, -1);
-
-            parsedStartFrom = c.getTime();
+            parsedEndTo = LocalDate.now().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant();
+            parsedStartFrom = LocalDate.now().minusYears(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
         } else {
-            parsedEndTo = Date.from(LocalDateTime.parse(String.format("%sT23:59:59", endTo)).atZone(ZoneId.systemDefault()).toInstant());
-            parsedStartFrom = Date.from(LocalDate.parse(startFrom).atStartOfDay().toInstant(ZoneOffset.UTC));
+            parsedEndTo = endTo.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant();
+            parsedStartFrom = startFrom.atStartOfDay(ZoneId.systemDefault()).toInstant();
         }
 
         List<Transaction> transactions = transactionRepository.findTransactionsByCreatedAtAfterAndCreatedAtBefore(parsedStartFrom, parsedEndTo);
@@ -55,7 +48,7 @@ public class AdminTransactionService {
             overallTurnover += transaction.getValue();
 
             TransactionResponse transactionResponse = TransactionResponse.builder()
-                    .id(transaction.getId())
+                    .id(transaction.getId().toString())
                     .waiterEmail(transaction.getWaiter().getEmail())
                     .waiterId(transaction.getWaiter().getId())
                     .restaurantName(transaction.getRestaurant().getName())
@@ -73,8 +66,8 @@ public class AdminTransactionService {
                 .overallTurnoverBrutto(String.format("%.2f", overallTurnover))
                 .overallIncomeBrutto(String.format("%.2f",overallProfitBrutto))
                 .overallIncomeNetto(String.format("%.2f", overallProfitNetto))
-                .startFrom(parsedStartFrom)
-                .endTo(parsedEndTo)
+                .startFrom(LocalDate.ofInstant(parsedStartFrom, ZoneId.systemDefault()))
+                .endTo(LocalDate.ofInstant(parsedEndTo, ZoneId.systemDefault()))
                 .build();
     }
 }

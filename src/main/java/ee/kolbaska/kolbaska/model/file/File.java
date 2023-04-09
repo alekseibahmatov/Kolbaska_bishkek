@@ -1,11 +1,13 @@
 package ee.kolbaska.kolbaska.model.file;
 
+import ee.kolbaska.kolbaska.model.baseentity.UUIDModel;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.Date;
 
 @Entity
 @Table(name = "file")
@@ -14,11 +16,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class File {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false)
-    private String id;
+public class File extends UUIDModel {
 
     @NotNull
     @Column(
@@ -31,38 +29,12 @@ public class File {
     @NotNull
     @Column(
             name = "file_name",
-            columnDefinition = "varchar(50)", // todo: rebuild database
+            columnDefinition = "varchar(50)",
             nullable = false
     )
     private String fileName;
 
-    @Column(
-            name = "created_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date createdAt;
-
-    @Column(
-            name = "updated_at",
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
-            nullable = false,
-            insertable = false,
-            updatable = false
-    )
-    private Date updatedAt;
-
-    @Column(
-            name = "deleted_at",
-            insertable = false,
-            updatable = false
-    )
-    private Date deletedAt;
-
     @OneToOne
-    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
 }
