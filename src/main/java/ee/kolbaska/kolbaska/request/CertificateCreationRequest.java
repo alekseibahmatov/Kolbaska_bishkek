@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CertificateCreationRequest {
     @NotNull
-    private Integer value;
+    private Double value;
 
     @NotNull
     @Email
@@ -42,7 +42,5 @@ public class CertificateCreationRequest {
     private AddressRequest billingAddress;
 
     @NotNull
-    private AddressRequest shippingAddress;
-
-    private String preferredProvider; //TODO change this to mandatory when will connect montonio
+    private String preferredProvider;
 }

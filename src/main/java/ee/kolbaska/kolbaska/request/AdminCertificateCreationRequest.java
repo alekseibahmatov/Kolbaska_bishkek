@@ -18,7 +18,7 @@ public class AdminCertificateCreationRequest {
     private Long holderUserId;
 
     @NotNull
-    private Integer value;
+    private Double value;
 
     @NotNull
     private LocalDate validUntil;

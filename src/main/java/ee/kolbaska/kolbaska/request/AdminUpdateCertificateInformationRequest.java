@@ -23,7 +23,7 @@ public class AdminUpdateCertificateInformationRequest {
     private Long holderUserId;
 
     @NotNull
-    private Integer value;
+    private Double value;
 
     @NotNull
     private Double remainingValue;

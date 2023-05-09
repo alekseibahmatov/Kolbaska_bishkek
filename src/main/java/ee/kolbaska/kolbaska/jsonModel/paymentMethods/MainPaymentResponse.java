@@ -1,4 +1,4 @@
-package ee.kolbaska.kolbaska.response.paymentMethods;
+package ee.kolbaska.kolbaska.jsonModel.paymentMethods;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

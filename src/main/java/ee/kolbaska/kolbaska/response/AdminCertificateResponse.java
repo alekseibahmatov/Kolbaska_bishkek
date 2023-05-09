@@ -13,7 +13,7 @@ public class AdminCertificateResponse {
 
     private String id;
 
-    private Integer value;
+    private Double value;
 
     private Double remainingValue;
 

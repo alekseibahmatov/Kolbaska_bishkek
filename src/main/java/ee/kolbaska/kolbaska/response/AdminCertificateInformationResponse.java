@@ -18,7 +18,7 @@ public class AdminCertificateInformationResponse {
 
     private Long toId;
 
-    private Integer value;
+    private Double value;
 
     private Double remainingValue;
 
