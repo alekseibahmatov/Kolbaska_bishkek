@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.WriterException;
 import ee.kolbaska.kolbaska.exception.PaymentException;
 import ee.kolbaska.kolbaska.exception.PaymentNotFoundException;
@@ -20,23 +22,30 @@ import ee.kolbaska.kolbaska.request.CertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.CertificateVerificationRequest;
 import ee.kolbaska.kolbaska.response.CertificateCreationResponse;
 import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
+import ee.kolbaska.kolbaska.response.PaymentMethodResponse;
+import ee.kolbaska.kolbaska.response.paymentMethods.Country;
+import ee.kolbaska.kolbaska.response.paymentMethods.MainPaymentResponse;
+import ee.kolbaska.kolbaska.response.paymentMethods.PaymentInitiation;
+import ee.kolbaska.kolbaska.response.paymentMethods.PaymentMethod;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.QrCodeService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +62,18 @@ public class CustomerPaymentService {
     private final EmailService emailService;
 
     private final RoleRepository roleRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${montonio.api.url}")
+    private String MONTONIO_API_URL;
+
+    @Value("${montonio.accessKey}")
+    private String MONTONIO_ACCESS_KEY;
+
+    @Value("${montonio.secretKey}")
+    private String MONTONIO_SECRET_KEY;
 
 
     @Value("${jwt.payment.secret}")
@@ -168,5 +189,53 @@ public class CustomerPaymentService {
                     .build();
         }
         throw new PaymentException("Something with your access key or payment status");
+    }
+
+    public Map<String, List<PaymentMethodResponse>> methods() throws JsonProcessingException {
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("accessKey", MONTONIO_ACCESS_KEY);
+
+        String jwtToken = JWT
+                .create()
+                .withPayload(payload)
+                .withIssuedAt(Instant.now())
+                .withExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS))
+                .sign(Algorithm.HMAC256(MONTONIO_SECRET_KEY));
+
+        String requestUrl = MONTONIO_API_URL + "/stores/payment-methods";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.setBearerAuth(jwtToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, entity, String.class);
+        String jsonResponse = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        MainPaymentResponse payments = objectMapper.readValue(jsonResponse, MainPaymentResponse.class);
+
+        PaymentInitiation paymentInitiation = payments.getPaymentMethods().getPaymentInitiation();
+
+        Map<String, Country> setup = paymentInitiation.getSetup();
+
+        Map<String, List<PaymentMethodResponse>> finalResponse = new HashMap<>();
+
+        for (Map.Entry<String, Country> country : setup.entrySet()) {
+            List<PaymentMethodResponse> countryMethods = new ArrayList<>();
+            for (PaymentMethod method : country.getValue().getPaymentMethods()) {
+                PaymentMethodResponse newMethod = PaymentMethodResponse.builder()
+                        .paymentName(method.getName())
+                        .paymentCode(method.getCode())
+                        .logoUrl(method.getLogoUrl())
+                        .build();
+
+                countryMethods.add(newMethod);
+            }
+            finalResponse.put(country.getKey(), countryMethods);
+        }
+
+        return finalResponse;
     }
 }
