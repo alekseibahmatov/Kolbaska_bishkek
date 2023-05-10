@@ -32,8 +32,8 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests(
                         (requests) -> requests
-                                .requestMatchers(API_BASEPATH + "/auth/**", API_BASEPATH + "/payment/initiateCreation", API_BASEPATH + "/customer/**").permitAll()
-                                .requestMatchers(API_BASEPATH + "/payment/verificationCreation", API_BASEPATH + "/payment/method").permitAll() //TODO change permit all to access from specific IPs
+                                .requestMatchers(API_BASEPATH + "/auth/**", API_BASEPATH + "/payment/initiateCreation", API_BASEPATH + "/customer/**", API_BASEPATH + "/payment/methods").permitAll()
+                                .requestMatchers(API_BASEPATH + "/payment/verificationCreation").permitAll() //TODO change permit all to access from specific IPs
                                 .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**", "/actuator", "/actuator/**").permitAll()
                                 .requestMatchers(API_BASEPATH + "/admin/**", API_BASEPATH + "/admin/download/**", API_BASEPATH + "/admin/file/**").hasRole("ADMIN")
                                 .requestMatchers(API_BASEPATH + "/transaction/**").hasAnyRole("ADMIN", "MANAGER", "WAITER")

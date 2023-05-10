@@ -36,7 +36,7 @@ public class CustomerPaymentController {
     @PostMapping("/initiateCreation")
     public ResponseEntity<CertificateCreationResponse> initiateCreation(
             @Valid @RequestBody CertificateCreationRequest request
-    ) {
+    ) throws JsonProcessingException {
         return ResponseEntity.ok(service.initiateCreation(request));
     }
 

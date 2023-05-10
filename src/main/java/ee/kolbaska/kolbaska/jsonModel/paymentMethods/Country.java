@@ -1,4 +1,4 @@
-package ee.kolbaska.kolbaska.response.paymentMethods;
+package ee.kolbaska.kolbaska.jsonModel.paymentMethods;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,13 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentMethod {
-    private String name;
-    private String logoUrl;
-
+public class Country {
     @JsonProperty("supportedCurrencies")
     private List<String> supportedCurrencies;
 
-    private Integer uiPosition;
-    private String code;
+    @JsonProperty("paymentMethods")
+    private List<PaymentMethod> paymentMethods;
 }

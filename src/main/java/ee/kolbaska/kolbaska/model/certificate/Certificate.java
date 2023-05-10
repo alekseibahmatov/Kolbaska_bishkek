@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.model.certificate;
 
 import ee.kolbaska.kolbaska.model.baseentity.UUIDModel;
+import ee.kolbaska.kolbaska.model.payment.Payment;
 import ee.kolbaska.kolbaska.model.transaction.Transaction;
 import ee.kolbaska.kolbaska.model.user.User;
 import jakarta.persistence.*;
@@ -30,10 +31,10 @@ public class Certificate extends UUIDModel {
     @NotNull
     @Column(
             name = "value",
-            columnDefinition = "int",
+            columnDefinition = "double",
             nullable = false
     )
-    private Integer value;
+    private Double value;
 
     @Column(
             name = "remaining_value",
@@ -76,5 +77,9 @@ public class Certificate extends UUIDModel {
 
     @OneToMany(mappedBy = "certificate", orphanRemoval = true)
     private List<Transaction> transactions;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "payment_id", nullable = false)
+    private Payment payment;
 
 }

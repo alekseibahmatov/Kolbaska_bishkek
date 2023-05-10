@@ -9,6 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.WriterException;
 import ee.kolbaska.kolbaska.exception.PaymentException;
 import ee.kolbaska.kolbaska.exception.PaymentNotFoundException;
+import ee.kolbaska.kolbaska.jsonModel.paymentData.PaymentData;
+import ee.kolbaska.kolbaska.jsonModel.paymentMethods.Country;
+import ee.kolbaska.kolbaska.jsonModel.paymentMethods.MainPaymentResponse;
+import ee.kolbaska.kolbaska.jsonModel.paymentMethods.PaymentInitiation;
+import ee.kolbaska.kolbaska.jsonModel.paymentMethods.PaymentMethod;
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import ee.kolbaska.kolbaska.model.payment.Payment;
 import ee.kolbaska.kolbaska.model.payment.Status;
@@ -23,10 +28,6 @@ import ee.kolbaska.kolbaska.request.CertificateVerificationRequest;
 import ee.kolbaska.kolbaska.response.CertificateCreationResponse;
 import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
 import ee.kolbaska.kolbaska.response.PaymentMethodResponse;
-import ee.kolbaska.kolbaska.response.paymentMethods.Country;
-import ee.kolbaska.kolbaska.response.paymentMethods.MainPaymentResponse;
-import ee.kolbaska.kolbaska.response.paymentMethods.PaymentInitiation;
-import ee.kolbaska.kolbaska.response.paymentMethods.PaymentMethod;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.QrCodeService;
 import freemarker.template.TemplateException;
@@ -80,7 +81,69 @@ public class CustomerPaymentService {
     private String JWT_SECRET = "supersecret";
 
     @Transactional
-    public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) {
+    public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) throws JsonProcessingException {
+
+        Map<String, Object> payload = new HashMap<>();
+
+
+        String uuid = UUID.randomUUID().toString();
+
+        payload.put("accessKey", MONTONIO_ACCESS_KEY);
+        payload.put("merchantReference", uuid);
+        payload.put("returnUrl", "http://localhost:8080"); //TODO change this to variable
+        payload.put("notificationUrl", "http://google.com/%s".formatted(uuid)); //TODO change this to variable
+        payload.put("grandTotal", request.getValue());
+        payload.put("currency", "EUR");
+
+        Map<String, Object> paymentMethod = new HashMap<>();
+        paymentMethod.put("method", "paymentInitiation"); //TODO in the future change this so it choose method automatically
+        paymentMethod.put("currency", "EUR");
+        paymentMethod.put("amount", request.getValue());
+
+        Map<String, String> paymentMethodOptions = new HashMap<>();
+
+        paymentMethodOptions.put("preferredProvider", request.getPreferredProvider());
+
+        paymentMethod.put("methodOptions", paymentMethodOptions);
+
+        payload.put("payment", paymentMethod);
+
+        Map<String, String> billingAddress = new HashMap<>();
+        billingAddress.put("firstName", request.getFromFullName());
+        billingAddress.put("email", request.getFromEmail());
+        billingAddress.put("phoneNumber", request.getFromPhone());
+        billingAddress.put("addressLine1", request.getBillingAddress().getStreet());
+        billingAddress.put("locality", request.getBillingAddress().getCity());
+        billingAddress.put("region", request.getBillingAddress().getState());
+        billingAddress.put("postalCode", request.getBillingAddress().getZipCode());
+        billingAddress.put("country", "EE"); //TODO fix this somehow
+
+        payload.put("billingAddress", billingAddress);
+        payload.put("locale", "et"); //TODO fix this somehow
+
+        String jwtToken = JWT
+                .create()
+                .withPayload(payload)
+                .withExpiresAt(Instant.now().plus(10, ChronoUnit.MINUTES))
+                .withIssuedAt(Instant.now())
+                .sign(Algorithm.HMAC256(MONTONIO_SECRET_KEY));
+
+        String requestUrl = MONTONIO_API_URL + "/orders";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+
+        String requestBody = "{\"data\": \""+ jwtToken +"\"}";
+
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.POST, entity, String.class);
+
+        String jsonResponse = response.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        PaymentData payments = objectMapper.readValue(jsonResponse, PaymentData.class);
 
         Payment newPayment = Payment.builder()
                 .value(request.getValue())
@@ -93,16 +156,10 @@ public class CustomerPaymentService {
                 .status(Status.PENDING)
                 .build();
 
-
-        //TODO here add implementation of montonio payment system.
-        // Has to be payload creation method, jwt signing method and method that will send request to montonio servers to register new order
-
-        //newPayment.id(UUID.randomUUID().toString()); //TODO when montonio is connected change this to its UUID from response
-
         paymentRepository.save(newPayment);
 
         return CertificateCreationResponse.builder()
-                .redirectUrl("https://dummymontonio.com/someshittyoreder")
+                .redirectUrl(payments.getPaymentUrl())
                 .build();
     }
 
@@ -113,14 +170,14 @@ public class CustomerPaymentService {
 
         Map<String, Claim> claims = decodedJWT.getClaims();
 
-        Optional<Payment> ifPayment = paymentRepository.findById(claims.get("uuid").asString());
+        Optional<Payment> ifPayment = paymentRepository.findById(claims.get("merchantReference").asString());
 
         if(ifPayment.isEmpty()) throw new PaymentNotFoundException("Payment wasn't found");
         Payment payment = ifPayment.get();
 
         if (
                 claims.get("paymentStatus").asString().equals("PAID") &&
-                claims.get("accessKey").asString().equals("someaccesskey") //TODO change this when montonio payment when we will integrate it
+                claims.get("accessKey").asString().equals(MONTONIO_ACCESS_KEY) //TODO change this when montonio payment when we will integrate it
         ) {
             Optional<User> ifHolder = userRepository.findByEmail(payment.getToEmail());
             Optional<User> ifSender = userRepository.findByEmail(payment.getFromEmail());

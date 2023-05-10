@@ -1,11 +1,15 @@
 package ee.kolbaska.kolbaska.model.payment;
 
 import ee.kolbaska.kolbaska.model.baseentity.UUIDModel;
+import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "payment")
@@ -67,10 +71,10 @@ public class Payment extends UUIDModel {
     @NotNull
     @Column(
             name = "value",
-            columnDefinition = "int",
+            columnDefinition = "double",
             nullable = false
     )
-    private Integer value;
+    private Double value;
 
     @NotNull
     @Column(
@@ -78,4 +82,8 @@ public class Payment extends UUIDModel {
             nullable = false
     )
     private Status status;
+
+    @OneToMany(mappedBy = "payment", orphanRemoval = true)
+    private List<Certificate> certificates;
+
 }
