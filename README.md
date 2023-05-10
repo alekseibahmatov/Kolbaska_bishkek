@@ -1,4 +1,15 @@
-<h1>Before first run:</h1>
+# Before first run:
+
+## New method(suitable only for Mac and Linux):
+1. Make sure that you have `docker` and `docker compose` installed on your machine
+2. Run `docker compose up` or `docker compose up -d` to use detached mode
+### To use debugger:
+1. Click on the "Add Configuration" button in the top right corner and select `Remote JVM debug`
+2. Set whatever name you want
+3. Make sure that port for debugging is `5005`
+4. Save configuration and now you are free to use debug
+
+## Old method(windows developers must use this instruction):
 
 1. Click on the "Add Configuration" button in the top right corner and select "Docker Compose" from the list.
 2. In the "Configuration file" field, specify the path to the docker-compose.yml file.
