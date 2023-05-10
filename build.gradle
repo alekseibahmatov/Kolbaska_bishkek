@@ -33,7 +33,6 @@ dependencies {
     implementation group: 'com.google.zxing', name: 'javase', version: '3.5.1'
     implementation group: 'org.freemarker', name: 'freemarker', version: '2.3.32'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '3.0.1'
-    implementation 'org.zeroturnaround:gradle-jrebel-plugin:1.1.12'
     implementation 'com.influxdb:influxdb-client-java:6.7.0'
     testImplementation 'ch.qos.logback:logback-classic:1.4.6'
     implementation 'org.liquibase:liquibase-core'
