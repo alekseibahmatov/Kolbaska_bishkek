@@ -85,7 +85,6 @@ public class CustomerPaymentService {
 
         Map<String, Object> payload = new HashMap<>();
 
-
         String uuid = UUID.randomUUID().toString();
 
         payload.put("accessKey", MONTONIO_ACCESS_KEY);
