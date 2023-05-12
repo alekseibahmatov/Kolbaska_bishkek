@@ -13,9 +13,16 @@ pipeline {
         }
         stage('Delete files') {
             steps {
-                sh 'rm docker-compose.yml'
-                sh 'rm Dockerfile'
-                sh 'rm .env'
+                script {
+                    try {
+                        sh 'rm docker-compose.yml'
+                        sh 'rm Dockerfile'
+                        sh 'rm .env'
+                    } finally {
+                        echo 'Skipping step'
+                    }
+                }
+
             }
         }
         stage('Copy new files') {
