@@ -13,8 +13,8 @@ pipeline {
         }
         stage('Delete files') {
             steps {
-                sh 'rm docker_compose_dev.yml'
-                sh 'rm Docker file'
+                sh 'rm docker_compose.yml'
+                sh 'rm Dockerfile'
             }
         }
         stage('Copy new files') {
