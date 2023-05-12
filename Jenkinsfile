@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Hello world') {
       steps {
-        ls /var
+        sh 'ls /var'
       }
     }
   }
