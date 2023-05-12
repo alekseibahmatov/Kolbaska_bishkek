@@ -2,7 +2,7 @@
 
 ## New method(suitable only for Mac and Linux):
 1. Make sure that you have `docker` and `docker compose` installed on your machine
-2. Run `docker compose up` or `docker compose up -d` to use detached mode
+2. Run `docker compose up` or `docker compose up -d` to use detached mode.
 ### To use debugger:
 1. Click on the "Add Configuration" button in the top right corner and select `Remote JVM debug`
 2. Set whatever name you want
