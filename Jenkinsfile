@@ -14,13 +14,11 @@ pipeline {
         }
         stage('Delete files') {
             steps {
-                sh 'rm docker-compose.yml'
                 sh 'rm Dockerfile'
             }
         }
         stage('Copy new files') {
             steps {
-                sh 'cp /var/jenkins/infra/docker_compose.yml docker-compose.yml'
                 sh 'cp /var/jenkins/infra/Dockerfile Dockerfile'
                 sh 'cp /var/jenkins/infra/.env_backend .env_backend'
                 sh 'cp /var/jenkins/infra/.env_database .env_database'
