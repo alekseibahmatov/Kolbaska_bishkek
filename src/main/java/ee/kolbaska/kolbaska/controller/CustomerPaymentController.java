@@ -28,7 +28,7 @@ public class CustomerPaymentController {
 
     private final CustomerPaymentService service;
 
-    @GetMapping("/methods")
+    @GetMapping("/method")
     public ResponseEntity<Map<String, List<PaymentMethodResponse>>> methods() throws JsonProcessingException {
         return ResponseEntity.ok(service.methods());
     }
