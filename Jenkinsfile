@@ -34,7 +34,7 @@ pipeline {
         }
         stage('Build and start stack') {
             steps {
-                sh 'docker compose up -d --env-file=.env'
+                sh 'docker compose --env-file .env up -d'
                 cleanWs()
             }
         }
