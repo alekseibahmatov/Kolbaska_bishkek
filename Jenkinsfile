@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Copy new files') {
             steps {
-                sh 'cp /var/jenkins/infra/docker_compose.yml docker_compose.yml'
+                sh 'cp /var/jenkins/infra/docker_compose.yml docker-compose.yml'
                 sh 'cp /var/jenkins/infra/Dockerfile Dockerfile'
             }
         }
