@@ -61,10 +61,10 @@ public class PaymentData {
     private Address shippingAddress;
 
     @JsonProperty(required = true)
-    private LocalDateTime expiresAt;
+    private String expiresAt;
 
     @JsonProperty(required = true)
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @JsonProperty(required = true)
     private String storeName;

@@ -40,5 +40,5 @@ public class PaymentIntent {
     private String serviceFeeCurrency;
 
     @JsonProperty(required = true)
-    private LocalDateTime createdAt;
+    private String createdAt;
 }
