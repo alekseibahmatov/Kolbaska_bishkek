@@ -12,7 +12,9 @@ pipeline {
             }
         }
         stage('Start build') {
-            sh 'docker build .'
+            steps {
+                sh 'docker build .'
+            }
         }
         stage('Clear docker') {
             steps {
