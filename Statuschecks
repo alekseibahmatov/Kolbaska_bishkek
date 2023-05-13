@@ -1,6 +1,11 @@
 pipeline {
     agent { label 'Slavik' }
     stages {
+        stage('Clear docker') {
+            steps {
+                sh 'docker system prune -af'
+            }
+        }
         stage('Delete existing dockerfile') {
             steps {
                 sh 'rm Dockerfile'
