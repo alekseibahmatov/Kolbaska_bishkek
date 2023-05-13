@@ -1,0 +1,10 @@
+pipeline {
+    agent { label 'Slavik' }
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Hello'
+            }
+        }
+    }
+}
