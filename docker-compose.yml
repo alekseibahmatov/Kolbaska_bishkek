@@ -17,7 +17,7 @@ services:
     volumes:
       - ./:/app
     working_dir: /app
-    command: sh script.sh
+    command: sh Maitsetuur-backend/script.sh
     ports:
       - 8080:8080
       - 5005:5005
