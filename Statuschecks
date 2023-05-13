@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'Slavik' }
     stages {
-        stage('Clear docker') {
+        stage('Clear docker cache') {
             steps {
                 sh 'docker system prune -af'
             }
