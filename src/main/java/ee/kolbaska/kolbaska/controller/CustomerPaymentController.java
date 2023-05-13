@@ -1,14 +1,17 @@
 package ee.kolbaska.kolbaska.controller;
 
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.zxing.WriterException;
 import ee.kolbaska.kolbaska.exception.PaymentException;
 import ee.kolbaska.kolbaska.exception.PaymentNotFoundException;
 import ee.kolbaska.kolbaska.request.CertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.CertificateVerificationRequest;
+import ee.kolbaska.kolbaska.request.PaymentValidationRequest;
 import ee.kolbaska.kolbaska.response.CertificateCreationResponse;
 import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
 import ee.kolbaska.kolbaska.response.PaymentMethodResponse;
+import ee.kolbaska.kolbaska.response.PaymentValidationResponse;
 import ee.kolbaska.kolbaska.service.CustomerPaymentService;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
@@ -45,5 +48,12 @@ public class CustomerPaymentController {
             @Valid @RequestBody CertificateVerificationRequest request
     ) throws PaymentNotFoundException, PaymentException, MessagingException, IOException, WriterException, TemplateException {
         return ResponseEntity.ok(service.verificationCreation(request));
+    }
+
+    @PostMapping("/validatePayment")
+    public ResponseEntity<PaymentValidationResponse> validatePayment(
+            @Valid @RequestBody PaymentValidationRequest request
+    ) {
+        return ResponseEntity.ok(service.validatePayment(request));
     }
 }

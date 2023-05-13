@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,9 +26,11 @@ import ee.kolbaska.kolbaska.repository.RoleRepository;
 import ee.kolbaska.kolbaska.repository.UserRepository;
 import ee.kolbaska.kolbaska.request.CertificateCreationRequest;
 import ee.kolbaska.kolbaska.request.CertificateVerificationRequest;
+import ee.kolbaska.kolbaska.request.PaymentValidationRequest;
 import ee.kolbaska.kolbaska.response.CertificateCreationResponse;
 import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
 import ee.kolbaska.kolbaska.response.PaymentMethodResponse;
+import ee.kolbaska.kolbaska.response.PaymentValidationResponse;
 import ee.kolbaska.kolbaska.service.miscellaneous.EmailService;
 import ee.kolbaska.kolbaska.service.miscellaneous.QrCodeService;
 import freemarker.template.TemplateException;
@@ -293,5 +296,14 @@ public class CustomerPaymentService {
         }
 
         return finalResponse;
+    }
+
+    public PaymentValidationResponse validatePayment(PaymentValidationRequest request) {
+        try {
+           JWT.require(Algorithm.HMAC256(JWT_SECRET)).build().verify(request.getOrderToken());
+        } catch (JWTVerificationException e) {
+            return PaymentValidationResponse.builder().success(false).build();
+        }
+        return PaymentValidationResponse.builder().success(true).build();
     }
 }
