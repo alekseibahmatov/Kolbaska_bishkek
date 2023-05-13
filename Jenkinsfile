@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Copy new files') {
             steps {
-                sh 'cp /var/jenkins/infra/Dockerfile Dockerfile'
+                sh 'cp /var/jenkins/infra/Dockerfile_dev Dockerfile'
                 sh 'cp /var/jenkins/infra/.env_backend .env_backend'
                 sh 'cp /var/jenkins/infra/.env_database .env_database'
             }

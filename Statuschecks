@@ -1,9 +1,30 @@
 pipeline {
     agent { label 'Slavik' }
     stages {
-        stage('Test') {
+        stage('Clear docker cache') {
             steps {
-                echo 'Hello'
+                sh 'docker system prune -af'
+            }
+        }
+        stage('Delete existing dockerfile') {
+            steps {
+                sh 'rm Dockerfile'
+            }
+        }
+        stage('Copy new dockerfile') {
+            steps {
+                sh 'cp /var/jenkins/infra/Dockerfile_status Dockerfile'
+            }
+        }
+        stage('Start build') {
+            steps {
+                sh 'docker build .'
+            }
+        }
+        stage('Clear docker') {
+            steps {
+                sh 'docker system prune -af'
+                cleanWs()
             }
         }
     }
