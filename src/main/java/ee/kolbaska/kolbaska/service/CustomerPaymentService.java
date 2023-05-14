@@ -79,9 +79,6 @@ public class CustomerPaymentService {
     @Value("${montonio.secretKey}")
     private String MONTONIO_SECRET_KEY;
 
-    @Value("${jwt.payment.secret}")
-    private String JWT_SECRET = "supersecret";
-
     @Value("${front.baseurl}")
     private String WEBSITE_BASE_URL;
 
@@ -158,9 +155,8 @@ public class CustomerPaymentService {
                 .phone(request.getToPhone())
                 .description(request.getCongratsText())
                 .status(Status.PENDING)
+                .merchantReference(uuid.toString())
                 .build();
-
-        newPayment.setId(uuid);
 
         paymentRepository.save(newPayment);
 
@@ -181,7 +177,7 @@ public class CustomerPaymentService {
 
         Map<String, Claim> claims = decodedJWT.getClaims();
 
-        Optional<Payment> ifPayment = paymentRepository.findById(UUID.fromString(claims.get("merchantReference").asString()));
+        Optional<Payment> ifPayment = paymentRepository.findByMerchantReference(claims.get("merchantReference").asString());
 
         if(ifPayment.isEmpty()) throw new PaymentNotFoundException("Payment wasn't found");
         Payment payment = ifPayment.get();
