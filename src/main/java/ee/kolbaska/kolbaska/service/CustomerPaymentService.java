@@ -85,6 +85,12 @@ public class CustomerPaymentService {
     @Value("${front.baseurl}")
     private String WEBSITE_BASE_URL;
 
+    @Value("${api.baseurl}")
+    private String API_BASEURL;
+
+    @Value("${api.basepath}")
+    private String API_BASEPATH;
+
     @Transactional
     public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) throws JsonProcessingException {
 
@@ -95,7 +101,7 @@ public class CustomerPaymentService {
         payload.put("accessKey", MONTONIO_ACCESS_KEY);
         payload.put("merchantReference", uuid);
         payload.put("returnUrl", "%s/personal-coupon-order/order-details".formatted(WEBSITE_BASE_URL)); //TODO change this to variable
-        payload.put("notificationUrl", "http://google.com/%s".formatted(uuid)); //TODO change this to variable
+        payload.put("notificationUrl", "%s%s/payment/verificationCreation".formatted(API_BASEURL, API_BASEPATH)); //TODO change this to variable
         payload.put("grandTotal", request.getValue());
         payload.put("currency", "EUR");
 
@@ -175,7 +181,7 @@ public class CustomerPaymentService {
 
         if (
                 claims.get("paymentStatus").asString().equals("PAID") &&
-                claims.get("accessKey").asString().equals(MONTONIO_ACCESS_KEY) //TODO change this when montonio payment when we will integrate it
+                claims.get("accessKey").asString().equals(MONTONIO_ACCESS_KEY)
         ) {
             Optional<User> ifHolder = userRepository.findByEmail(payment.getToEmail());
             Optional<User> ifSender = userRepository.findByEmail(payment.getFromEmail());
