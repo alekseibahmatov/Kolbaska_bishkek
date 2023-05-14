@@ -40,7 +40,4 @@ public class CertificateCreationRequest {
 
     @NotNull
     private AddressRequest billingAddress;
-
-    @NotNull
-    private String preferredProvider;
 }
