@@ -216,6 +216,7 @@ public class CustomerPaymentService {
                     .validUntil(validUntilDate)
                     .active(true)
                     .createdByAdmin(false)
+                    .payment(payment)
                     .build();
 
             newCertificate = certificateRepository.save(newCertificate);

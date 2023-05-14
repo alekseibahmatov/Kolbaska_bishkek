@@ -9,7 +9,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "payment")
@@ -91,6 +93,6 @@ public class Payment extends UUIDModel {
     private String merchantReference;
 
     @OneToMany(mappedBy = "payment", orphanRemoval = true)
-    private List<Certificate> certificates;
+    private Set<Certificate> certificates;
 
 }

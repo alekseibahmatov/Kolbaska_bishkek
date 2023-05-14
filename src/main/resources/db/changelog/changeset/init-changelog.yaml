@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1684100467495-1
+      id: 1684103755656-1
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -11,52 +11,53 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_address
                   name: id
                   type: BIGINT
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: street
-                  type: VARCHAR(100)
+                  type: varchar(100)
               - column:
                   name: apartment_number
-                  type: VARCHAR(10)
+                  type: varchar(10)
               - column:
                   constraints:
                     nullable: false
                   name: city
-                  type: VARCHAR(50)
+                  type: varchar(50)
               - column:
                   name: state
-                  type: VARCHAR(20)
+                  type: varchar(20)
               - column:
                   constraints:
                     nullable: false
                   name: zip_code
-                  type: VARCHAR(10)
+                  type: varchar(10)
               - column:
                   constraints:
                     nullable: false
                   name: country
-                  type: VARCHAR(50)
+                  type: varchar(50)
             tableName: address
   - changeSet:
-      id: 1684100467495-2
+      id: 1684103755656-2
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -67,31 +68,32 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_category
                   name: id
                   type: BIGINT
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: name
-                  type: VARCHAR(32)
+                  type: varchar(32)
             tableName: category
   - changeSet:
-      id: 1684100467495-3
+      id: 1684103755656-3
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -101,36 +103,37 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_certificate
                   name: id
-                  type: CHAR(36)
+                  type: UUID
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: description
-                  type: TEXT
+                  type: text
               - column:
                   constraints:
                     nullable: false
                   name: value
-                  type: INT
+                  type: double
               - column:
                   name: remaining_value
-                  type: DOUBLE
+                  type: double
               - column:
                   constraints:
                     nullable: false
@@ -140,7 +143,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: created_by_admin
-                  type: BIT(1)
+                  type: bool
               - column:
                   constraints:
                     nullable: false
@@ -150,13 +153,18 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: active
-                  type: BIT(1)
+                  type: bool
               - column:
                   name: user_sender
                   type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: payment_id
+                  type: UUID
             tableName: certificate
   - changeSet:
-      id: 1684100467495-4
+      id: 1684103755656-4
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -166,39 +174,40 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_file
                   name: id
-                  type: CHAR(36)
+                  type: UUID
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: file_type
-                  type: VARCHAR(20)
+                  type: varchar(20)
               - column:
                   constraints:
                     nullable: false
                   name: file_name
-                  type: VARCHAR(50)
+                  type: varchar(50)
               - column:
                   name: restaurant_id
                   type: BIGINT
             tableName: file
   - changeSet:
-      id: 1684100467495-5
+      id: 1684103755656-5
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -209,39 +218,42 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_login
                   name: id
                   type: BIGINT
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: ip
-                  type: VARCHAR(15)
+                  type: varchar(15)
               - column:
                   constraints:
                     nullable: false
                   name: user_agent
-                  type: TEXT
+                  type: text
               - column:
+                  constraints:
+                    nullable: false
                   name: user_id
                   type: BIGINT
             tableName: login
   - changeSet:
-      id: 1684100467495-6
+      id: 1684103755656-6
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -251,69 +263,72 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_payment
                   name: id
-                  type: CHAR(36)
+                  type: UUID
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: from_email
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   constraints:
                     nullable: false
                   name: to_email
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   constraints:
                     nullable: false
                   name: description
-                  type: TEXT
+                  type: text
               - column:
                   constraints:
                     nullable: false
                   name: to_fullname
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   constraints:
                     nullable: false
                   name: from_fullname
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   constraints:
                     nullable: false
                   name: phone
-                  type: VARCHAR(15)
+                  type: varchar(15)
               - column:
                   constraints:
                     nullable: false
                   name: value
-                  type: INT
+                  type: double
               - column:
                   constraints:
                     nullable: false
                   name: payment_status
                   type: INT
               - column:
+                  constraints:
+                    nullable: false
                   name: merchant_reference
                   type: VARCHAR(255)
             tableName: payment
   - changeSet:
-      id: 1684100467495-7
+      id: 1684103755656-7
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -324,43 +339,44 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_restaurant
                   name: id
                   type: BIGINT
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: name
-                  type: VARCHAR(64)
+                  type: varchar(64)
               - column:
                   constraints:
                     nullable: false
                   name: description
-                  type: TEXT
+                  type: text
               - column:
                   constraints:
                     nullable: false
                   name: working_hours
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   constraints:
                     nullable: false
                   name: average_bill
-                  type: INT
+                  type: int
               - column:
                   constraints:
                     nullable: false
@@ -370,39 +386,39 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: phone
-                  type: VARCHAR(15)
+                  type: varchar(15)
               - column:
                   constraints:
                     nullable: false
                   name: email
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   constraints:
                     nullable: false
                   name: active
-                  type: BIT(1)
+                  type: bool
               - column:
                   constraints:
                     nullable: false
                   name: restaurant_code
-                  type: VARCHAR(6)
+                  type: varchar(6)
               - column:
                   constraints:
                     nullable: false
                   name: maitsetuur_share
-                  type: INT
+                  type: int
               - column:
                   name: manager_id
                   type: BIGINT
               - column:
                   name: photo_id
-                  type: CHAR(36)
+                  type: UUID
               - column:
                   name: contract_id
-                  type: CHAR(36)
+                  type: UUID
             tableName: restaurant
   - changeSet:
-      id: 1684100467495-8
+      id: 1684103755656-8
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -420,7 +436,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: restaurant_categories
   - changeSet:
-      id: 1684100467495-9
+      id: 1684103755656-9
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -431,6 +447,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_role
                   name: id
                   type: BIGINT
               - column:
@@ -438,13 +455,13 @@ databaseChangeLog:
                     nullable: false
                   defaultValueComputed: CURRENT_TIMESTAMP
                   name: created_at
-                  type: timestamp
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
-                  defaultValueComputed: CURRENT_TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                   name: updated_at
-                  type: timestamp
+                  type: TIMESTAMP
               - column:
                   constraints:
                     nullable: false
@@ -452,7 +469,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
             tableName: role
   - changeSet:
-      id: 1684100467495-10
+      id: 1684103755656-10
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -462,42 +479,47 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_transaction
                   name: id
-                  type: CHAR(36)
+                  type: UUID
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   constraints:
                     nullable: false
                   name: value
-                  type: DOUBLE(6, 2)
+                  type: double(6,2)
               - column:
                   constraints:
                     nullable: false
                   name: waiter_id
                   type: BIGINT
               - column:
+                  constraints:
+                    nullable: false
                   name: restaurant_id
                   type: BIGINT
               - column:
+                  constraints:
+                    nullable: false
                   name: certificate_id
-                  type: CHAR(36)
+                  type: UUID
             tableName: transaction
   - changeSet:
-      id: 1684100467495-11
+      id: 1684103755656-11
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -508,57 +530,58 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    primaryKeyName: pk_user
                   name: id
                   type: BIGINT
               - column:
                   name: created_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: updated_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   name: deleted_at
-                  type: datetime
+                  type: DATETIME
               - column:
                   constraints:
                     nullable: false
                   defaultValueBoolean: false
                   name: deleted
-                  type: BIT(1)
+                  type: boolean
               - column:
                   name: password
-                  type: VARCHAR(60)
+                  type: varchar(60)
               - column:
                   name: full_name
-                  type: VARCHAR(60)
+                  type: varchar(60)
               - column:
                   constraints:
                     nullable: false
                   name: email
-                  type: VARCHAR(120)
+                  type: varchar(120)
               - column:
                   name: phone
-                  type: VARCHAR(15)
+                  type: varchar(15)
               - column:
                   name: address_id
                   type: BIGINT
               - column:
                   name: personal_code
-                  type: VARCHAR(11)
+                  type: varchar(11)
               - column:
                   constraints:
                     nullable: false
                   name: activated
-                  type: BIT(1)
+                  type: bool
               - column:
                   name: activation_code
-                  type: VARCHAR(36)
+                  type: varchar(36)
               - column:
                   name: restaurant_id
                   type: BIGINT
             tableName: user
   - changeSet:
-      id: 1684100467495-12
+      id: 1684103755656-12
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -576,7 +599,7 @@ databaseChangeLog:
                   type: BIGINT
             tableName: user_roles
   - changeSet:
-      id: 1684100467495-13
+      id: 1684103755656-13
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -590,210 +613,31 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                    unique: true
                   name: transactions_id
-                  type: CHAR(36)
+                  type: UUID
             tableName: user_transactions
   - changeSet:
-      id: 1684100467495-14
+      id: 1684103755656-14
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: user_holder
-            indexName: FK_CERTIFICATE_ON_USER_HOLDER
-            tableName: certificate
-  - changeSet:
-      id: 1684100467495-15
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: user_sender
-            indexName: FK_CERTIFICATE_ON_USER_SENDER
-            tableName: certificate
-  - changeSet:
-      id: 1684100467495-16
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: restaurant_id
-            indexName: FK_FILE_ON_RESTAURANT
-            tableName: file
-  - changeSet:
-      id: 1684100467495-17
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: user_id
-            indexName: FK_LOGIN_ON_USER
-            tableName: login
-  - changeSet:
-      id: 1684100467495-18
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: address_id
-            indexName: FK_RESTAURANT_ON_ADDRESS
-            tableName: restaurant
-  - changeSet:
-      id: 1684100467495-19
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: contract_id
-            indexName: FK_RESTAURANT_ON_CONTRACT
-            tableName: restaurant
-  - changeSet:
-      id: 1684100467495-20
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: manager_id
-            indexName: FK_RESTAURANT_ON_MANAGER
-            tableName: restaurant
-  - changeSet:
-      id: 1684100467495-21
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: photo_id
-            indexName: FK_RESTAURANT_ON_PHOTO
-            tableName: restaurant
-  - changeSet:
-      id: 1684100467495-22
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: certificate_id
-            indexName: FK_TRANSACTION_ON_CERTIFICATE
-            tableName: transaction
-  - changeSet:
-      id: 1684100467495-23
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: restaurant_id
-            indexName: FK_TRANSACTION_ON_RESTAURANT
-            tableName: transaction
-  - changeSet:
-      id: 1684100467495-24
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: waiter_id
-            indexName: FK_TRANSACTION_ON_WAITER
-            tableName: transaction
-  - changeSet:
-      id: 1684100467495-25
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: address_id
-            indexName: FK_USER_ON_ADDRESS
-            tableName: user
-  - changeSet:
-      id: 1684100467495-26
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: restaurant_id
-            indexName: FK_USER_ON_RESTAURANT
-            tableName: user
-  - changeSet:
-      id: 1684100467495-27
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: categories_id
-            indexName: fk_rescat_on_category
-            tableName: restaurant_categories
-  - changeSet:
-      id: 1684100467495-28
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: restaurant_id
-            indexName: fk_rescat_on_restaurant
-            tableName: restaurant_categories
-  - changeSet:
-      id: 1684100467495-29
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: roles_id
-            indexName: fk_userol_on_role
-            tableName: user_roles
-  - changeSet:
-      id: 1684100467495-30
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: user_id
-            indexName: fk_userol_on_user
-            tableName: user_roles
-  - changeSet:
-      id: 1684100467495-31
-      author: bahale (generated)
-      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
-      changes:
-        - createIndex:
-            columns:
-              - column:
-                  name: user_id
-            indexName: fk_usetra_on_user
+        - addUniqueConstraint:
+            columnNames: transactions_id
+            constraintName: uc_user_transactions_transactions
             tableName: user_transactions
   - changeSet:
-      id: 1684100467495-32
+      id: 1684103755656-15
+      author: bahale (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: payment_id
+            baseTableName: certificate
+            constraintName: FK_CERTIFICATE_ON_PAYMENT
+            referencedColumnNames: id
+            referencedTableName: payment
+  - changeSet:
+      id: 1684103755656-16
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -801,12 +645,10 @@ databaseChangeLog:
             baseColumnNames: user_holder
             baseTableName: certificate
             constraintName: FK_CERTIFICATE_ON_USER_HOLDER
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1684100467495-33
+      id: 1684103755656-17
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -814,12 +656,10 @@ databaseChangeLog:
             baseColumnNames: user_sender
             baseTableName: certificate
             constraintName: FK_CERTIFICATE_ON_USER_SENDER
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1684100467495-34
+      id: 1684103755656-18
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -827,12 +667,10 @@ databaseChangeLog:
             baseColumnNames: restaurant_id
             baseTableName: file
             constraintName: FK_FILE_ON_RESTAURANT
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1684100467495-35
+      id: 1684103755656-19
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -840,12 +678,10 @@ databaseChangeLog:
             baseColumnNames: user_id
             baseTableName: login
             constraintName: FK_LOGIN_ON_USER
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1684100467495-36
+      id: 1684103755656-20
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -853,12 +689,10 @@ databaseChangeLog:
             baseColumnNames: address_id
             baseTableName: restaurant
             constraintName: FK_RESTAURANT_ON_ADDRESS
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1684100467495-37
+      id: 1684103755656-21
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -866,12 +700,10 @@ databaseChangeLog:
             baseColumnNames: contract_id
             baseTableName: restaurant
             constraintName: FK_RESTAURANT_ON_CONTRACT
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: file
   - changeSet:
-      id: 1684100467495-38
+      id: 1684103755656-22
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -879,12 +711,10 @@ databaseChangeLog:
             baseColumnNames: manager_id
             baseTableName: restaurant
             constraintName: FK_RESTAURANT_ON_MANAGER
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1684100467495-39
+      id: 1684103755656-23
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -892,12 +722,10 @@ databaseChangeLog:
             baseColumnNames: photo_id
             baseTableName: restaurant
             constraintName: FK_RESTAURANT_ON_PHOTO
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: file
   - changeSet:
-      id: 1684100467495-40
+      id: 1684103755656-24
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -905,12 +733,10 @@ databaseChangeLog:
             baseColumnNames: certificate_id
             baseTableName: transaction
             constraintName: FK_TRANSACTION_ON_CERTIFICATE
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: certificate
   - changeSet:
-      id: 1684100467495-41
+      id: 1684103755656-25
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -918,12 +744,10 @@ databaseChangeLog:
             baseColumnNames: restaurant_id
             baseTableName: transaction
             constraintName: FK_TRANSACTION_ON_RESTAURANT
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1684100467495-42
+      id: 1684103755656-26
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -931,12 +755,10 @@ databaseChangeLog:
             baseColumnNames: waiter_id
             baseTableName: transaction
             constraintName: FK_TRANSACTION_ON_WAITER
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1684100467495-43
+      id: 1684103755656-27
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -944,12 +766,10 @@ databaseChangeLog:
             baseColumnNames: address_id
             baseTableName: user
             constraintName: FK_USER_ON_ADDRESS
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: address
   - changeSet:
-      id: 1684100467495-44
+      id: 1684103755656-28
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -957,12 +777,10 @@ databaseChangeLog:
             baseColumnNames: restaurant_id
             baseTableName: user
             constraintName: FK_USER_ON_RESTAURANT
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1684100467495-45
+      id: 1684103755656-29
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -970,12 +788,10 @@ databaseChangeLog:
             baseColumnNames: categories_id
             baseTableName: restaurant_categories
             constraintName: fk_rescat_on_category
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: category
   - changeSet:
-      id: 1684100467495-46
+      id: 1684103755656-30
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -983,12 +799,10 @@ databaseChangeLog:
             baseColumnNames: restaurant_id
             baseTableName: restaurant_categories
             constraintName: fk_rescat_on_restaurant
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: restaurant
   - changeSet:
-      id: 1684100467495-47
+      id: 1684103755656-31
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -996,12 +810,10 @@ databaseChangeLog:
             baseColumnNames: roles_id
             baseTableName: user_roles
             constraintName: fk_userol_on_role
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: role
   - changeSet:
-      id: 1684100467495-48
+      id: 1684103755656-32
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -1009,12 +821,10 @@ databaseChangeLog:
             baseColumnNames: user_id
             baseTableName: user_roles
             constraintName: fk_userol_on_user
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
   - changeSet:
-      id: 1684100467495-49
+      id: 1684103755656-33
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -1022,12 +832,10 @@ databaseChangeLog:
             baseColumnNames: transactions_id
             baseTableName: user_transactions
             constraintName: fk_usetra_on_transaction
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: transaction
   - changeSet:
-      id: 1684100467495-50
+      id: 1684103755656-34
       author: bahale (generated)
       objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
       changes:
@@ -1035,8 +843,6 @@ databaseChangeLog:
             baseColumnNames: user_id
             baseTableName: user_transactions
             constraintName: fk_usetra_on_user
-            onDelete: RESTRICT
-            onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: user
 
