@@ -2,6 +2,7 @@ package ee.kolbaska.kolbaska.model.user;
 
 import ee.kolbaska.kolbaska.model.address.Address;
 import ee.kolbaska.kolbaska.model.baseentity.DefaultModel;
+import ee.kolbaska.kolbaska.model.business.Business;
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import ee.kolbaska.kolbaska.model.login.Login;
 import ee.kolbaska.kolbaska.model.restaurant.Restaurant;
@@ -15,6 +16,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -105,6 +107,9 @@ public class User extends DefaultModel implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Collection<Role> roles;
+
+    @OneToMany(mappedBy = "representative", orphanRemoval = true)
+    private List<Business> businesses;
 
     @Override
     public String getUsername() {

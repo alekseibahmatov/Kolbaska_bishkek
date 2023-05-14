@@ -206,7 +206,7 @@ public class CustomerPaymentService {
                     .roles(List.of(customerRole))
                     .build()));
 
-            LocalDate validUntilDate = LocalDate.now().minusYears(1);
+            LocalDate validUntilDate = LocalDate.now().plusYears(1);
 
             Certificate newCertificate = Certificate.builder()
                     .holder(holder)
@@ -236,7 +236,7 @@ public class CustomerPaymentService {
             DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
             content.put("qrCode", qrCodeImage);
-            content.put("value", "%f€".formatted(payment.getValue()));
+            content.put("value", "%.2f€".formatted(payment.getValue()));
             content.put("valid_until", validUntilDate.format(dtf));
             content.put("from", payment.getFromFullName());
             content.put("to", payment.getToFullName());
