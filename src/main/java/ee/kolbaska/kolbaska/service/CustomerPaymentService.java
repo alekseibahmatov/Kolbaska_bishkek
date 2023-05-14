@@ -79,9 +79,11 @@ public class CustomerPaymentService {
     @Value("${montonio.secretKey}")
     private String MONTONIO_SECRET_KEY;
 
-
     @Value("${jwt.payment.secret}")
     private String JWT_SECRET = "supersecret";
+
+    @Value("${front.baseurl}")
+    private String WEBSITE_BASE_URL;
 
     @Transactional
     public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) throws JsonProcessingException {
@@ -92,7 +94,7 @@ public class CustomerPaymentService {
 
         payload.put("accessKey", MONTONIO_ACCESS_KEY);
         payload.put("merchantReference", uuid);
-        payload.put("returnUrl", "http://localhost:8080"); //TODO change this to variable
+        payload.put("returnUrl", "%s/personal-coupon-order/order-details".formatted(WEBSITE_BASE_URL)); //TODO change this to variable
         payload.put("notificationUrl", "http://google.com/%s".formatted(uuid)); //TODO change this to variable
         payload.put("grandTotal", request.getValue());
         payload.put("currency", "EUR");
@@ -101,12 +103,6 @@ public class CustomerPaymentService {
         paymentMethod.put("method", "paymentInitiation"); //TODO in the future change this so it choose method automatically
         paymentMethod.put("currency", "EUR");
         paymentMethod.put("amount", request.getValue());
-
-        Map<String, String> paymentMethodOptions = new HashMap<>();
-
-        paymentMethodOptions.put("preferredProvider", request.getPreferredProvider());
-
-        paymentMethod.put("methodOptions", paymentMethodOptions);
 
         payload.put("payment", paymentMethod);
 
@@ -230,7 +226,7 @@ public class CustomerPaymentService {
             DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
             content.put("qrCode", qrCodeImage);
-            content.put("value", "%d€".formatted(payment.getValue()));
+            content.put("value", "%f€".formatted(payment.getValue()));
             content.put("valid_until", validUntilDate.format(dtf));
             content.put("from", payment.getFromFullName());
             content.put("to", payment.getToFullName());
