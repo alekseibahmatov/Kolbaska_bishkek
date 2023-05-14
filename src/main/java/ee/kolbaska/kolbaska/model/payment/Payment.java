@@ -83,6 +83,13 @@ public class Payment extends UUIDModel {
     )
     private Status status;
 
+    @NotNull
+    @Column(
+            name = "merchant_reference",
+            nullable = false
+    )
+    private String merchantReference;
+
     @OneToMany(mappedBy = "payment", orphanRemoval = true)
     private List<Certificate> certificates;
 
