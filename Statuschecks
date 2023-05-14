@@ -1,11 +1,6 @@
 pipeline {
     agent { label 'Slavik' }
     stages {
-        stage('Clear docker cache') {
-            steps {
-                sh 'docker system prune -af'
-            }
-        }
         stage('Delete existing dockerfile') {
             steps {
                 sh 'rm Dockerfile'
@@ -13,17 +8,17 @@ pipeline {
         }
         stage('Copy new dockerfile') {
             steps {
-                sh 'cp /var/jenkins/infra/Dockerfile_status Dockerfile'
+                sh 'cp /var/jenkins/infra/Dockerfile_backend_status Dockerfile'
             }
         }
         stage('Start build') {
             steps {
-                sh 'docker build .'
+                sh 'docker build . -t app-status:check'
             }
         }
         stage('Clear docker') {
             steps {
-                sh 'docker system prune -af'
+                sh 'docker rmi app-status:check'
                 cleanWs()
             }
         }
