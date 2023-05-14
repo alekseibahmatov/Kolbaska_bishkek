@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class PaymentValidationRequest {
-    @NotNull
     private String orderToken;
 }
