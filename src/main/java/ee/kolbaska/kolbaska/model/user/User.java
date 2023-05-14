@@ -54,7 +54,7 @@ public class User extends DefaultModel implements UserDetails {
             name = "phone",
             columnDefinition = "varchar(15)"
     )
-    @Size(min = 12, max = 15)
+    @Size(max = 15)
     private String phone;
 
     @ManyToOne
