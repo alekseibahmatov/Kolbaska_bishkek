@@ -179,7 +179,7 @@ public class CustomerPaymentService {
 
         Map<String, Claim> claims = decodedJWT.getClaims();
 
-        Optional<Payment> ifPayment = paymentRepository.findById(claims.get("merchantReference").asString());
+        Optional<Payment> ifPayment = paymentRepository.findById(UUID.fromString(claims.get("merchantReference").asString()));
 
         if(ifPayment.isEmpty()) throw new PaymentNotFoundException("Payment wasn't found");
         Payment payment = ifPayment.get();
