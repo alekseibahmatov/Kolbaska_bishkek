@@ -96,10 +96,10 @@ public class CustomerPaymentService {
 
         Map<String, Object> payload = new HashMap<>();
 
-        String uuid = UUID.randomUUID().toString();
+        UUID uuid = UUID.randomUUID();
 
         payload.put("accessKey", MONTONIO_ACCESS_KEY);
-        payload.put("merchantReference", uuid);
+        payload.put("merchantReference", uuid.toString());
         payload.put("returnUrl", "%s/personal-coupon-order/order-details".formatted(WEBSITE_BASE_URL)); //TODO change this to variable
         payload.put("notificationUrl", "%s%s/payment/verificationCreation".formatted(API_BASEURL, API_BASEPATH)); //TODO change this to variable
         payload.put("grandTotal", request.getValue());
@@ -159,6 +159,8 @@ public class CustomerPaymentService {
                 .description(request.getCongratsText())
                 .status(Status.PENDING)
                 .build();
+
+        newPayment.setId(uuid);
 
         paymentRepository.save(newPayment);
 
