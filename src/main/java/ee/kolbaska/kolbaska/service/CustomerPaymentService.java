@@ -170,7 +170,12 @@ public class CustomerPaymentService {
     @Transactional
     public CertificateVerificationResponse verificationCreation(CertificateVerificationRequest request) throws PaymentNotFoundException, PaymentException, IOException, WriterException, MessagingException, TemplateException {
 
-        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(JWT_SECRET)).build().verify(request.getOrderToken());
+        DecodedJWT decodedJWT;
+        try {
+            decodedJWT = JWT.require(Algorithm.HMAC256(MONTONIO_SECRET_KEY)).build().verify(request.getOrderToken());
+        } catch (JWTVerificationException e) {
+            throw new JWTVerificationException("Secret token is not valid");
+        }
 
         Map<String, Claim> claims = decodedJWT.getClaims();
 
@@ -302,7 +307,7 @@ public class CustomerPaymentService {
 
     public PaymentValidationResponse validatePayment(PaymentValidationRequest request) {
         try {
-           JWT.require(Algorithm.HMAC256(JWT_SECRET)).build().verify(request.getOrderToken());
+           JWT.require(Algorithm.HMAC256(MONTONIO_SECRET_KEY)).build().verify(request.getOrderToken());
         } catch (JWTVerificationException e) {
             return PaymentValidationResponse.builder().success(false).build();
         }
