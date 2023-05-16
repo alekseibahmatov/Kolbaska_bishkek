@@ -15,6 +15,7 @@ import ee.maitsetuur.jsonModel.paymentMethods.Country;
 import ee.maitsetuur.jsonModel.paymentMethods.MainPaymentResponse;
 import ee.maitsetuur.jsonModel.paymentMethods.PaymentInitiation;
 import ee.maitsetuur.jsonModel.paymentMethods.PaymentMethod;
+import ee.maitsetuur.model.business.Business;
 import ee.maitsetuur.model.business.PaymentCustomer;
 import ee.maitsetuur.model.certificate.Certificate;
 import ee.maitsetuur.model.payment.Payment;
@@ -37,7 +38,9 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Example;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -67,6 +70,8 @@ public class CustomerPaymentService {
     private final RoleRepository roleRepository;
 
     private final PaymentCustomerRepository paymentCustomerRepository;
+
+    private final BusinessRepository businessRepository;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -115,6 +120,7 @@ public class CustomerPaymentService {
 
         Map<String, String> billingAddress = new HashMap<>();
         billingAddress.put("firstName", request.getBuyer().getFromFullName());
+        billingAddress.put("lastName", request.getBusinessInformation().getBusinessName());
         billingAddress.put("email", request.getBuyer().getFromEmail());
         billingAddress.put("phoneNumber", request.getBuyer().getFromPhone());
         billingAddress.put("addressLine1", "%s - %s".formatted(request.getAddress().getStreet(), request.getAddress().getApartmentNumber()));
@@ -166,6 +172,31 @@ public class CustomerPaymentService {
         ObjectMapper objectMapper = new ObjectMapper();
         PaymentData payments = objectMapper.readValue(jsonResponse, PaymentData.class);
 
+        Optional<User> ifSender = userRepository.findByEmail(request.getBuyer().getFromEmail());
+
+        Role customerRole = roleRepository.findRoleByRoleName("ROLE_CUSTOMER").get();
+
+        User sender = ifSender.orElseGet(() -> userRepository.save(User.builder()
+                .fullName(request.getBuyer().getFromFullName())
+                .email(request.getBuyer().getFromEmail())
+                .activated(false)
+                .roles(List.of(customerRole))
+                .build()));
+
+        if (request.getBusinessInformation() != null) {
+            Business business = Business.builder()
+                    .businessName(request.getBusinessInformation().getBusinessName())
+                    .registerCode(request.getBusinessInformation().getRegisterCode())
+                    .businessKMKR(request.getBusinessInformation().getBusinessKMKR())
+                    .representative(sender)
+                    .build();
+
+            Optional<Business> ifBusiness = businessRepository.findOne(Example.of(business));
+
+            if (ifBusiness.isEmpty()) businessRepository.save(business);
+        }
+
+
         Payment newPayment = Payment.builder()
                 .fromFullName(request.getBuyer().getFromFullName())
                 .fromEmail(request.getBuyer().getFromEmail())
@@ -197,7 +228,7 @@ public class CustomerPaymentService {
     }
 
     @Transactional
-    public CertificateVerificationResponse verificationCreation(CertificateVerificationRequest request) throws PaymentNotFoundException, PaymentException, IOException, WriterException, MessagingException, TemplateException {
+    public CertificateVerificationResponse verificationCreation(CertificateVerificationRequest request) throws PaymentNotFoundException, PaymentException, IOException, WriterException, MessagingException {
 
         DecodedJWT decodedJWT;
         try {
@@ -217,21 +248,17 @@ public class CustomerPaymentService {
                 claims.get("paymentStatus").asString().equals("PAID") &&
                 claims.get("accessKey").asString().equals(MONTONIO_ACCESS_KEY)
         ) {
-            Optional<User> ifSender = userRepository.findByEmail(payment.getFromEmail());
-
             Role customerRole = roleRepository.findRoleByRoleName("ROLE_CUSTOMER").get();
-
-            User sender = ifSender.orElseGet(() -> userRepository.save(User.builder()
-                    .email(payment.getFromEmail())
-                    .fullName(payment.getFromFullName())
-                    .activated(false)
-                    .roles(List.of(customerRole))
-                    .build()));
-
 
             Set<PaymentCustomer> paymentCustomers = payment.getPaymentCustomers();
 
             LocalDate validUntilDate = LocalDate.now().plusYears(1);
+
+            Optional<User> ifSender = userRepository.findByEmail(payment.getFromEmail());
+
+            if (ifSender.isEmpty()) throw new UsernameNotFoundException("User not found, it must be created on previous step");
+
+            User sender = ifSender.get();
 
             for (PaymentCustomer pc : paymentCustomers) {
                 Optional<User> ifHolder = userRepository.findByEmail(pc.getEmail());
