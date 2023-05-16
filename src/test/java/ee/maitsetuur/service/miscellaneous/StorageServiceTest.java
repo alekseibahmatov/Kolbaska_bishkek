@@ -73,7 +73,7 @@ class StorageServiceTest {
     @Test
     void testGetFile() throws Exception {
         // Arrange
-        String fileId = "file_id";
+        UUID fileId = UUID.randomUUID();
         String fileName = "testfile.txt";
 
         // create the necessary directories
@@ -92,7 +92,7 @@ class StorageServiceTest {
         when(fileRepository.findById(fileId)).thenReturn(Optional.of(file));
 
         // Act
-        Map<String, Object> fileMap = storageService.getFile(fileId);
+        Map<String, Object> fileMap = storageService.getFile(String.valueOf(fileId));
 
         // Assert
         assertNotNull(fileMap);
@@ -109,12 +109,12 @@ class StorageServiceTest {
     @Test
     void testGetFileNotFound() {
         // Arrange
-        String fileId = "file_id";
+        UUID fileId = UUID.randomUUID();
 
         when(fileRepository.findById(fileId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(FileNotFoundException.class, () -> storageService.getFile(fileId));
+        assertThrows(FileNotFoundException.class, () -> storageService.getFile(String.valueOf(fileId)));
         verify(fileRepository).findById(fileId);
     }
 }
