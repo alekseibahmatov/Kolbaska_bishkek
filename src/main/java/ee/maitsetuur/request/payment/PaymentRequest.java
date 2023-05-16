@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class PaymentRequest {
 
-    @NotNull
     private BusinessInformation businessInformation;
 
     @NotNull

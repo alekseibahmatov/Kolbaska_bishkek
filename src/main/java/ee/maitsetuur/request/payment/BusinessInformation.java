@@ -11,6 +11,5 @@ public class BusinessInformation {
     @NotNull
     private String registerCode;
 
-    @NotNull
     private String businessKMKR;
 }
