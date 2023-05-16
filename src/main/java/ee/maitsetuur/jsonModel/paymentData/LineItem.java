@@ -3,10 +3,16 @@ package ee.maitsetuur.jsonModel.paymentData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class LineItem {
-    // Add line item fields here
+    private String name;
+
+    private Integer quantity;
+
+    private Double finalPrice;
 }
