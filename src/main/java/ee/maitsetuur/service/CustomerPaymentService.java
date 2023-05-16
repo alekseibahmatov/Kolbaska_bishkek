@@ -183,7 +183,7 @@ public class CustomerPaymentService {
                 .roles(List.of(customerRole))
                 .build()));
 
-        if (request.getBusinessInformation() != null) {
+        Optional.ofNullable(request.getBusinessInformation()).ifPresent(businessInfo -> {
             Business business = Business.builder()
                     .businessName(request.getBusinessInformation().getBusinessName())
                     .registerCode(request.getBusinessInformation().getRegisterCode())
@@ -194,8 +194,7 @@ public class CustomerPaymentService {
             Optional<Business> ifBusiness = businessRepository.findOne(Example.of(business));
 
             if (ifBusiness.isEmpty()) businessRepository.save(business);
-        }
-
+        });
 
         Payment newPayment = Payment.builder()
                 .fromFullName(request.getBuyer().getFromFullName())
