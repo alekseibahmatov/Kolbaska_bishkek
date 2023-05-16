@@ -1,7 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/changeset/init-changelog.yaml
-  - include:
-      file: db/changelog/changeset/add-role-data-changelog.yaml
-  - include:
-      file: db/changelog/changeset/15-01-changelog.yaml
