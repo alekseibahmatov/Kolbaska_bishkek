@@ -25,7 +25,7 @@ public class EmailService {
 
     private final SpringTemplateEngine templateEngine;
 
-    @Value("${spring.mail.from}")
+    @Value("${spring.mail.username}")
     private String from;
 
     public void sendSimpleMessage(String to, String subject, String text) {
@@ -37,7 +37,7 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void sendHTMLEmail(String to, String subject, String templateName, Map<String, Object> data) throws MessagingException, IOException, TemplateException {
+    public void sendHTMLEmail(String to, String subject, String templateName, Map<String, Object> data) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 

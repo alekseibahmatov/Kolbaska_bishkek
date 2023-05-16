@@ -15,18 +15,17 @@ import ee.kolbaska.kolbaska.jsonModel.paymentMethods.Country;
 import ee.kolbaska.kolbaska.jsonModel.paymentMethods.MainPaymentResponse;
 import ee.kolbaska.kolbaska.jsonModel.paymentMethods.PaymentInitiation;
 import ee.kolbaska.kolbaska.jsonModel.paymentMethods.PaymentMethod;
+import ee.kolbaska.kolbaska.model.business.PaymentCustomer;
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import ee.kolbaska.kolbaska.model.payment.Payment;
 import ee.kolbaska.kolbaska.model.payment.Status;
 import ee.kolbaska.kolbaska.model.user.Role;
 import ee.kolbaska.kolbaska.model.user.User;
-import ee.kolbaska.kolbaska.repository.CertificateRepository;
-import ee.kolbaska.kolbaska.repository.PaymentRepository;
-import ee.kolbaska.kolbaska.repository.RoleRepository;
-import ee.kolbaska.kolbaska.repository.UserRepository;
-import ee.kolbaska.kolbaska.request.CertificateCreationRequest;
+import ee.kolbaska.kolbaska.repository.*;
 import ee.kolbaska.kolbaska.request.CertificateVerificationRequest;
 import ee.kolbaska.kolbaska.request.PaymentValidationRequest;
+import ee.kolbaska.kolbaska.request.payment.CertificateInformation;
+import ee.kolbaska.kolbaska.request.payment.PaymentRequest;
 import ee.kolbaska.kolbaska.response.CertificateCreationResponse;
 import ee.kolbaska.kolbaska.response.CertificateVerificationResponse;
 import ee.kolbaska.kolbaska.response.PaymentMethodResponse;
@@ -67,6 +66,8 @@ public class CustomerPaymentService {
 
     private final RoleRepository roleRepository;
 
+    private final PaymentCustomerRepository paymentCustomerRepository;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -89,7 +90,7 @@ public class CustomerPaymentService {
     private String API_BASEPATH;
 
     @Transactional
-    public CertificateCreationResponse initiateCreation(CertificateCreationRequest request) throws JsonProcessingException {
+    public CertificateCreationResponse initiateCreation(PaymentRequest request) throws JsonProcessingException {
 
         Map<String, Object> payload = new HashMap<>();
 
@@ -97,30 +98,49 @@ public class CustomerPaymentService {
 
         payload.put("accessKey", MONTONIO_ACCESS_KEY);
         payload.put("merchantReference", uuid.toString());
-        payload.put("returnUrl", "%s/personal-coupon-order/order-details".formatted(WEBSITE_BASE_URL)); //TODO change this to variable
-        payload.put("notificationUrl", "%s%s/payment/verificationCreation".formatted(API_BASEURL, API_BASEPATH)); //TODO change this to variable
-        payload.put("grandTotal", request.getValue());
+        payload.put("returnUrl", "%s/personal-coupon-order/order-details".formatted(WEBSITE_BASE_URL));
+        payload.put("notificationUrl", "%s%s/payment/verificationCreation".formatted(API_BASEURL, API_BASEPATH));
+
+        Double total = request.getCertificates().stream().mapToDouble(CertificateInformation::getNominalValue).sum();
+
+        payload.put("grandTotal", total);
         payload.put("currency", "EUR");
 
         Map<String, Object> paymentMethod = new HashMap<>();
         paymentMethod.put("method", "paymentInitiation"); //TODO in the future change this so it choose method automatically
         paymentMethod.put("currency", "EUR");
-        paymentMethod.put("amount", request.getValue());
+        paymentMethod.put("amount", total);
 
         payload.put("payment", paymentMethod);
 
         Map<String, String> billingAddress = new HashMap<>();
-        billingAddress.put("firstName", request.getFromFullName());
-        billingAddress.put("email", request.getFromEmail());
-        billingAddress.put("phoneNumber", request.getFromPhone());
-        billingAddress.put("addressLine1", request.getBillingAddress().getStreet());
-        billingAddress.put("locality", request.getBillingAddress().getCity());
-        billingAddress.put("region", request.getBillingAddress().getState());
-        billingAddress.put("postalCode", request.getBillingAddress().getZipCode());
+        billingAddress.put("firstName", request.getBuyer().getFromFullName());
+        billingAddress.put("email", request.getBuyer().getFromEmail());
+        billingAddress.put("phoneNumber", request.getBuyer().getFromPhone());
+        billingAddress.put("addressLine1", "%s - %s".formatted(request.getAddress().getStreet(), request.getAddress().getApartmentNumber()));
+        billingAddress.put("locality", request.getAddress().getCity());
+        billingAddress.put("region", request.getAddress().getState());
+        billingAddress.put("postalCode", request.getAddress().getZipCode());
         billingAddress.put("country", "EE"); //TODO fix this somehow
 
         payload.put("billingAddress", billingAddress);
         payload.put("locale", "et"); //TODO fix this somehow
+
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        List<CertificateInformation> certificatesInformation = request.getCertificates();
+
+        for (CertificateInformation ci : certificatesInformation) {
+            Map<String, Object> item = new HashMap<>();
+
+            item.put("name", "Certificate - %s".formatted(ci.getGreeting()));
+            item.put("quantity", 1);
+            item.put("finalPrice", ci.getNominalValue());
+
+            items.add(item);
+        }
+
+        payload.put("lineItems", items);
 
         String jwtToken = JWT
                 .create()
@@ -147,18 +167,29 @@ public class CustomerPaymentService {
         PaymentData payments = objectMapper.readValue(jsonResponse, PaymentData.class);
 
         Payment newPayment = Payment.builder()
-                .value(request.getValue())
-                .toEmail(request.getToEmail())
-                .fromEmail(request.getFromEmail())
-                .toFullName(request.getToFullName())
-                .fromFullName(request.getFromFullName())
-                .phone(request.getToPhone())
-                .description(request.getCongratsText())
+                .fromFullName(request.getBuyer().getFromFullName())
+                .fromEmail(request.getBuyer().getFromEmail())
                 .status(Status.PENDING)
                 .merchantReference(uuid.toString())
                 .build();
 
-        paymentRepository.save(newPayment);
+        newPayment = paymentRepository.save(newPayment);
+
+        List<PaymentCustomer> customers = new ArrayList<>();
+
+        for (CertificateInformation ci : certificatesInformation) {
+            PaymentCustomer customer = PaymentCustomer.builder()
+                    .greeting(ci.getGreeting())
+                    .greetingText(ci.getGreetingsText())
+                    .email(ci.getEmail())
+                    .value(ci.getNominalValue())
+                    .payment(newPayment)
+                    .build();
+
+            customers.add(customer);
+        }
+
+        paymentCustomerRepository.saveAll(customers);
 
         return CertificateCreationResponse.builder()
                 .redirectUrl(payments.getPaymentUrl())
@@ -186,68 +217,74 @@ public class CustomerPaymentService {
                 claims.get("paymentStatus").asString().equals("PAID") &&
                 claims.get("accessKey").asString().equals(MONTONIO_ACCESS_KEY)
         ) {
-            Optional<User> ifHolder = userRepository.findByEmail(payment.getToEmail());
             Optional<User> ifSender = userRepository.findByEmail(payment.getFromEmail());
 
             Role customerRole = roleRepository.findRoleByRoleName("ROLE_CUSTOMER").get();
 
-            User holder = ifHolder.orElseGet(() -> userRepository.save(User.builder()
-                    .fullName(payment.getToFullName())
-                    .phone(payment.getPhone())
-                    .email(payment.getToEmail())
+            User sender = ifSender.orElseGet(() -> userRepository.save(User.builder()
+                    .email(payment.getFromEmail())
+                    .fullName(payment.getFromFullName())
                     .activated(false)
                     .roles(List.of(customerRole))
                     .build()));
 
-            User sender = ifSender.orElseGet(() -> userRepository.save(User.builder()
-                    .email(payment.getFromEmail())
-                    .fullName(payment.getToFullName())
-                    .activated(false)
-                    .roles(List.of(customerRole))
-                    .build()));
+
+            Set<PaymentCustomer> paymentCustomers = payment.getPaymentCustomers();
 
             LocalDate validUntilDate = LocalDate.now().plusYears(1);
 
-            Certificate newCertificate = Certificate.builder()
-                    .holder(holder)
-                    .sender(sender)
-                    .description(payment.getDescription())
-                    .value(payment.getValue())
-                    .validUntil(validUntilDate)
-                    .active(true)
-                    .createdByAdmin(false)
-                    .payment(payment)
-                    .build();
+            for (PaymentCustomer pc : paymentCustomers) {
+                Optional<User> ifHolder = userRepository.findByEmail(pc.getEmail());
 
-            newCertificate = certificateRepository.save(newCertificate);
+                User holder = ifHolder.orElseGet(() -> userRepository.save(User.builder()
+                        .email(pc.getEmail())
+                        .activated(false)
+                        .roles(List.of(customerRole))
+                        .build()));
+
+                Certificate newCertificate = Certificate.builder()
+                        .holder(holder)
+                        .sender(sender)
+                        .greeting(pc.getGreeting())
+                        .greetingText(pc.getGreetingText())
+                        .value(pc.getValue())
+                        .validUntil(validUntilDate)
+                        .active(true)
+                        .createdByAdmin(false)
+                        .payment(payment)
+                        .build();
+
+                newCertificate = certificateRepository.save(newCertificate);
+
+                Map<String, String> payload = new HashMap<>();
+
+                payload.put("certificate_id", newCertificate.getId().toString());
+                payload.put("name", pc.getGreeting());
+                payload.put("remainingValue", "%.2f".formatted(pc.getValue()));
+
+                byte[] qrCodeImage = qrCodeService.createQrCode(payload.toString());
+
+                Map<String, Object> content = new HashMap<>();
+
+                DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
+
+                content.put("qrCode", qrCodeImage);
+                content.put("value", "%.2f€".formatted(pc.getValue()));
+                content.put("valid_until", validUntilDate.format(dtf));
+                content.put("from", payment.getFromFullName());
+                content.put("to", pc.getGreeting());
+                content.put("description", pc.getGreetingText());
+
+                emailService.sendHTMLEmail(
+                        pc.getEmail(),
+                        "Congratulations you received restaurant certificate",
+                        "successfulCertificatePayment",
+                        content
+                );
+            }
+
             payment.setStatus(Status.PAID);
             paymentRepository.save(payment);
-
-            Map<String, String> payload = new HashMap<>();
-
-            payload.put("certificate_id", newCertificate.getId().toString());
-            payload.put("name", holder.getFullName());
-            payload.put("remainingValue", payment.getValue().toString());
-
-            byte[] qrCodeImage = qrCodeService.createQrCode(payload.toString());
-
-            Map<String, Object> content = new HashMap<>();
-
-            DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
-
-            content.put("qrCode", qrCodeImage);
-            content.put("value", "%.2f€".formatted(payment.getValue()));
-            content.put("valid_until", validUntilDate.format(dtf));
-            content.put("from", payment.getFromFullName());
-            content.put("to", payment.getToFullName());
-            content.put("description", payment.getDescription());
-
-            emailService.sendHTMLEmail(
-                    payment.getToEmail(),
-                    "Congratulations you received restaurant certificate",
-                    "successfulCertificatePayment",
-                    content
-            );
 
             return CertificateVerificationResponse.builder()
                     .message("Certificate was successful created and sent to the receiver")
@@ -256,6 +293,7 @@ public class CustomerPaymentService {
         throw new PaymentException("Something with your access key or payment status");
     }
 
+    @Deprecated
     public Map<String, List<PaymentMethodResponse>> methods() throws JsonProcessingException {
 
         Map<String, Object> payload = new HashMap<>();
