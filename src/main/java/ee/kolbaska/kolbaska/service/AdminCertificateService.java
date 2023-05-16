@@ -66,7 +66,7 @@ public class AdminCertificateService {
                 .active(true)
                 .sender(admin)
                 .holder(holder)
-                .description(request.getDescription())
+                .greetingText(request.getDescription())
                 .createdByAdmin(true)
                 .build();
 
@@ -81,7 +81,7 @@ public class AdminCertificateService {
         DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
         content.put("qrCode", qrCodeImage);
-        content.put("value", "%d€".formatted(request.getValue()));
+        content.put("value", "%.2f€".formatted(request.getValue()));
         content.put("valid_until", request.getValidUntil().format(dtf));
         content.put("from", "Support Team");
         content.put("to", holder.getFullName());
@@ -140,7 +140,7 @@ public class AdminCertificateService {
         AdminCertificateInformationResponse response = AdminCertificateInformationResponse.builder()
                 .toId(certificate.getHolder().getId())
                 .remainingValue(certificate.getRemainingValue())
-                .description(certificate.getDescription())
+                .description(certificate.getGreetingText())
                 .createdAt(certificate.getCreatedAt())
                 .value(certificate.getValue())
                 .validUntil(certificate.getValidUntil())
@@ -167,7 +167,7 @@ public class AdminCertificateService {
 
         certificate.setValidUntil(request.getValidUntil());
         certificate.setValue(request.getValue());
-        certificate.setDescription(request.getDescription());
+        certificate.setGreetingText(request.getDescription());
         certificate.setRemainingValue(request.getRemainingValue());
 
         if (!certificate.getCreatedByAdmin()) {
