@@ -56,6 +56,6 @@ public class Payment extends UUIDModel {
     private Set<Certificate> certificates;
 
     @OneToMany(mappedBy = "payment", orphanRemoval = true)
-    private Set<PaymentCustomer> paymentCustomers = new LinkedHashSet<>();
+    private Set<PaymentCustomer> paymentCustomers;
 
 }

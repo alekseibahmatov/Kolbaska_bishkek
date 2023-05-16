@@ -7,7 +7,7 @@ gradle bootRun -Pdebug &
 pid=$!
 
 while true; do
-  inotifywait -r -e modify,create,delete src
+  inotifywait -r -e modify,create,delete src build.gradle
 
   # Kill the old gradle bootRun process
   kill $pid
