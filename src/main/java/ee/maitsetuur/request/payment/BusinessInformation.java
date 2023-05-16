@@ -9,7 +9,7 @@ public class BusinessInformation {
     private String businessName;
 
     @NotNull
-    private String registerCode;
+    private Integer registerCode;
 
     private String businessKMKR;
 }
