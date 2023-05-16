@@ -33,7 +33,6 @@ import ee.maitsetuur.response.PaymentMethodResponse;
 import ee.maitsetuur.response.PaymentValidationResponse;
 import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.QrCodeService;
-import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,8 +204,6 @@ public class CustomerPaymentService {
 
         newPayment = paymentRepository.save(newPayment);
 
-        List<PaymentCustomer> customers = new ArrayList<>();
-
         for (CertificateInformation ci : certificatesInformation) {
             PaymentCustomer customer = PaymentCustomer.builder()
                     .greeting(ci.getGreeting())
@@ -216,10 +213,9 @@ public class CustomerPaymentService {
                     .payment(newPayment)
                     .build();
 
-            customers.add(customer);
+            paymentCustomerRepository.save(customer);
         }
 
-        paymentCustomerRepository.saveAll(customers);
 
         return CertificateCreationResponse.builder()
                 .redirectUrl(payments.getPaymentUrl())

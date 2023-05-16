@@ -41,7 +41,7 @@ CREATE TABLE category
 
 CREATE TABLE certificate
 (
-    id               char(36)         NOT NULL,
+    id               BINARY(16) NOT NULL,
     created_at       datetime NULL,
     updated_at       datetime NULL,
     deleted_at       datetime NULL,
@@ -55,13 +55,13 @@ CREATE TABLE certificate
     user_holder      BIGINT           NOT NULL,
     active           BIT(1)           NOT NULL,
     user_sender      BIGINT NULL,
-    payment_id       char(36)         NOT NULL,
+    payment_id       BINARY(16) NOT NULL,
     CONSTRAINT pk_certificate PRIMARY KEY (id)
 );
 
 CREATE TABLE file
 (
-    id            char(36)         NOT NULL,
+    id            BINARY(16) NOT NULL,
     created_at    datetime NULL,
     updated_at    datetime NULL,
     deleted_at    datetime NULL,
@@ -87,7 +87,7 @@ CREATE TABLE login
 
 CREATE TABLE payment
 (
-    id                 char(36)         NOT NULL,
+    id                 BINARY(16) NOT NULL,
     created_at         datetime NULL,
     updated_at         datetime NULL,
     deleted_at         datetime NULL,
@@ -110,7 +110,7 @@ CREATE TABLE payment_customer
     greeting      VARCHAR(255)     NOT NULL,
     value         DOUBLE           NOT NULL,
     greeting_text VARCHAR(255)     NOT NULL,
-    payment_id    char(36)         NOT NULL,
+    payment_id    BINARY(16) NOT NULL,
     CONSTRAINT pk_payment_customer PRIMARY KEY (id)
 );
 
@@ -132,8 +132,8 @@ CREATE TABLE restaurant
     restaurant_code  VARCHAR(6)       NOT NULL,
     maitsetuur_share INT              NOT NULL,
     manager_id       BIGINT NULL,
-    photo_id         char(36) NULL,
-    contract_id      char(36) NULL,
+    photo_id         BINARY(16) NULL,
+    contract_id      BINARY(16) NULL,
     CONSTRAINT pk_restaurant PRIMARY KEY (id)
 );
 
@@ -154,7 +154,7 @@ CREATE TABLE `role`
 
 CREATE TABLE transaction
 (
-    id         char(36)         NOT NULL,
+    id         BINARY(16) NOT NULL,
     created_at datetime NULL,
     updated_at datetime NULL,
     deleted_at datetime NULL,
@@ -163,7 +163,7 @@ CREATE TABLE transaction
 ) NOT NULL,
     waiter_id      BIGINT           NOT NULL,
     restaurant_id  BIGINT           NOT NULL,
-    certificate_id char(36)         NOT NULL,
+    certificate_id BINARY(16)       NOT NULL,
     CONSTRAINT pk_transaction PRIMARY KEY (id)
 );
 
@@ -194,8 +194,8 @@ CREATE TABLE user_roles
 
 CREATE TABLE user_transactions
 (
-    user_id         BIGINT   NOT NULL,
-    transactions_id char(36) NOT NULL
+    user_id         BIGINT NOT NULL,
+    transactions_id BINARY(16) NOT NULL
 );
 
 ALTER TABLE user_transactions
@@ -266,3 +266,10 @@ ALTER TABLE user_transactions
 
 ALTER TABLE user_transactions
     ADD CONSTRAINT fk_usetra_on_user FOREIGN KEY (user_id) REFERENCES user (id);
+
+INSERT INTO role (role_name) VALUES
+                                 ('ROLE_CUSTOMER'),
+                                 ("ROLE_ADMIN"),
+                                 ("ROLE_MANAGER"),
+                                 ("ROLE_WAITER"),
+                                 ("ROLE_ACCOUNTANT");
