@@ -120,7 +120,7 @@ public class CustomerPaymentService {
 
         Map<String, String> billingAddress = new HashMap<>();
         billingAddress.put("firstName", request.getBuyer().getFromFullName());
-        billingAddress.put("lastName", request.getBusinessInformation().getBusinessName());
+        Optional.ofNullable(request.getBusinessInformation()).ifPresent(businessInformation -> billingAddress.put("lastName", businessInformation.getBusinessName()));
         billingAddress.put("email", request.getBuyer().getFromEmail());
         billingAddress.put("phoneNumber", request.getBuyer().getFromPhone());
         billingAddress.put("addressLine1", "%s - %s".formatted(request.getAddress().getStreet(), request.getAddress().getApartmentNumber()));
@@ -185,9 +185,9 @@ public class CustomerPaymentService {
 
         Optional.ofNullable(request.getBusinessInformation()).ifPresent(businessInfo -> {
             Business business = Business.builder()
-                    .businessName(request.getBusinessInformation().getBusinessName())
-                    .registerCode(request.getBusinessInformation().getRegisterCode())
-                    .businessKMKR(request.getBusinessInformation().getBusinessKMKR())
+                    .businessName(businessInfo.getBusinessName())
+                    .registerCode(businessInfo.getRegisterCode())
+                    .businessKMKR(businessInfo.getBusinessKMKR())
                     .representative(sender)
                     .build();
 
