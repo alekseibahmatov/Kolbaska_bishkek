@@ -1,6 +1,7 @@
 package ee.kolbaska.kolbaska.model.payment;
 
 import ee.kolbaska.kolbaska.model.baseentity.UUIDModel;
+import ee.kolbaska.kolbaska.model.business.PaymentCustomer;
 import ee.kolbaska.kolbaska.model.certificate.Certificate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,51 +32,11 @@ public class Payment extends UUIDModel {
 
     @NotNull
     @Column(
-            name = "to_email",
-            columnDefinition = "varchar(120)",
-            nullable = false
-    )
-    private String toEmail;
-
-    @NotNull
-    @Column(
-            name = "description",
-            columnDefinition = "text",
-            nullable = false
-    )
-    private String description;
-
-    @NotNull
-    @Column(
-            name = "to_fullname",
-            columnDefinition = "varchar(120)",
-            nullable = false
-    )
-    private String toFullName;
-
-    @NotNull
-    @Column(
             name = "from_fullname",
             columnDefinition = "varchar(120)",
             nullable = false
     )
     private String fromFullName;
-
-    @NotNull
-    @Column(
-            name = "phone",
-            columnDefinition = "varchar(15)",
-            nullable = false
-    )
-    private String phone;
-
-    @NotNull
-    @Column(
-            name = "value",
-            columnDefinition = "double",
-            nullable = false
-    )
-    private Double value;
 
     @NotNull
     @Column(
@@ -94,5 +54,8 @@ public class Payment extends UUIDModel {
 
     @OneToMany(mappedBy = "payment", orphanRemoval = true)
     private Set<Certificate> certificates;
+
+    @OneToMany(mappedBy = "payment", orphanRemoval = true)
+    private Set<PaymentCustomer> paymentCustomers = new LinkedHashSet<>();
 
 }

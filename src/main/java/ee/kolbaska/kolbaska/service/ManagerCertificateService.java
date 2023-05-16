@@ -95,11 +95,11 @@ public class ManagerCertificateService {
         SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
 
         content.put("qrCode", qrCodeImage);
-        content.put("value", "%d€".formatted(certificate.getValue()));
+        content.put("value", "%.2f€".formatted(certificate.getValue()));
         content.put("valid_until", sf.format(certificate.getValidUntil()));
         content.put("from", certificate.getSender().getFullName());
         content.put("to", certificate.getHolder().getFullName());
-        content.put("description", certificate.getDescription());
+        content.put("description", certificate.getGreetingText());
 
         emailService.sendHTMLEmail(
                 certificate.getHolder().getEmail(),

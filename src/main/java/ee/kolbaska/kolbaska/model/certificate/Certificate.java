@@ -22,11 +22,19 @@ public class Certificate extends UUIDModel {
 
     @NotNull
     @Column(
-            name = "description",
+            name = "greeting",
+            columnDefinition = "varchar(120)",
+            nullable = false
+    )
+    private String greeting;
+
+    @NotNull
+    @Column(
+            name = "greeting_text",
             columnDefinition = "text",
             nullable = false
     )
-    private String description;
+    private String greetingText;
 
     @NotNull
     @Column(
