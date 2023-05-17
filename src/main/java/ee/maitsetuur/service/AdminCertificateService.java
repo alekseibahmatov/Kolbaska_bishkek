@@ -16,7 +16,6 @@ import ee.maitsetuur.response.AdminCertificateResponse;
 import ee.maitsetuur.response.AdminUpdateCertificateInformationResponse;
 import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.QrCodeService;
-import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -62,10 +61,12 @@ public class AdminCertificateService {
 
         Certificate newCertificate = Certificate.builder()
                 .value(request.getValue())
+                .remainingValue(request.getValue())
                 .validUntil(request.getValidUntil())
                 .active(true)
                 .sender(admin)
                 .holder(holder)
+                .greeting(holder.getFullName())
                 .greetingText(request.getDescription())
                 .createdByAdmin(true)
                 .build();
@@ -128,7 +129,7 @@ public class AdminCertificateService {
         return response;
     }
 
-    public AdminCertificateInformationResponse getCertificate(String id) throws CertificateNotFoundException {
+    public AdminCertificateInformationResponse getCertificate(UUID id) throws CertificateNotFoundException {
         LOGGER.info("Retrieving certificate with ID {}", id);
 
         Optional<Certificate> ifCertificate = certificateRepository.findById(id);
@@ -193,7 +194,7 @@ public class AdminCertificateService {
                 .build();
     }
 
-    public AdminUpdateCertificateInformationResponse disableCertificate(String id) throws CertificateNotFoundException {
+    public AdminUpdateCertificateInformationResponse disableCertificate(UUID id) throws CertificateNotFoundException {
         LOGGER.info("Disabling certificate with ID {}", id);
 
         Certificate certificate = certificateRepository.findById(id).orElseThrow(

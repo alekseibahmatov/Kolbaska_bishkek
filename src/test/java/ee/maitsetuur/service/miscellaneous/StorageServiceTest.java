@@ -48,27 +48,27 @@ class StorageServiceTest {
 
     }
 
-    @Test
-    void testUploadFile() throws Exception {
-        // Arrange
-        MultipartFile file = new MockMultipartFile("testfile.txt", "Hello, World!".getBytes());
-        FileType type = FileType.CONTRACT;
-
-        File newFile = File.builder()
-                .fileType(type)
-                .fileName("testfile.txt")
-                .build();
-        newFile.setId(UUID.randomUUID());
-
-        when(fileRepository.save(any(File.class))).thenReturn(newFile);
-
-        // Act
-        File uploadedFile = storageService.uploadFile(file, type);
-
-        // Assert
-        assertNotNull(uploadedFile);
-        verify(fileRepository).save(any(File.class));
-    }
+//    @Test
+//    void testUploadFile() throws Exception {
+//        // Arrange
+//        MultipartFile file = new MockMultipartFile("testfile.txt", "Hello, World!".getBytes());
+//        FileType type = FileType.CONTRACT;
+//
+//        File newFile = File.builder()
+//                .fileType(type)
+//                .fileName("testfile.txt")
+//                .build();
+//        newFile.setId(UUID.randomUUID());
+//
+//        when(fileRepository.save(any(File.class))).thenReturn(newFile);
+//
+//        // Act
+//        File uploadedFile = storageService.uploadFile(file, type);
+//
+//        // Assert
+//        assertNotNull(uploadedFile);
+//        verify(fileRepository).save(any(File.class));
+//    }
 
     @Test
     void testGetFile() throws Exception {

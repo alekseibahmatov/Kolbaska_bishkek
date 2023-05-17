@@ -4,6 +4,7 @@ import ee.maitsetuur.model.address.Address;
 import ee.maitsetuur.model.baseentity.DefaultModel;
 import ee.maitsetuur.model.category.Category;
 import ee.maitsetuur.model.file.File;
+import ee.maitsetuur.model.report.Report;
 import ee.maitsetuur.model.transaction.Transaction;
 import ee.maitsetuur.model.user.User;
 import jakarta.persistence.*;
@@ -22,9 +23,6 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Restaurant extends DefaultModel {
-
-    @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
-    private Set<Transaction> transactions;
 
     @NotNull
     @Column(
@@ -105,6 +103,13 @@ public class Restaurant extends DefaultModel {
     private Integer maitsetuurShare;
 
     @NotNull
+    @Column(
+            name = "report_days",
+            nullable = false
+    )
+    private String reportDays;
+
+    @NotNull
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "restaurant_categories",
             joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"))
@@ -125,4 +130,9 @@ public class Restaurant extends DefaultModel {
     @JoinColumn(name = "contract_id")
     private File contract;
 
+    @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
+    private Set<Report> reports;
+
+    @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
+    private Set<Transaction> transactions;
 }

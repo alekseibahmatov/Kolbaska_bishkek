@@ -32,12 +32,39 @@ public class SecurityConfiguration {
                 .disable()
                 .authorizeHttpRequests(
                         (requests) -> requests
-                                .requestMatchers(API_BASEPATH + "/auth/**", API_BASEPATH + "/payment/initiateCreation", API_BASEPATH + "/customer/**", API_BASEPATH + "/payment/methods", API_BASEPATH + "/payment/validatePayment").permitAll()
-                                .requestMatchers(API_BASEPATH + "/payment/verificationCreation").permitAll() //TODO change permit all to access from specific IPs
-                                .requestMatchers("/api-docs", "/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**", "/actuator", "/actuator/**").permitAll()
-                                .requestMatchers(API_BASEPATH + "/admin/**", API_BASEPATH + "/admin/download/**", API_BASEPATH + "/admin/file/**").hasRole("ADMIN")
-                                .requestMatchers(API_BASEPATH + "/transaction/**").hasAnyRole("ADMIN", "MANAGER", "WAITER")
-                                .requestMatchers(API_BASEPATH + "/restaurant/**").hasAnyRole("ADMIN", "MANAGER")
+                                .requestMatchers(
+                                        API_BASEPATH + "/auth/**",
+                                        API_BASEPATH + "/payment/initiateCreation",
+                                        API_BASEPATH + "/customer/**",
+                                        API_BASEPATH + "/payment/methods",
+                                        API_BASEPATH + "/payment/validatePayment"
+                                ).permitAll()
+                                .requestMatchers(
+                                        API_BASEPATH + "/payment/verificationCreation"
+                                ).permitAll() //TODO change permit all to access from specific IPs
+                                .requestMatchers(
+                                        "/api-docs",
+                                        "/api-docs/**",
+                                        "/configuration/**",
+                                        "/swagger*/**",
+                                        "/webjars/**",
+                                        "/actuator",
+                                        "/actuator/**"
+                                ).permitAll()
+                                .requestMatchers(
+                                        API_BASEPATH + "/admin/**",
+                                        API_BASEPATH + "/admin/download/**",
+                                        API_BASEPATH + "/admin/file/**"
+                                ).hasRole("ADMIN")
+                                .requestMatchers(
+                                        API_BASEPATH + "/accountant/**"
+                                ).hasAnyRole("ADMIN", "MANAGER")
+                                .requestMatchers(
+                                        API_BASEPATH + "/transaction/**"
+                                ).hasAnyRole("ADMIN", "MANAGER", "WAITER")
+                                .requestMatchers(
+                                        API_BASEPATH + "/restaurant/**"
+                                ).hasAnyRole("ADMIN", "MANAGER")
                                 .anyRequest()
                                 .authenticated()
                 )

@@ -15,7 +15,6 @@ import ee.maitsetuur.request.CertificateActivationRequest;
 import ee.maitsetuur.response.CertificateActivationResponse;
 import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.QrCodeService;
-import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -25,9 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -92,11 +93,11 @@ public class ManagerCertificateService {
 
         Map<String, Object> content = new HashMap<>();
 
-        SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         content.put("qrCode", qrCodeImage);
         content.put("value", "%.2f€".formatted(certificate.getValue()));
-        content.put("valid_until", sf.format(certificate.getValidUntil()));
+        content.put("valid_until", certificate.getValidUntil().format(dateTimeFormatter));
         content.put("from", certificate.getSender().getFullName());
         content.put("to", certificate.getHolder().getFullName());
         content.put("description", certificate.getGreetingText());

@@ -55,7 +55,7 @@ CREATE TABLE certificate
     user_holder      BIGINT           NOT NULL,
     active           BIT(1)           NOT NULL,
     user_sender      BIGINT NULL,
-    payment_id       BINARY(16) NOT NULL,
+    payment_id       BINARY(16) NULL,
     CONSTRAINT pk_certificate PRIMARY KEY (id)
 );
 
@@ -114,6 +114,23 @@ CREATE TABLE payment_customer
     CONSTRAINT pk_payment_customer PRIMARY KEY (id)
 );
 
+CREATE TABLE report
+(
+    id                  BIGINT AUTO_INCREMENT NOT NULL,
+    created_at          datetime NULL,
+    updated_at          datetime NULL,
+    deleted_at          datetime NULL,
+    deleted             BIT(1) DEFAULT 0 NOT NULL,
+    transactions_amount INT              NOT NULL,
+    turnover            DOUBLE           NOT NULL,
+    maitsetuur_share    DOUBLE           NOT NULL,
+    report_from         date             NOT NULL,
+    report_to           date             NOT NULL,
+    status              INT              NOT NULL,
+    restaurant_id       BIGINT           NOT NULL,
+    CONSTRAINT pk_report PRIMARY KEY (id)
+);
+
 CREATE TABLE restaurant
 (
     id               BIGINT AUTO_INCREMENT NOT NULL,
@@ -154,16 +171,16 @@ CREATE TABLE `role`
 
 CREATE TABLE transaction
 (
-    id         BINARY(16) NOT NULL,
-    created_at datetime NULL,
-    updated_at datetime NULL,
-    deleted_at datetime NULL,
-    deleted    BIT(1) DEFAULT 0 NOT NULL,
-    value      DOUBLE(6, 2
-) NOT NULL,
+    id             BINARY(16) NOT NULL,
+    created_at     datetime NULL,
+    updated_at     datetime NULL,
+    deleted_at     datetime NULL,
+    deleted        BIT(1) DEFAULT 0 NOT NULL,
+    value          DOUBLE           NOT NULL,
     waiter_id      BIGINT           NOT NULL,
     restaurant_id  BIGINT           NOT NULL,
-    certificate_id BINARY(16)       NOT NULL,
+    certificate_id BINARY(16) NOT NULL,
+    report_id      BIGINT NULL,
     CONSTRAINT pk_transaction PRIMARY KEY (id)
 );
 
@@ -222,6 +239,9 @@ ALTER TABLE login
 ALTER TABLE payment_customer
     ADD CONSTRAINT FK_PAYMENT_CUSTOMER_ON_PAYMENT FOREIGN KEY (payment_id) REFERENCES payment (id);
 
+ALTER TABLE report
+    ADD CONSTRAINT FK_REPORT_ON_RESTAURANT FOREIGN KEY (restaurant_id) REFERENCES restaurant (id);
+
 ALTER TABLE restaurant
     ADD CONSTRAINT FK_RESTAURANT_ON_ADDRESS FOREIGN KEY (address_id) REFERENCES address (id);
 
@@ -236,6 +256,9 @@ ALTER TABLE restaurant
 
 ALTER TABLE transaction
     ADD CONSTRAINT FK_TRANSACTION_ON_CERTIFICATE FOREIGN KEY (certificate_id) REFERENCES certificate (id);
+
+ALTER TABLE transaction
+    ADD CONSTRAINT FK_TRANSACTION_ON_REPORT FOREIGN KEY (report_id) REFERENCES report (id);
 
 ALTER TABLE transaction
     ADD CONSTRAINT FK_TRANSACTION_ON_RESTAURANT FOREIGN KEY (restaurant_id) REFERENCES restaurant (id);
@@ -269,7 +292,6 @@ ALTER TABLE user_transactions
 
 INSERT INTO role (role_name) VALUES
                                  ('ROLE_CUSTOMER'),
-                                 ("ROLE_ADMIN"),
-                                 ("ROLE_MANAGER"),
-                                 ("ROLE_WAITER"),
-                                 ("ROLE_ACCOUNTANT");
+                                 ('ROLE_ADMIN'),
+                                 ('ROLE_MANAGER'),
+                                 ('ROLE_WAITER');

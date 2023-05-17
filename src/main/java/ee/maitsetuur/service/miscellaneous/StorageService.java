@@ -3,6 +3,7 @@ package ee.maitsetuur.service.miscellaneous;
 import ee.maitsetuur.model.file.File;
 import ee.maitsetuur.model.file.FileType;
 import ee.maitsetuur.repository.FileRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -27,6 +28,7 @@ public class StorageService {
     @Value("${file-storage.basepath}")
     private String basePath;
 
+    @Transactional
     public File uploadFile(MultipartFile file, FileType type) throws Exception {
         String directory = switch (type) {
             case PHOTO -> "/photos/";
@@ -42,7 +44,7 @@ public class StorageService {
                 .fileName(fileName)
                 .build();
 
-        newFile = repository.save(newFile);
+        newFile = repository.saveAndFlush(newFile);
 
         Path fullPath;
 
