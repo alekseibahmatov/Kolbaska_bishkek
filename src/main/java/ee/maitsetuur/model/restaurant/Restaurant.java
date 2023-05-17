@@ -131,7 +131,7 @@ public class Restaurant extends DefaultModel {
     private File contract;
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
-    private Set<Report> reports = new LinkedHashSet<>();
+    private Set<Report> reports;
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private Set<Transaction> transactions;
