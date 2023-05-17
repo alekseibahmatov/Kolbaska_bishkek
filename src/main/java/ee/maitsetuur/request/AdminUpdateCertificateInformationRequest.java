@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 public class AdminUpdateCertificateInformationRequest {
 
     @NotNull
-    private String id;
+    private UUID id;
 
     private Long senderUserId;
 

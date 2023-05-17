@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.basepath}/admin")
@@ -29,7 +30,7 @@ public class AdminCertificateController {
     @PostMapping("/certificate")
     public ResponseEntity<AdminCertificateCreationResponse> createCertificate(
             @Valid @RequestBody AdminCertificateCreationRequest request
-    ) throws MessagingException, TemplateException, IOException, WriterException {
+    ) throws MessagingException, IOException, WriterException {
         return ResponseEntity.ok(service.createCertificate(request));
     }
 
@@ -40,7 +41,7 @@ public class AdminCertificateController {
 
     @GetMapping("/certificate/{id}")
     public ResponseEntity<AdminCertificateInformationResponse> getCertificate(
-            @Valid @PathVariable String id
+            @Valid @PathVariable UUID id
     ) throws CertificateNotFoundException {
         return ResponseEntity.ok(service.getCertificate(id));
     }
@@ -54,7 +55,7 @@ public class AdminCertificateController {
 
     @DeleteMapping("/certificate/{id}")
     public ResponseEntity<AdminUpdateCertificateInformationResponse> disableCertificate(
-            @Valid @PathVariable String id
+            @Valid @PathVariable UUID id
     ) throws CertificateNotFoundException {
         return ResponseEntity.ok(service.disableCertificate(id));
     }
