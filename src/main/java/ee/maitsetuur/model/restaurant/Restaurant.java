@@ -103,13 +103,6 @@ public class Restaurant extends DefaultModel {
     private Integer maitsetuurShare;
 
     @NotNull
-    @Column(
-            name = "report_days",
-            nullable = false
-    )
-    private String reportDays;
-
-    @NotNull
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "restaurant_categories",
             joinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"))

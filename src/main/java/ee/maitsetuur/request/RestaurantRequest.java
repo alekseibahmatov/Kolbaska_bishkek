@@ -55,9 +55,6 @@ public class RestaurantRequest {
     private String workingHours;
 
     @NotNull
-    private String reportDays;
-
-    @NotNull
     private Integer averageBill;
 
     @NotNull

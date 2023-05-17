@@ -87,7 +87,7 @@ public class Certificate extends UUIDModel {
     private List<Transaction> transactions;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "payment_id", nullable = true, updatable = false)
+    @JoinColumn(name = "payment_id", nullable = true)
     private Payment payment;
 
 }

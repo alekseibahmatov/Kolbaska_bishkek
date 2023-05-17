@@ -75,7 +75,6 @@ public class AdminRestaurantService {
                 .phone(request.getRestaurantPhone())
                 .email(request.getRestaurantEmail())
                 .maitsetuurShare(request.getMaitsetuurShare())
-                .reportDays(request.getReportDays())
                 .restaurantCode(UUID.randomUUID().toString().substring(0, 6).toUpperCase())
                 .categories(setupCategories(new HashSet<>(request.getCategories())))
                 .photo(storageService.uploadFile(request.getPhoto(), FileType.PHOTO))
