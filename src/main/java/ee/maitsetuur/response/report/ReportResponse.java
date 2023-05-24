@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportResponse {
-    private Long id;
+    private UUID id;
 
     private Integer transactionsAmount;
 
@@ -28,5 +29,5 @@ public class ReportResponse {
 
     private Status status;
 
-    private Set<ReportTransactionResponse> reportTransactionRespons;
+    private Set<ReportTransactionResponse> reportTransactionResponse;
 }

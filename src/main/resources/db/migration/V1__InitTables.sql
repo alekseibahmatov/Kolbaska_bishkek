@@ -116,7 +116,7 @@ CREATE TABLE payment_customer
 
 CREATE TABLE report
 (
-    id                  BIGINT AUTO_INCREMENT NOT NULL,
+    id                  BINARY(16) NOT NULL,
     created_at          datetime NULL,
     updated_at          datetime NULL,
     deleted_at          datetime NULL,
@@ -180,7 +180,7 @@ CREATE TABLE transaction
     waiter_id      BIGINT           NOT NULL,
     restaurant_id  BIGINT           NOT NULL,
     certificate_id BINARY(16) NOT NULL,
-    report_id      BIGINT NULL,
+    report_id      BINARY(16) NULL,
     CONSTRAINT pk_transaction PRIMARY KEY (id)
 );
 
@@ -292,6 +292,6 @@ ALTER TABLE user_transactions
 
 INSERT INTO role (role_name) VALUES
                                  ('ROLE_CUSTOMER'),
-                                 ('ROLE_ADMIN'),
+                                 ('ROLE_WAITER'),
                                  ('ROLE_MANAGER'),
-                                 ('ROLE_WAITER');
+                                 ('ROLE_ADMIN');

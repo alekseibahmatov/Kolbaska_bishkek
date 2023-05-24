@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,7 +22,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -92,7 +89,7 @@ class StorageServiceTest {
         when(fileRepository.findById(fileId)).thenReturn(Optional.of(file));
 
         // Act
-        Map<String, Object> fileMap = storageService.getFile(String.valueOf(fileId));
+        Map<String, Object> fileMap = storageService.downloadRestaurantFile(String.valueOf(fileId));
 
         // Assert
         assertNotNull(fileMap);
@@ -114,7 +111,7 @@ class StorageServiceTest {
         when(fileRepository.findById(fileId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(FileNotFoundException.class, () -> storageService.getFile(String.valueOf(fileId)));
+        assertThrows(FileNotFoundException.class, () -> storageService.downloadRestaurantFile(String.valueOf(fileId)));
         verify(fileRepository).findById(fileId);
     }
 }

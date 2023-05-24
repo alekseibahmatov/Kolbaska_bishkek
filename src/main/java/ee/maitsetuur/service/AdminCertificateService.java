@@ -91,7 +91,7 @@ public class AdminCertificateService {
         emailService.sendHTMLEmail(
                 holder.getEmail(),
                 "Congratulations you received restaurant certificate",
-                "successfulCertificatePayment",
+                "email/successfulCertificatePayment",
                 content
         );
 

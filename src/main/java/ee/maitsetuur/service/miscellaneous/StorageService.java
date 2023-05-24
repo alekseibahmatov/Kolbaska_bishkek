@@ -65,7 +65,7 @@ public class StorageService {
     }
 
 
-    public Map<String, Object> getFile(String fileId) throws Exception {
+    public Map<String, Object> downloadRestaurantFile(String fileId) throws Exception {
 
         File file = repository.findById(UUID.fromString(fileId)).orElseThrow(
                 () -> new FileNotFoundException("File with following id not found")
