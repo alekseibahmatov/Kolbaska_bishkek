@@ -105,7 +105,7 @@ public class ManagerCertificateService {
         emailService.sendHTMLEmail(
                 certificate.getHolder().getEmail(),
                 "Congratulations you received restaurant certificate",
-                "successfulCertificatePayment",
+                "email/successfulCertificatePayment",
                 content
         );
 

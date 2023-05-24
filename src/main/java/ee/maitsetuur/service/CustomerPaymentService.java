@@ -300,7 +300,7 @@ public class CustomerPaymentService {
                 emailService.sendHTMLEmail(
                         pc.getEmail(),
                         "Congratulations you received restaurant certificate",
-                        "successfulCertificatePayment",
+                        "email/successfulCertificatePayment",
                         content
                 );
             }

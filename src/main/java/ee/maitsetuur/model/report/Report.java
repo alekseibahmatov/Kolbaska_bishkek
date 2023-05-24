@@ -1,6 +1,6 @@
 package ee.maitsetuur.model.report;
 
-import ee.maitsetuur.model.baseentity.DefaultModel;
+import ee.maitsetuur.model.baseentity.UUIDModel;
 import ee.maitsetuur.model.payment.Status;
 import ee.maitsetuur.model.restaurant.Restaurant;
 import ee.maitsetuur.model.transaction.Transaction;
@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Report extends DefaultModel {
+public class Report extends UUIDModel {
     @NotNull
     @Column(
             name = "transactions_amount",

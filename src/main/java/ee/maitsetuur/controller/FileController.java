@@ -23,8 +23,8 @@ public class FileController {
     private final StorageService service;
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) throws Exception {
-        Map<String, Object> fileMap = service.getFile(fileId);
+    public ResponseEntity<Resource> downloadRestaurantFile(@PathVariable String fileId) throws Exception {
+        Map<String, Object> fileMap = service.downloadRestaurantFile(fileId);
         Resource file = (Resource) fileMap.get("file");
         FileType fileType = (FileType) fileMap.get("fileType");
 
