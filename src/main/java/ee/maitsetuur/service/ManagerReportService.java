@@ -58,24 +58,6 @@ public class ManagerReportService {
                     .transactionsAmount(report.getTransactionsAmount())
                     .build();
 
-            Set<Transaction> transactions = report.getTransactions();
-
-            Set<ReportTransactionResponse> transactionResponses = new HashSet<>();
-
-            for (Transaction t : transactions) {
-                ReportTransactionResponse transactionResponse = ReportTransactionResponse.builder()
-                        .activationDate(LocalDate.ofInstant(t.getCreatedAt(), ZoneId.systemDefault()))
-                        .activationTime(LocalTime.ofInstant(t.getCreatedAt(), ZoneId.systemDefault()))
-                        .amountSpent(t.getValue())
-                        .uuid(t.getId().toString())
-                        .waiterFullName(t.getWaiter().getFullName())
-                        .build();
-
-                transactionResponses.add(transactionResponse);
-            }
-
-            reportResponse.setReportTransactionResponse(transactionResponses);
-
             response.add(reportResponse);
         }
 
@@ -169,18 +151,41 @@ public class ManagerReportService {
 
             assert response.body() != null;
 
-            // parse response body as json
             JsonObject json = new Gson().fromJson(response.body().string(), JsonObject.class);
 
-            // get base64 pdf string
             String base64Pdf = json.get("pdf").getAsString();
 
-            // decode base64 string to byte array
             pdfBytes = Base64.getDecoder().decode(base64Pdf);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return pdfBytes;
+    }
+
+    public List<ReportTransactionResponse> getTransactions(UUID reportId) throws ReportNotFoundException, IllegalAccessException {
+        User manager = user.getRequestUser();
+
+        Report report = reportRepository.findById(reportId).orElseThrow(() -> new ReportNotFoundException("Report not found"));
+
+        if (report.getRestaurant().getManager() != manager && !user.getRoleNames(manager).contains("ROLE_ADMIN")) throw new IllegalAccessException("Access denied");
+
+        Set<Transaction> transactions = report.getTransactions();
+
+        List<ReportTransactionResponse> response = new ArrayList<>();
+
+        for (Transaction t : transactions) {
+            ReportTransactionResponse transactionResponse = ReportTransactionResponse.builder()
+                    .activationDate(LocalDate.ofInstant(t.getCreatedAt(), ZoneId.systemDefault()))
+                    .activationTime(LocalTime.ofInstant(t.getCreatedAt(), ZoneId.systemDefault()))
+                    .amountSpent(t.getValue())
+                    .uuid(t.getId().toString())
+                    .waiterFullName(t.getWaiter().getFullName())
+                    .build();
+
+            response.add(transactionResponse);
+        }
+
+        return response;
     }
 }

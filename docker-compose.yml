@@ -18,7 +18,9 @@ services:
     build:
       context: Maitsetuur-node-app
       dockerfile: Dockerfile
+    working_dir: /usr/src/app
     container_name: node-app
+    command: sh script.sh
     volumes:
       - ./Maitsetuur-node-app:/usr/src/app
     networks:
