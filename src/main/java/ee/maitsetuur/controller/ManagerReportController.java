@@ -34,7 +34,7 @@ public class ManagerReportController {
 
     @GetMapping("/report/{reportId}/transactions")
     public ResponseEntity<List<ReportTransactionResponse>> getTransactions(
-            @RequestParam UUID reportId
+            @PathVariable UUID reportId
     ) throws ReportNotFoundException, IllegalAccessException {
         return ResponseEntity.ok(service.getTransactions(reportId));
     }

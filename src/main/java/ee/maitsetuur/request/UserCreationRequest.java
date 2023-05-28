@@ -8,46 +8,27 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminCustomerUpdateRequest {
-
-    @NotNull
-    private Long id;
-
+public class UserCreationRequest {
     @NotNull
     private String fullName;
 
-    private String newPassword;
+    private String password;
 
+    @NotNull
     @Email
     private String email;
 
-    @Size(max = 15, message = "Incorrect phone number")
+    @Size(max = 15)
     private String phone;
 
     @NotNull
     private AddressRequest address;
 
-    @NotNull
     private String personalCode;
 
-    @NotNull
-    private Boolean activated;
-
-    @NotNull
-    private Boolean deleted;
-
-    @NotNull
-    private String activationCode;
-
-    @NotNull
-    private String restaurantCode;
-
-    @NotNull
-    private List<String> roleNames;
+    private String roleName;
 }

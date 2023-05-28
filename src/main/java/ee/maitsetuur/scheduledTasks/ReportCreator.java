@@ -33,7 +33,7 @@ public class ReportCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminRestaurantService.class);
 
-    @Scheduled(cron = "0 17 19 ? * *")
+    @Scheduled(cron = "0 0 0 ? * 3")
     @Transactional
     public void generateReport() {
         LOGGER.info("Starting to generate report");
