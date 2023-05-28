@@ -1,5 +1,5 @@
 <configuration>
-    <appender name="INFLUXDB" class="ee.kolbaska.kolbaska.appender.InfluxDBAppender">
+    <appender name="INFLUXDB" class="ee.maitsetuur.appender.InfluxDBAppender">
         <url>http://influxdb:8086</url>
         <token>c3xqz8dozXJO-agj7J1OXmp-sUgMkBm5uWI_iN9Avz68K_rlOLb5LZxqEMaS879iocEhGNvTpUDLy2Y8EgLU7w==</token>
         <org>Maitsetuur</org>
