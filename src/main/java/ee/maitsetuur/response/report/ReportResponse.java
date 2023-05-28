@@ -28,6 +28,4 @@ public class ReportResponse {
     private LocalDate reportTo;
 
     private Status status;
-
-    private Set<ReportTransactionResponse> reportTransactionResponse;
 }
