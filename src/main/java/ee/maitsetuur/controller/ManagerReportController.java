@@ -2,8 +2,8 @@ package ee.maitsetuur.controller;
 
 import ee.maitsetuur.exception.ReportNotFoundException;
 import ee.maitsetuur.exception.RestaurantNotFoundException;
+import ee.maitsetuur.request.ReportDetailedResponse;
 import ee.maitsetuur.response.report.ReportResponse;
-import ee.maitsetuur.response.report.ReportTransactionResponse;
 import ee.maitsetuur.service.ManagerReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -33,7 +33,7 @@ public class ManagerReportController {
     }
 
     @GetMapping("/report/{reportId}/transactions")
-    public ResponseEntity<List<ReportTransactionResponse>> getTransactions(
+    public ResponseEntity<ReportDetailedResponse> getTransactions(
             @PathVariable UUID reportId
     ) throws ReportNotFoundException, IllegalAccessException {
         return ResponseEntity.ok(service.getTransactions(reportId));

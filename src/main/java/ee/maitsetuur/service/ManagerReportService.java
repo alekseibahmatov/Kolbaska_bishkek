@@ -11,6 +11,7 @@ import ee.maitsetuur.model.restaurant.Restaurant;
 import ee.maitsetuur.model.transaction.Transaction;
 import ee.maitsetuur.model.user.User;
 import ee.maitsetuur.repository.ReportRepository;
+import ee.maitsetuur.request.ReportDetailedResponse;
 import ee.maitsetuur.response.report.ReportResponse;
 import ee.maitsetuur.response.report.ReportTransactionResponse;
 import lombok.RequiredArgsConstructor;
@@ -163,7 +164,7 @@ public class ManagerReportService {
         return pdfBytes;
     }
 
-    public List<ReportTransactionResponse> getTransactions(UUID reportId) throws ReportNotFoundException, IllegalAccessException {
+    public ReportDetailedResponse getTransactions(UUID reportId) throws ReportNotFoundException, IllegalAccessException {
         User manager = user.getRequestUser();
 
         Report report = reportRepository.findById(reportId).orElseThrow(() -> new ReportNotFoundException("Report not found"));
@@ -172,7 +173,7 @@ public class ManagerReportService {
 
         Set<Transaction> transactions = report.getTransactions();
 
-        List<ReportTransactionResponse> response = new ArrayList<>();
+        List<ReportTransactionResponse> transactionResponses = new ArrayList<>();
 
         for (Transaction t : transactions) {
             ReportTransactionResponse transactionResponse = ReportTransactionResponse.builder()
@@ -183,9 +184,14 @@ public class ManagerReportService {
                     .waiterFullName(t.getWaiter().getFullName())
                     .build();
 
-            response.add(transactionResponse);
+            transactionResponses.add(transactionResponse);
         }
 
-        return response;
+        return ReportDetailedResponse.builder()
+                .transactions(transactionResponses)
+                .turnover("%.2f".formatted(report.getTurnover()))
+                .maitsetuurShare("%.2f".formatted(report.getMaitsetuurShare()))
+                .status(report.getStatus())
+                .build();
     }
 }
