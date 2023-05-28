@@ -156,7 +156,7 @@ public class ManagerReportService {
         );
 
         Request request = new Request.Builder()
-                .url("http://localhost:3030/reports")
+                .url("http://node-app:3030/reports")
                 .post(body)
                 .build();
 
