@@ -33,12 +33,14 @@ pipeline {
         }
         stage('Build and start stack') {
             steps {
-                try {
-                    sh 'docker network create stack-network'
-                } catch(Exception e) {}
-                try {
-                    sh 'docker volume create stack-db-storage'
-                } catch(Exception e) {}
+                script {
+                    try {
+                        sh 'docker network create stack-network'
+                    } catch(Exception e) {}
+                    try {
+                        sh 'docker volume create stack-db-storage'
+                    } catch(Exception e) {}
+                }
                 sh 'docker run --env-file .env_database --network stack-network -v stack-db-storage:/var/lib/mysql -p 3306:3306 --name db -d mysql:8.0.33'
                 sh 'docker build . -t stack-app'
                 sh 'docker run --env-file .env_backend --network stack-network -p 8080:8080 --name app -d stack-app'
