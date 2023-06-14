@@ -7,6 +7,8 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.zxing.WriterException;
 import ee.maitsetuur.exception.PaymentException;
 import ee.maitsetuur.exception.PaymentNotFoundException;
@@ -35,6 +37,10 @@ import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.QrCodeService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
@@ -45,6 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -182,24 +189,27 @@ public class CustomerPaymentService {
                 .roles(List.of(customerRole))
                 .build()));
 
-        Optional.ofNullable(request.getBusinessInformation()).ifPresent(businessInfo -> {
-            Business business = Business.builder()
-                    .businessName(businessInfo.getBusinessName())
-                    .registerCode(businessInfo.getRegisterCode())
-                    .businessKMKR(businessInfo.getBusinessKMKR())
+        Business business = null;
+
+        if (Optional.ofNullable(request.getBusinessInformation()).isPresent()) {
+            Business businessRequest = Business.builder()
+                    .businessName(request.getBusinessInformation().getBusinessName())
+                    .registerCode(request.getBusinessInformation().getRegisterCode())
+                    .businessKMKR(request.getBusinessInformation().getBusinessKMKR())
                     .representative(sender)
                     .build();
 
-            Optional<Business> ifBusiness = businessRepository.findOne(Example.of(business));
+            Optional<Business> ifBusiness = businessRepository.findOne(Example.of(businessRequest));
 
-            if (ifBusiness.isEmpty()) businessRepository.save(business);
-        });
+            business = ifBusiness.orElseGet(() -> businessRepository.save(businessRequest));
+        }
 
         Payment newPayment = Payment.builder()
                 .fromFullName(request.getBuyer().getFromFullName())
                 .fromEmail(request.getBuyer().getFromEmail())
                 .status(Status.PENDING)
                 .merchantReference(uuid.toString())
+                .business(business)
                 .build();
 
         newPayment = paymentRepository.save(newPayment);
@@ -255,6 +265,14 @@ public class CustomerPaymentService {
 
             User sender = ifSender.get();
 
+            String senderName = null;
+
+            if (Optional.ofNullable(payment.getBusiness()).isPresent()) {
+                senderName = payment.getBusiness().getBusinessName();
+            } else {
+                senderName = sender.getFullName();
+            }
+
             for (PaymentCustomer pc : paymentCustomers) {
                 Optional<User> ifHolder = userRepository.findByEmail(pc.getEmail());
 
@@ -280,30 +298,84 @@ public class CustomerPaymentService {
 
                 Map<String, String> payload = new HashMap<>();
 
+                DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
+
                 payload.put("certificate_id", newCertificate.getId().toString());
                 payload.put("name", pc.getGreeting());
                 payload.put("remainingValue", "%.2f".formatted(pc.getValue()));
+                payload.put("value", "%.2f€".formatted(pc.getValue()));
+                payload.put("valid_until", validUntilDate.format(dtf));
+                payload.put("from", payment.getFromFullName());
+                payload.put("to", pc.getGreeting());
+                payload.put("description", pc.getGreetingText());
 
-                byte[] qrCodeImage = qrCodeService.createQrCode(payload.toString());
+                OkHttpClient client = new OkHttpClient();
 
-                Map<String, Object> content = new HashMap<>();
+                Gson gson = new Gson();
+                String jsonData = gson.toJson(payload);
 
-                DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
-
-                content.put("qrCode", qrCodeImage);
-                content.put("value", "%.2f€".formatted(pc.getValue()));
-                content.put("valid_until", validUntilDate.format(dtf));
-                content.put("from", payment.getFromFullName());
-                content.put("to", pc.getGreeting());
-                content.put("description", pc.getGreetingText());
-
-                emailService.sendHTMLEmail(
-                        pc.getEmail(),
-                        "Congratulations you received restaurant certificate",
-                        "email/successfulCertificatePayment",
-                        content
+                RequestBody body = RequestBody.create(
+                        jsonData,
+                        okhttp3.MediaType.parse("application/json; charset=utf-8")
                 );
+
+                Request certificateRequest = new Request.Builder()
+                        .url("http://node-app:3030/certificate")
+                        .post(body)
+                        .build();
+
+                byte[] pdfBytes = null;
+
+                try (Response response = client.newCall(certificateRequest).execute()) {
+                    if (!response.isSuccessful()) {
+                        throw new IOException("Unexpected code " + response);
+                    }
+
+                    assert response.body() != null;
+
+                    JsonObject json = new Gson().fromJson(response.body().string(), JsonObject.class);
+
+                    String base64Pdf = json.get("pdf").getAsString();
+
+                    pdfBytes = Base64.getDecoder().decode(base64Pdf);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                HashMap<String, Object> emailContent = new HashMap<>();
+
+                Locale estonianLocale = new Locale("et", "ee");
+
+                SimpleDateFormat formatter = new SimpleDateFormat("EEEE, d. MMM yyyy", estonianLocale);
+
+                emailContent.put("payment_date", formatter.format(new Date()));
+                emailContent.put("sender", "Saatja: %s".formatted(senderName));
+                emailContent.put("value", "%.2f€".formatted(pc.getValue()));
+
+                emailService.sendHTMLEmail(pc.getEmail(), "You have received certificate", "billCertificate", emailContent, pdfBytes);
             }
+
+            HashMap<String, Object> emailContent = new HashMap<>();
+
+            Double total = paymentCustomers.stream().mapToDouble(PaymentCustomer::getValue).sum();
+
+            emailContent.put("bill_total", "%.2f€".formatted(total));
+
+            Locale estonianLocale = new Locale("et", "ee");
+
+            SimpleDateFormat formatter = new SimpleDateFormat("EEEE, d. MMM yyyy", estonianLocale);
+
+            emailContent.put("payment_date", formatter.format(LocalDate.now()));
+            emailContent.put("full_name", payment.getFromFullName());
+            emailContent.put("certificates_total", paymentCustomers.size());
+
+            emailService.sendHTMLEmail(
+                    payment.getFromEmail(),
+                    "Maitsetuur Bill",
+                    "email/purchaseBill",
+                    emailContent,
+                    new byte[]{}
+            );
 
             payment.setStatus(Status.PAID);
             paymentRepository.save(payment);

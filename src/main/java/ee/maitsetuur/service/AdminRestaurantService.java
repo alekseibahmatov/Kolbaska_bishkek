@@ -18,9 +18,11 @@ import ee.maitsetuur.response.RestaurantTableResponse;
 import ee.maitsetuur.response.RestaurantUpdateResponse;
 import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.StorageService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,9 @@ public class AdminRestaurantService {
     private final EmailService emailService;
 
     private final RoleRepository roleRepository;
+
+    @Value("${front.baseurl}")
+    private String FRONT_BASEURL;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminRestaurantService.class);
 
@@ -152,7 +157,7 @@ public class AdminRestaurantService {
                 .collect(Collectors.toList());
     }
 
-    private User getUser(String email) throws UserStillOnDutyException {
+    private User getUser(String email) throws UserStillOnDutyException, MessagingException {
         LOGGER.info("Getting user with email {}", email);
 
         User user = userRepository.findByEmail(email).orElse(null);
@@ -176,7 +181,10 @@ public class AdminRestaurantService {
                 .activated(true)
                 .build();
 
-        emailService.sendSimpleMessage(email, "Activate your account", String.format("Here is your uuid to activate you account: %s", activationCode));
+        Map<String, Object> content = new HashMap<>();
+        content.put("url", "%s/add-personal-info/%s".formatted(FRONT_BASEURL, activationCode));
+
+        emailService.sendHTMLEmail(email, "Activate your account", "completeRegistration", content);
 
         LOGGER.info("Created new user: {}", newUser);
 
