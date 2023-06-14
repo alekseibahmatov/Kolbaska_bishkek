@@ -1,5 +1,7 @@
 package ee.maitsetuur.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.zxing.WriterException;
 import ee.maitsetuur.config.UserConfiguration;
 import ee.maitsetuur.exception.CertificateNotFoundException;
@@ -18,6 +20,10 @@ import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.QrCodeService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +56,7 @@ public class AdminCertificateService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminCertificateService.class);
 
     @Transactional
-    public AdminCertificateCreationResponse createCertificate(AdminCertificateCreationRequest request) throws IOException, WriterException, MessagingException {
+    public AdminCertificateCreationResponse createCertificate(AdminCertificateCreationRequest request) throws MessagingException {
         LOGGER.info("Creating a new certificate for the holder with ID {}", request.getHolderUserId());
 
         User admin = userConfiguration.getRequestUser();
@@ -73,26 +79,58 @@ public class AdminCertificateService {
 
         newCertificate = certificateRepository.save(newCertificate);
 
-        String qrCodeUrl = "%s/api/v1/certificate/%s".formatted(API_BASEURL, newCertificate.getId());
-
-        byte[] qrCodeImage = qrCodeService.createQrCode(qrCodeUrl);
-
-        Map<String, Object> content = new HashMap<>();
+        Map<String, String> payload = new HashMap<>();
 
         DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
 
-        content.put("qrCode", qrCodeImage);
-        content.put("value", "%.2f€".formatted(request.getValue()));
-        content.put("valid_until", request.getValidUntil().format(dtf));
-        content.put("from", "Support Team");
-        content.put("to", holder.getFullName());
-        content.put("description", request.getDescription());
+        payload.put("certificate_id", newCertificate.getId().toString());
+        payload.put("name", newCertificate.getGreeting());
+        payload.put("remainingValue", "%.2f".formatted(newCertificate.getValue()));
+        payload.put("value", "%.2f€".formatted(newCertificate.getValue()));
+        payload.put("valid_until", newCertificate.getValidUntil().format(dtf));
+        payload.put("from", "Support Team");
+        payload.put("to", newCertificate.getGreeting());
+        payload.put("description", newCertificate.getGreetingText());
+
+        OkHttpClient client = new OkHttpClient();
+
+        Gson gson = new Gson();
+        String jsonData = gson.toJson(payload);
+
+        RequestBody body = RequestBody.create(
+                jsonData,
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
+
+        Request certificateRequest = new Request.Builder()
+                .url("http://node-app:3030/certificate")
+                .post(body)
+                .build();
+
+        byte[] pdfBytes = null;
+
+        try (Response response = client.newCall(certificateRequest).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            assert response.body() != null;
+
+            JsonObject json = new Gson().fromJson(response.body().string(), JsonObject.class);
+
+            String base64Pdf = json.get("pdf").getAsString();
+
+            pdfBytes = Base64.getDecoder().decode(base64Pdf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         emailService.sendHTMLEmail(
                 holder.getEmail(),
                 "Congratulations you received restaurant certificate",
                 "email/successfulCertificatePayment",
-                content
+                new HashMap<>(),
+                pdfBytes
         );
 
         LOGGER.info("Successfully created a new certificate with ID {}", newCertificate.getId());

@@ -1,12 +1,10 @@
 package ee.maitsetuur.model.payment;
 
 import ee.maitsetuur.model.baseentity.UUIDModel;
+import ee.maitsetuur.model.business.Business;
 import ee.maitsetuur.model.business.PaymentCustomer;
 import ee.maitsetuur.model.certificate.Certificate;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -37,6 +35,7 @@ public class Payment extends UUIDModel {
     )
     private String fromFullName;
 
+    @Enumerated
     @NotNull
     @Column(
             name = "payment_status",
@@ -56,5 +55,9 @@ public class Payment extends UUIDModel {
 
     @OneToMany(mappedBy = "payment", orphanRemoval = true)
     private Set<PaymentCustomer> paymentCustomers;
+
+    @ManyToOne
+    @JoinColumn(name = "business_id")
+    private Business business;
 
 }

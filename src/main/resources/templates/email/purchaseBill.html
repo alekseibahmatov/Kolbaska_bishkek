@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;900&display=swap');
+        *{
+            margin: 0;
+            padding: 0;
+            text-decoration: none;
+            list-style: none;
+            box-sizing: border-box;
+            font-family: 'Mulish', sans-serif;
+        }
+        .billContent{
+            margin: 0 auto;
+            width: 481px;
+        }
+        .billHeader{
+            background-color: #14086A;
+            color: #FFFFFF;
+            padding: 35px;
+        }
+        .billUpperPart{
+            display: flex;
+            justify-content: space-between;
+        }
+        .billLogo{
+            font-weight: 900;
+            font-size: 25px;
+            align-self: center;
+        }
+        .billUpperRightPart{
+            font-size: 10px;
+            font-weight: 400;
+            align-self: center;
+        }
+        .billTotalSmall{
+            text-align: right;
+        }
+        .billMainPart{
+            margin-top: 50px;
+            font-weight: 900;
+            font-size: 25px;
+        }
+        .billLowerPart{
+            margin-top: 32px;
+            font-weight: 400;
+            font-size: 16px;
+            padding-bottom: 20px;
+        }
+        .billMainContent{
+            background-color: #ffffff;
+            color: #2F313E;
+            padding: 35px;
+        }
+        .billMainContentTotal{
+            display: flex;
+            justify-content: space-between;
+            font-size: 25px;
+            font-weight: 900;
+        }
+        .billMainContentCoupons{
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+        .billMainContentCard{
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 900;
+            margin-top: 40px;
+        }
+        .billCreditCard{
+            display: flex;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .dots{
+            display: flex;
+            gap: 3px;
+        }
+        .creditCardImg{
+            margin-top: 2px;
+        }
+        .creditCardNumbers{
+            align-self: center;
+            margin-top: -4px;
+        }
+        .billPrivacyPolicy{
+            margin-top: 40px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .blueBill{
+            color: #1B00DF;
+            cursor: pointer;
+        }
+        .billGetPdf{
+            margin-top: 40px;
+            color: #0050FF;
+            font-size: 17px;
+            font-weight: 500;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #E9E9E9;
+        }
+        .billGetInTouch{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            color: #1B00DF;
+            font-weight: 500;
+            font-size: 17px;
+        }
+        .billAutoLetter{
+            margin-top: 30px;
+            font-size: 14px;
+            font-weight: 400;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #E9E9E9;
+        }
+        .billContentFooter{
+            margin-top: 25px;
+            text-align: center;
+            color: #ACAEBA;
+            font-size: 15px;
+            font-weight: 500;
+            padding-bottom: 25px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="billContent">
+        <div class="billHeader">
+            <div class="billUpperPart">
+                <div class="billLogo">
+                    MaitseTuur
+                </div>
+                <div class="billUpperRightPart">
+                    <div class="billTotalSmall">
+                        Kokku: <span th:text="${bill_total}"></span>
+                    </div>
+                    <div class="billDateSMall" th:text="${payment_date}"></div>
+                </div>
+            </div>
+            <div class="billMainPart">
+                Täname teid sertifikaadi ostmise eest, <span th:text="${full_name}"></span>
+            </div>
+            <div class="billLowerPart">
+                Loodame, et olete surnud
+            </div>
+        </div>
+        <div class="billMainContent">
+            <div class="billMainContentTotal">
+                <div class="billTotalBig">
+                    Kokku
+                </div>
+                <div class="billTotalPrice" th:text="${bill_total}"></div>
+            </div>
+            <div class="billMainContentCoupons">
+                <div class="billTotalCoupons">
+                    Kupongid
+                </div>
+                <div class="billTotalAmount">
+                    <span th:text="${certificates_total}"></span>tk.
+                </div>
+            </div>
+            <div class="billMainContentCard">
+                    <div class="billTotalPaid">
+                        Kokku kantud
+                    </div>
+                    <div class="billTotalPaid" th:text="${bill_total}"></div>
+            </div>
+            <div class="billPrivacyPolicy">
+                Sertifikaadi ostmisega nõustusite meie privaatsuspoliitika ja kasutustingimustega. <span class="blueBill"> Lisateabe saamiseks </span>
+            </div>
+            <div class="billGetPdf">
+                Laadige kviitung alla PDF-vormingus
+            </div>
+            <div class="billGetInTouch">
+                <div class="billGetIn">
+                    Võtke ühendust tugiteenusega
+                </div>
+                <div class="billArrow">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16.1421 1.85786C16.1421 1.30558 15.6944 0.857864 15.1421 0.857864L6.14214 0.857865C5.58985 0.857865 5.14214 1.30558 5.14214 1.85786C5.14214 2.41015 5.58985 2.85786 6.14214 2.85786L14.1421 2.85786L14.1421 10.8579C14.1421 11.4101 14.5899 11.8579 15.1421 11.8579C15.6944 11.8579 16.1421 11.4101 16.1421 10.8579L16.1421 1.85786ZM1.70711 16.7071L15.8492 2.56497L14.435 1.15076L0.292893 15.2929L1.70711 16.7071Z" fill="#A9ABB8"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="billAutoLetter">
+                See on automaatne kiri. Kui vajate abi, võite sellele meilile vastamise asemel <span class="blueBill"> ühendust võtta toega. </span>
+            </div>
+            <div class="billContentFooter">
+                <div class="billCompany">
+                    OÜ MaitseTuur
+                </div>
+                <div class="billAddress">
+                    Sõstra 4-40, 13567
+                </div>
+                <div class="billRegNum">
+                    10616344
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

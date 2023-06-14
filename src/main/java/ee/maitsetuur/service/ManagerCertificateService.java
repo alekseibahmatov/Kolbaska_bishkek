@@ -1,5 +1,7 @@
 package ee.maitsetuur.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.zxing.WriterException;
 import ee.maitsetuur.config.UserConfiguration;
 import ee.maitsetuur.exception.CertificateInsufficientFundsException;
@@ -17,6 +19,10 @@ import ee.maitsetuur.service.miscellaneous.EmailService;
 import ee.maitsetuur.service.miscellaneous.QrCodeService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,11 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -81,33 +88,79 @@ public class ManagerCertificateService {
         transactionRepository.save(newTransaction);
         certificateRepository.save(certificate);
 
-        LOGGER.info("Certificate with unique code: {} has been successfully activated for restaurant: {}", request.getUniqueCode(), worker.getRestaurant() == null ? worker.getManagedRestaurant().getName() : worker.getRestaurant().getName());
-
         Map<String, String> payload = new HashMap<>();
 
+        DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendPattern("dd/MM/yyyy").toFormatter();
+
         payload.put("certificate_id", certificate.getId().toString());
-        payload.put("name", certificate.getHolder().getFullName());
-        payload.put("remainingValue", certificate.getRemainingValue().toString());
+        payload.put("name", certificate.getSender().getFullName());
+        payload.put("remainingValue", "%.2f".formatted(certificate.getRemainingValue()));
+        payload.put("value", "%.2f€".formatted(certificate.getValue()));
+        payload.put("valid_until", certificate.getValidUntil().format(dtf));
+        payload.put("from", certificate.getSender().getFullName());
+        payload.put("to", certificate.getHolder().getFullName());
+        payload.put("description", certificate.getGreetingText());
 
-        byte[] qrCodeImage = qrCodeService.createQrCode(payload.toString());
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .build();
 
-        Map<String, Object> content = new HashMap<>();
+        Gson gson = new Gson();
+        String jsonData = gson.toJson(payload);
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        RequestBody body = RequestBody.create(
+                jsonData,
+                okhttp3.MediaType.parse("application/json; charset=utf-8")
+        );
 
-        content.put("qrCode", qrCodeImage);
-        content.put("value", "%.2f€".formatted(certificate.getValue()));
-        content.put("valid_until", certificate.getValidUntil().format(dateTimeFormatter));
-        content.put("from", certificate.getSender().getFullName());
-        content.put("to", certificate.getHolder().getFullName());
-        content.put("description", certificate.getGreetingText());
+        Request certificateRequest = new Request.Builder()
+                .url("http://node-app:3030/certificate")
+                .post(body)
+                .build();
+
+        byte[] pdfBytes = null;
+
+        try (Response response = client.newCall(certificateRequest).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            assert response.body() != null;
+
+            JsonObject json = new Gson().fromJson(response.body().string(), JsonObject.class);
+
+            String base64Pdf = json.get("pdf").getAsString();
+
+            pdfBytes = Base64.getDecoder().decode(base64Pdf);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        HashMap<String, Object> emailContent = new HashMap<>();
+
+        emailContent.put("bill_total", "%.2f€".formatted(transactionValue));
+
+        Locale estonianLocale = new Locale("et", "ee");
+
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, d. MMM yyyy", estonianLocale);
+
+        emailContent.put("payment_date", formatter.format(new Date()));
+        emailContent.put("full_name", certificate.getSender().getFullName());
+        emailContent.put("remaining_total", "%.2f€".formatted(certificate.getRemainingValue()));
+        emailContent.put("transaction_total", "%.2f€".formatted(transactionValue));
+        emailContent.put("certificate_id", certificate.getId());
 
         emailService.sendHTMLEmail(
                 certificate.getHolder().getEmail(),
                 "Congratulations you received restaurant certificate",
-                "email/successfulCertificatePayment",
-                content
+                "email/activationBill",
+                emailContent,
+                pdfBytes
         );
+
+        LOGGER.info("Certificate with unique code: {} has been successfully activated for restaurant: {}", request.getUniqueCode(), worker.getRestaurant() == null ? worker.getManagedRestaurant().getName() : worker.getRestaurant().getName());
 
         return CertificateActivationResponse.builder()
                 .message("QR Code was successfully activated!")
