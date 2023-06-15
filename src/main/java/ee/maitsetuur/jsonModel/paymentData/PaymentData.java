@@ -42,6 +42,9 @@ public class PaymentData {
     private String currency;
 
     @JsonProperty(required = true)
+    private Integer availableForRefund;
+
+    @JsonProperty(required = true)
     private String paymentMethodType;
 
     @JsonProperty("paymentIntents")

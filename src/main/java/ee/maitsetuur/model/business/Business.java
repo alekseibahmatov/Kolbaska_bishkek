@@ -31,7 +31,6 @@ public class Business extends DefaultModel {
     )
     private Integer registerCode;
 
-    @NotNull
     @Column(
             name = "business_kmkr"
     )
