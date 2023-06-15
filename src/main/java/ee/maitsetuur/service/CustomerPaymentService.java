@@ -58,6 +58,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -309,7 +310,11 @@ public class CustomerPaymentService {
                 payload.put("to", pc.getGreeting());
                 payload.put("description", pc.getGreetingText());
 
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(60, TimeUnit.SECONDS)
+                        .readTimeout(60, TimeUnit.SECONDS)
+                        .writeTimeout(60, TimeUnit.SECONDS)
+                        .build();
 
                 Gson gson = new Gson();
                 String jsonData = gson.toJson(payload);
@@ -365,7 +370,7 @@ public class CustomerPaymentService {
 
             SimpleDateFormat formatter = new SimpleDateFormat("EEEE, d. MMM yyyy", estonianLocale);
 
-            emailContent.put("payment_date", formatter.format(LocalDate.now()));
+            emailContent.put("payment_date", formatter.format(new Date()));
             emailContent.put("full_name", payment.getFromFullName());
             emailContent.put("certificates_total", paymentCustomers.size());
 
