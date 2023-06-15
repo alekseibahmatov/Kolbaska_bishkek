@@ -5,8 +5,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'docker stop db'
-                        sh 'docker stop app'
+                        sh 'docker stop db app'
                     } catch (Exception e) {
                         echo "Error: Failed to stop the stack, but continuing the pipeline."
                         echo "Error message: ${e.getMessage()}"
