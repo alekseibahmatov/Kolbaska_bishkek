@@ -234,7 +234,7 @@ public class CustomerPaymentService {
     }
 
     @Transactional
-    public CertificateVerificationResponse verificationCreation(CertificateVerificationRequest request) throws PaymentNotFoundException, PaymentException, IOException, WriterException, MessagingException {
+    public CertificateVerificationResponse verificationCreation(CertificateVerificationRequest request) throws PaymentNotFoundException, PaymentException, MessagingException {
 
         DecodedJWT decodedJWT;
         try {
@@ -249,6 +249,8 @@ public class CustomerPaymentService {
 
         if(ifPayment.isEmpty()) throw new PaymentNotFoundException("Payment wasn't found");
         Payment payment = ifPayment.get();
+
+        if(payment.getStatus() == Status.PAID) throw new PaymentException("Payment is already done");
 
         if (
                 claims.get("paymentStatus").asString().equals("PAID") &&
