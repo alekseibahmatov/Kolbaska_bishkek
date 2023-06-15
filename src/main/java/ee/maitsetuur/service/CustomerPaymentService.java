@@ -352,7 +352,7 @@ public class CustomerPaymentService {
                 emailContent.put("sender", "Saatja: %s".formatted(senderName));
                 emailContent.put("value", "%.2f€".formatted(pc.getValue()));
 
-                emailService.sendHTMLEmail(pc.getEmail(), "You have received certificate", "billCertificate", emailContent, pdfBytes);
+                emailService.sendHTMLEmail(pc.getEmail(), "You have received certificate", "email/billCertificate", emailContent, pdfBytes);
             }
 
             HashMap<String, Object> emailContent = new HashMap<>();
