@@ -23,7 +23,7 @@ CREATE TABLE business
     deleted           BIT(1) DEFAULT 0 NOT NULL,
     business_name     VARCHAR(255)     NOT NULL,
     register_code     INT              NOT NULL,
-    business_kmkr     VARCHAR(255)     NOT NULL,
+    business_kmkr     VARCHAR(255) NULL,
     representative_id BIGINT           NOT NULL,
     CONSTRAINT pk_business PRIMARY KEY (id)
 );
@@ -96,6 +96,7 @@ CREATE TABLE payment
     from_fullname      VARCHAR(120)     NOT NULL,
     payment_status     INT              NOT NULL,
     merchant_reference VARCHAR(255)     NOT NULL,
+    business_id        BIGINT NULL,
     CONSTRAINT pk_payment PRIMARY KEY (id)
 );
 
@@ -238,6 +239,9 @@ ALTER TABLE login
 
 ALTER TABLE payment_customer
     ADD CONSTRAINT FK_PAYMENT_CUSTOMER_ON_PAYMENT FOREIGN KEY (payment_id) REFERENCES payment (id);
+
+ALTER TABLE payment
+    ADD CONSTRAINT FK_PAYMENT_ON_BUSINESS FOREIGN KEY (business_id) REFERENCES business (id);
 
 ALTER TABLE report
     ADD CONSTRAINT FK_REPORT_ON_RESTAURANT FOREIGN KEY (restaurant_id) REFERENCES restaurant (id);
