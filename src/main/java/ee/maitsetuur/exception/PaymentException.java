@@ -2,6 +2,7 @@ package ee.maitsetuur.exception;
 
 public class PaymentException extends Exception {
     public PaymentException(String message) {
-        super(message);
+        super(message,null,false,false);
+
     }
 }

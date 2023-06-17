@@ -2,6 +2,6 @@ package ee.maitsetuur.exception;
 
 public class RestaurantAlreadyExistsException extends Exception {
     public RestaurantAlreadyExistsException(String message) {
-        super(message);
+        super(message,null,false,false);
     }
 }
