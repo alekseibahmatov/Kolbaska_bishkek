@@ -2,6 +2,6 @@ package ee.maitsetuur.exception;
 
 public class UserAlreadyExistsException extends Exception {
     public UserAlreadyExistsException(String message) {
-        super(message);
+        super(message,null,false,false);
     }
 }

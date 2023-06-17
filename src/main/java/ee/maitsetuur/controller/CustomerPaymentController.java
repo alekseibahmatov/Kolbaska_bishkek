@@ -39,9 +39,9 @@ public class CustomerPaymentController {
     }
 
     @PostMapping("/verificationCreation")
-    public ResponseEntity<CertificateVerificationResponse> verificationCreation(
+    public synchronized ResponseEntity<CertificateVerificationResponse> verificationCreation(
             @Valid @RequestBody CertificateVerificationRequest request
-    ) throws PaymentNotFoundException, PaymentException, MessagingException, IOException, WriterException, TemplateException {
+    ) throws PaymentNotFoundException, PaymentException, MessagingException {
         return ResponseEntity.ok(service.verificationCreation(request));
     }
 

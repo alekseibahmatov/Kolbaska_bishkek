@@ -7,12 +7,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -41,7 +47,7 @@ public class SecurityConfiguration {
                                 ).permitAll()
                                 .requestMatchers(
                                         API_BASEPATH + "/payment/verificationCreation"
-                                ).permitAll() //TODO change permit all to access from specific IPs
+                                ).access(hasIpAddress(List.of("35.156.245.42", "35.156.159.169")))
                                 .requestMatchers(
                                         "/api-docs",
                                         "/api-docs/**",
@@ -75,6 +81,20 @@ public class SecurityConfiguration {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new CorsFilter(), ChannelProcessingFilter.class);
         return http.build();
+    }
+
+    private static AuthorizationManager<RequestAuthorizationContext> hasIpAddress(List<String> ipAddress) {
+        List<IpAddressMatcher> ipAddressMatchers = ipAddress.stream()
+                .map(IpAddressMatcher::new)
+                .toList();
+
+        return (authentication, context) -> {
+            String request = context.getRequest().getHeader("x-forwarded-for");
+            return new AuthorizationDecision(
+                    ipAddressMatchers.stream()
+                            .anyMatch(matcher -> matcher.matches(request))
+            );
+        };
     }
 
     @Bean

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.zxing.WriterException;
 import ee.maitsetuur.exception.PaymentException;
 import ee.maitsetuur.exception.PaymentNotFoundException;
 import ee.maitsetuur.jsonModel.paymentData.PaymentData;
@@ -108,9 +107,11 @@ public class CustomerPaymentService {
 
         UUID uuid = UUID.randomUUID();
 
+        String certificateTypeURL = Optional.ofNullable(request.getBusinessInformation()).isPresent() ? "business-coupon-order" : "personal-coupon-order";
+
         payload.put("accessKey", MONTONIO_ACCESS_KEY);
         payload.put("merchantReference", uuid.toString());
-        payload.put("returnUrl", "%s/personal-coupon-order/order-details".formatted(WEBSITE_BASE_URL));
+        payload.put("returnUrl", "%s/%s/order-details".formatted(WEBSITE_BASE_URL, certificateTypeURL));
         payload.put("notificationUrl", "%s%s/payment/verificationCreation".formatted(API_BASEURL, API_BASEPATH));
 
         Double total = request.getCertificates().stream().mapToDouble(CertificateInformation::getNominalValue).sum();
@@ -245,12 +246,12 @@ public class CustomerPaymentService {
 
         Map<String, Claim> claims = decodedJWT.getClaims();
 
-        Optional<Payment> ifPayment = paymentRepository.findByMerchantReference(claims.get("merchantReference").asString());
+        Optional<Payment> ifPayment = paymentRepository.findByMerchantReferenceWithLock(claims.get("merchantReference").asString());
 
         if(ifPayment.isEmpty()) throw new PaymentNotFoundException("Payment wasn't found");
         Payment payment = ifPayment.get();
 
-        if(payment.getStatus() == Status.PAID) throw new PaymentException("Payment is already done");
+        if(payment.getStatus() == Status.PAID) throw new PaymentException("Payment is being processed by another request");
 
         if (
                 claims.get("paymentStatus").asString().equals("PAID") &&
@@ -308,7 +309,7 @@ public class CustomerPaymentService {
                 payload.put("remainingValue", "%.2f".formatted(pc.getValue()));
                 payload.put("value", "%.2f€".formatted(pc.getValue()));
                 payload.put("valid_until", validUntilDate.format(dtf));
-                payload.put("from", payment.getFromFullName());
+                payload.put("from", senderName);
                 payload.put("to", pc.getGreeting());
                 payload.put("description", pc.getGreetingText());
 
@@ -380,8 +381,7 @@ public class CustomerPaymentService {
                     payment.getFromEmail(),
                     "Maitsetuur Bill",
                     "email/purchaseBill",
-                    emailContent,
-                    new byte[]{}
+                    emailContent
             );
 
             payment.setStatus(Status.PAID);

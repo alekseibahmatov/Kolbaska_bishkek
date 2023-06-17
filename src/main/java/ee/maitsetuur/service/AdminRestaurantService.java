@@ -184,7 +184,7 @@ public class AdminRestaurantService {
         Map<String, Object> content = new HashMap<>();
         content.put("url", "%s/add-personal-info/%s".formatted(FRONT_BASEURL, activationCode));
 
-        emailService.sendHTMLEmail(email, "Activate your account", "completeRegistration", content);
+        emailService.sendHTMLEmail(email, "Activate your account", "email/completeRegistration", content);
 
         LOGGER.info("Created new user: {}", newUser);
 
