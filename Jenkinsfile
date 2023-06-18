@@ -42,7 +42,7 @@ pipeline {
                 }
                 sh 'docker run --env-file .env_database --network stack-network -v stack-db-storage:/var/lib/mysql -p 3306:3306 --name db -d mysql:8.0.33'
                 sh 'docker build . -t stack-app'
-                sh 'docker run --env-file .env_backend --network stack-network -p 8080:8080 --name app -d stack-app'
+                sh 'docker run --env-file .env_backend --network stack-network -p 8080:8080 -v /var/storage:/var/storage --name app -d stack-app'
                 cleanWs()
             }
         }
