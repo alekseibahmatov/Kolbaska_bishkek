@@ -292,6 +292,7 @@ public class CustomerPaymentService {
                         .greeting(pc.getGreeting())
                         .greetingText(pc.getGreetingText())
                         .value(pc.getValue())
+                        .remainingValue(pc.getValue())
                         .validUntil(validUntilDate)
                         .active(true)
                         .createdByAdmin(false)
