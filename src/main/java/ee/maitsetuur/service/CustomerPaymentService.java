@@ -282,6 +282,7 @@ public class CustomerPaymentService {
 
                 User holder = ifHolder.orElseGet(() -> userRepository.save(User.builder()
                         .email(pc.getEmail())
+                        .fullName(pc.getGreeting())
                         .activated(false)
                         .roles(List.of(customerRole))
                         .build()));
